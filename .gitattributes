@@ -1,0 +1,17 @@
+# Generated catalog data must be byte-identical on every platform: the
+# generator writes LF, and `catalog:verify` plus the reproducibility spec
+# compare those exact bytes. A CRLF checkout would break both.
+/data/*.json text eol=lf
+
+# Tooling sources are LF-only so the same generators run everywhere.
+/scripts/** text eol=lf
+
+# Runtime assets are copied from the source verbatim; never let Git rewrite
+# their bytes or misdetect their type.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bbmodel binary
+*.schem binary
+*.schematic binary
