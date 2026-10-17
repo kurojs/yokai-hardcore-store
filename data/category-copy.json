@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "folder": "Alimento Yokai  para guerreros y pets",
+      "name": "Alimento Yokai  para guerreros y pets",
+      "description": "Descubre alimentos que no solo llenan el estómago, ¡sino que también desatan habilidades extraordinarias! Desde saltos montañosos hasta velocidades superhumanas al estilo Yokaiflash, estos manjares te brindan las habilidades que siempre soñaste. Aprovecha la magia de Yokai en cada bocado.",
+      "bannerImage": "categoria_imagen_1.png"
+    },
+    {
+      "folder": "Armeria De Heroe",
+      "name": "Armeria De Heroe",
+      "description": "¡Combate con estilo y deja impresionados a tus compañeros aventureros! Descubre nuestra colección de partículas cosméticas que siguen al jugador, ideales para personalizar tu experiencia de juego. Añade un toque de magia y elegancia a tu avatar mientras exploras el mundo de Yokai.",
+      "bannerImage": null
+    },
+    {
+      "folder": "Armeria de Aventurero",
+      "name": "Armeria de Aventurero",
+      "description": "Explora nuestra colección de armas y armaduras únicas, creadas con diseños exclusivos y encantamientos poderosos. Desde espadas que brillan con el poder del trueno hasta armaduras que resisten los embates más feroces, cada pieza es una obra maestra digna de los dioses mismos. Descubre el poder que solo los artesanos divinos pueden ofrecer.",
+      "bannerImage": "categoria_imagen_1.jpg"
+    },
+    {
+      "folder": "Artefactos Mágicos",
+      "name": "Artefactos Mágicos",
+      "description": "Explora una colección única de joyas y artefactos ancestrales. Aunque pequeños en tamaño, estos objetos poseen un poder extraordinario capaz de otorgar salud, infligir daño o incluso iluminar tu camino. Cada artefacto es una oportunidad para avanzar más rápido en tu aventura. ¡Aprovecha estas reliquias antes de que desaparezcan! Los goblins, como sabes, no trabajan todo el tiempo...",
+      "bannerImage": "categoria_imagen_1.jpg"
+    },
+    {
+      "folder": "Bosque de las Ninfas",
+      "name": "Bosque de las Ninfas",
+      "description": "Explora los tesoros que el Dios Dino ha descubierto en sus expediciones a través de mundos desconocidos. Cada ítem posee cualidades únicas, como el legendario amuleto que permitió a Dino explorar la cuarta dimensión. ¿Estás listo para poseer el poder de otras realidades?",
+      "bannerImage": "categoria_imagen_1.jpg"
+    },
+    {
+      "folder": "Cofres_Ofertas",
+      "name": "Cofres/Ofertas",
+      "description": "¡Explora nuestra selección exclusiva de cofres y ofertas diseñadas para potenciar tu experiencia de supervivencia en el mundo! No pierdas la oportunidad de adquirir ítems únicos que te ayudarán a destacar entre los demás aventureros. Descubre paquetes cuidadosamente seleccionados y ofertas imperdibles que incluyen desde herramientas poderosas hasta objetos raros y esenciales para tu progreso en el servidor hardcore de Minecraft. Aprovecha estas oportunidades para fortalecer tu equipo y alcanzar nuevas alturas en tus expediciones y combates.",
+      "bannerImage": "categoria_imagen_1.jpg"
+    },
+    {
+      "folder": "Emboscada a jugadores",
+      "name": "Emboscada a jugadores",
+      "description": "¿Buscas una venganza justa y sin complicaciones? Contrata a nuestros mercenarios para que se encarguen del trabajo sucio por ti. Desde saqueadores implacables hasta brujas sigilosas, nuestros especialistas están listos para darle una lección a cualquier adversario que se cruce en tu camino en el mundo de Yokai. ¡Deja que la justicia de los mercenarios hable por ti!",
+      "bannerImage": "categoria_imagen_1.jpg"
+    },
+    {
+      "folder": "Mascotas",
+      "name": "Mascotas",
+      "description": "Descubre un mundo de compañeros leales que te acompañarán en todas tus aventuras. Desde feroces guerreros hasta encantadoras criaturas místicas, nuestras mascotas poseen habilidades únicas para ayudarte en el combate y la exploración. Además, intercambia un alimento especial por valiosos objetos para mejorar tu equipo. ¡Conviértete en el mejor maestro Yokemon y domina el mundo de Yokai con tus fieles amigos!",
+      "bannerImage": null
+    },
+    {
+      "folder": "RESUCITACIÓN",
+      "name": "RESUCITACIÓN",
+      "description": "¿Te han derrotado en batalla? ¿Buscas una segunda oportunidad para redimirte? ¡Bienvenido al lugar donde las segundas oportunidades se hacen realidad! Obtén tu desban y regresa al campo de batalla con renovada determinación. ¡No dejes que una derrota detenga tu aventura en nuestro servidor hardcore! Mantén tu determinación. =)",
+      "bannerImage": null
+    },
+    {
+      "folder": "Yokai Coins",
+      "name": "Yokai Coins",
+      "description": "¡Adquiere la moneda más valorada del mundo Yokai! Estas monedas te permitirán acceder a ítems mágicos y exclusivos, así como negociar sin restricciones dentro de nuestro mundo. Prepárate para explorar y comerciar con los NPC, asegurando tu ventaja en cada aventura.",
+      "bannerImage": "categoria_imagen_1.jpg"
+    }
+  ]
+}

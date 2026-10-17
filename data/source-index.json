@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "categoryFolders": [
+    "Alimento Yokai  para guerreros y pets",
+    "Armeria De Heroe",
+    "Armeria de Aventurero",
+    "Artefactos Mágicos",
+    "Bosque de las Ninfas",
+    "Cofres_Ofertas",
+    "Emboscada a jugadores",
+    "Mascotas",
+    "RESUCITACIÓN",
+    "Yokai Coins"
+  ],
+  "products": [
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "10 ALGODONES DE AZUCAR",
+      "image": "imagen.png",
+      "name": "10 ALGODONES DE AZUCAR",
+      "priceUsd": 1,
+      "description": "¡Aliméntate como todo un guerrero con los Algodones de Azúcar Goblin! Características del Alimento: Cantidad: Se entrega un set de 10 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Velocidad IX durante 10 segundos: Aumenta significativamente la velocidad de movimiento del consumidor. Descripción: Los Algodones de Azúcar Goblin son una golosina única y energizante, elaborada con los métodos secretos del reino Goblin. Este dulce no solo deleita el paladar, sino que también otorga al consumidor una velocidad aumentada, permitiéndole moverse con rapidez y agilidad en cualquier situación. ¡Perfectos para guerreros que buscan velocidad y energía para enfrentar sus desafíos con determinación!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "10 Cuencos de arroz",
+      "image": "imagen.png",
+      "name": "10 Cuencos de arroz",
+      "priceUsd": 4,
+      "description": "¡Aliméntate como todo un guerrero con los Cuencos de Arroz Goblin! Características del Alimento: Cantidad: Se entrega un set de 10 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Hambre II durante 3 segundos: Satisface parcialmente el hambre del consumidor. Suerte V durante 25 segundos: Mejora la suerte del consumidor para obtener mejores resultados. Héroe de la Aldea IV durante 25 segundos: Potencia las habilidades del consumidor como defensor de la aldea. Velocidad IX durante 25 segundos: Aumenta significativamente la velocidad de movimiento del consumidor. Fuerza III durante 25 segundos: Aumenta la fuerza física del consumidor. Resistencia II durante 25 segundos: Mejora la resistencia del consumidor ante el daño. Regeneración V durante 25 segundos: Acelera la regeneración de salud del consumidor. Salud Mejorada IV durante 25 segundos: Mejora la salud general del consumidor. Descripción: Los Cuencos de Arroz Goblin son un platillo legendario del reino Goblin, preparado con ingredientes únicos y métodos culinarios ancestrales. Este alimento no solo satisface el hambre rápidamente, sino que también otorga una amplia gama de beneficios temporales, desde mejoras en la suerte y fuerza, hasta regeneración acelerada y mayor resistencia. ¡Perfecto para guerreros que buscan una comida completa y poderosa antes de embarcarse en sus aventuras más peligrosas y desafiantes!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "10 GALLETAS CREEPER",
+      "image": "imagen.png",
+      "name": "10 GALLETAS CREEPER",
+      "priceUsd": 4,
+      "description": "¡Aliméntate como todo un guerrero con las Galletas Creeper Goblin! Características del Alimento: Cantidad: Se entrega un set de 10 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Malpresagio durante 15 segundos: Aplica un efecto negativo temporal a los enemigos cercanos. Caída Lenta durante 15 segundos: Permite al consumidor caer lentamente y controlar su descenso. Descripción: Las Galletas Creeper Goblin son una creación culinaria intrigante, elaborada con ingredientes secretos del reino Goblin. Este alimento no solo satisface el hambre, sino que también otorga habilidades especiales al consumidor, como la capacidad del tener el efecto malpresagio y controlar su descenso con caída lenta. ¡Ideal para guerreros astutos que desean dominar el campo de batalla con efectos tácticos y habilidades especiales!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "10 GELATINAS DE SLIME",
+      "image": "imagen.png",
+      "name": "10 GELATINAS DE SLIME",
+      "priceUsd": 2,
+      "description": "¡Aliméntate como todo un guerrero con las Gelatinas de Slime Goblin! Características del Alimento: Cantidad: Se entrega un set de 10 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Supersalto IX durante 15 segundos: Permite al consumidor saltar a alturas increíbles. Descripción: Las Gelatinas de Slime Goblin son una especialidad culinaria única, elaborada con los ingredientes más peculiares del reino Goblin. Este alimento no solo es delicioso, sino que también proporciona al consumidor la capacidad de realizar saltos extraordinarios, permitiéndole superar obstáculos y explorar terrenos elevados con facilidad. ¡Ideal para guerreros que buscan dominar los cielos y moverse con agilidad en cualquier situación!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "10 HAMBURGUESAS",
+      "image": "imagen.png",
+      "name": "10 HAMBURGUESAS",
+      "priceUsd": 4,
+      "description": "¡Aliméntate como todo un guerrero con las Hamburguesas Goblin! Características del Alimento: Cantidad: Se entrega un set de 15 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Saturación V durante 10 segundos: Proporciona una saciedad completa y prolongada. Fuerza IV durante 10 segundos: Mejora la fuerza física del consumidor. Descripción: Las Hamburguesas Goblin son una creación culinaria poderosa y deliciosa, cocinadas con técnicas ancestrales del reino Goblin. Estas hamburguesas no solo satisfacen completamente el hambre con su poderosa saturación, sino que también otorgan una fuerza adicional al consumidor, aumentando su capacidad para enfrentar desafíos físicos y combates. ¡Perfectas para guerreros que buscan alimentarse bien y potenciar su fuerza en sus aventuras más exigentes!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "15 COCA COLA",
+      "image": "imagen.png",
+      "name": "15 COCA COLA",
+      "priceUsd": 3,
+      "description": "¡Aliméntate como todo un guerrero con la Coca Cola Goblin! Características del Alimento: Cantidad: Se entrega un set de 15 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Regeneración II durante 5 segundos: Acelera la recuperación de salud. Velocidad durante 15 segundos: Aumenta la velocidad de movimiento. Luminiscencia IX durante 15 segundos: Ilumina el entorno con una luz intensa. Sonido: ¡Utah que rico, ¿eh?! Descripción: Esta Coca Cola Goblin es más que una bebida: es una bendición culinaria del reino Goblin, preparada para proporcionar a los guerreros una rápida regeneración, velocidad aumentada, y luminosidad en la oscuridad. Además, ¡su sabor es simplemente delicioso! ¡Disfruta de las ventajas de este alimento en tus aventuras más desafiantes!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "25 SUSHI",
+      "image": "imagen.png",
+      "name": "25 SUSHI",
+      "priceUsd": 5,
+      "description": "¡Aliméntate como todo un guerrero con el Sushi Goblin! Características del Alimento: Cantidad: Se entrega un set de 25 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Hambre II durante 3 segundos: Satisface parcialmente el hambre del consumidor. Suerte V durante 25 segundos: Mejora la suerte del consumidor para obtener mejores resultados. Héroe de la Aldea IV durante 25 segundos: Potencia las habilidades del consumidor como defensor de la aldea. Velocidad IX durante 25 segundos: Aumenta significativamente la velocidad de movimiento del consumidor. Fuerza III durante 25 segundos: Aumenta la fuerza física del consumidor. Resistencia II durante 25 segundos: Mejora la resistencia del consumidor ante el daño. Regeneración V durante 25 segundos: Acelera la regeneración de salud del consumidor. Salud Mejorada IV durante 25 segundos: Mejora la salud general del consumidor. Descripción: El Sushi Goblin es una obra maestra culinaria del reino Goblin, preparada con los ingredientes más exóticos y técnicas ancestrales. Este sushi no solo satisface el hambre, sino que también proporciona una amplia gama de beneficios temporales, desde mejoras en la suerte y fuerza, hasta regeneración acelerada y mayor resistencia. ¡Ideal para guerreros que buscan una comida completa para prepararse para batallas épicas y desafíos intensos!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "3 Ramen",
+      "image": "imagen.png",
+      "name": "3 Ramen",
+      "priceUsd": 1,
+      "description": "¡Aliméntate como todo un guerrero con el Ramen Goblin! Características del Alimento: Cantidad: Se entrega un set de 3 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Hambre II durante 3 segundos: Satisface parcialmente el hambre del consumidor. Suerte V durante 25 segundos: Mejora la suerte del consumidor para obtener mejores resultados. Héroe de la Aldea IV durante 25 segundos: Potencia las habilidades del consumidor como defensor de la aldea. Velocidad IX durante 25 segundos: Aumenta significativamente la velocidad de movimiento del consumidor. Fuerza III durante 25 segundos: Aumenta la fuerza física del consumidor. Resistencia II durante 25 segundos: Mejora la resistencia del consumidor ante el daño. Regeneración V durante 25 segundos: Acelera la regeneración de salud del consumidor. Salud Mejorada IV durante 25 segundos: Mejora la salud general del consumidor. Descripción: El Ramen Goblin es una delicia culinaria del reino Goblin, preparada con técnicas tradicionales y ingredientes exclusivos. Este sabroso platillo no solo calma el hambre rápidamente, sino que también proporciona una serie de beneficios temporales, desde mejoras en la suerte y fuerza, hasta regeneración acelerada y mayor resistencia. ¡Ideal para guerreros que buscan una comida poderosa y revitalizante antes de enfrentarse a sus mayores desafíos!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "30 ALITAS NETHERIANAS",
+      "image": "imagen.png",
+      "name": "30 ALITAS NETHERIANAS",
+      "priceUsd": 3,
+      "description": "¡Aliméntate como todo un guerrero con las Alitas Netherianas Goblin! Características del Alimento: Cantidad: Se entrega un set de 30 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Saturación V durante 10 segundos: Satisface completamente el hambre del consumidor y proporciona una sensación de saciedad prolongada. Resistencia al Fuego durante 15 segundos: Protege al consumidor de los efectos dañinos del fuego y lava. Descripción: Las Alitas Netherianas Goblin son un manjar picante y reconfortante del reino Goblin, preparadas con técnicas únicas y sabores intensos. Estas alitas no solo satisfacen el hambre de manera completa y rápida, sino que también ofrecen una protección temporal contra el fuego y la lava, esencial para aventureros que exploran entornos peligrosos como el Nether. ¡Ideal para guerreros que buscan una comida deliciosa y funcional antes de adentrarse en terrenos hostiles!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "30 MUSLOS DE POLLO",
+      "image": "imagen.png",
+      "name": "30 MUSLOS DE POLLO",
+      "priceUsd": 2,
+      "description": "¡Aliméntate como todo un guerrero con los Muslos de Pollo Goblin! Características del Alimento: Cantidad: Se entrega un set de 30 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Saturación V durante 10 segundos: Satisface completamente el hambre del consumidor y proporciona una sensación de saciedad prolongada. Descripción: Los Muslos de Pollo Goblin son un manjar culinario del reino Goblin, preparados con técnicas tradicionales y cuidadosa selección de ingredientes. Estos muslos no solo satisfacen el hambre de manera completa y rápida, sino que también ofrecen una sensación prolongada de saciedad, ideal para guerreros que necesitan mantenerse en plena forma durante largas jornadas de aventuras. ¡Perfectos para aquellos que buscan una comida reconfortante y nutritiva antes de enfrentar desafíos épicos!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "30 PIZZA",
+      "image": "imagen.png",
+      "name": "30 PIZZA",
+      "priceUsd": 3,
+      "description": "¡Aliméntate como todo un guerrero con la Pizza Goblin! Características del Alimento: Cantidad: Se entrega un set de 30 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Saturación VI durante 10 segundos: Satisface completamente el hambre y proporciona un efecto de saciedad prolongado. Velocidad VI durante 10 segundos: Aumenta significativamente la velocidad de movimiento. Descripción: La Pizza Goblin es una delicia culinaria preparada con sabiduría goblin en las profundidades de su reino. Esta pizza no solo satisface completamente el hambre con su poderosa saturación, sino que también potencia la velocidad del consumidor, permitiéndole moverse ágilmente en cualquier situación. ¡Ideal para guerreros que buscan mantenerse ágiles y satisfechos durante sus épicas aventuras!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "5 CARAMELOS",
+      "image": "imagen.png",
+      "name": "5 CARAMELOS",
+      "priceUsd": 1,
+      "description": "¡Aliméntate como todo un guerrero con los Caramelos Goblin! Características del Alimento: Cantidad: Se entrega un set de 5 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Hambre II durante 10 segundos: Satisface parcialmente el hambre del consumidor. Regeneración II durante 10 segundos: Acelera la regeneración de salud del consumidor. Velocidad durante 30 segundos: Aumenta la velocidad de movimiento del consumidor. Descripción: Los Caramelos Goblin son golosinas especiales del reino Goblin, preparadas con habilidad y cariño por sus cocineros. Estos dulces no solo satisfacen el hambre de manera rápida, sino que también proporcionan una breve pero efectiva regeneración de salud y un impulso de velocidad para ayudar al consumidor en sus aventuras. ¡Perfectos para guerreros que necesitan un rápido impulso durante momentos críticos en el campo de batalla!"
+    },
+    {
+      "categoryFolder": "Alimento Yokai  para guerreros y pets",
+      "folder": "5 OBENTO",
+      "image": "imagen.png",
+      "name": "5 OBENTO",
+      "priceUsd": 2,
+      "description": "¡Aliméntate como todo un guerrero con los Obentos Goblin! Características del Alimento: Cantidad: Se entrega un set de 5 unidades. Origen: Producto cocinado en las profundidades del reino Goblin. Efectos Temporales: Suerte V durante 25 segundos: Mejora la suerte del consumidor para obtener mejores resultados. Fuerza III durante 25 segundos: Aumenta la fuerza física del consumidor. Regeneración V durante 25 segundos: Acelera la regeneración de salud del consumidor. Saturación III durante 25 segundos: Proporciona una saciedad completa y prolongada. Descripción: Los Obentos Goblin son una comida excepcionalmente poderosa, preparada con técnicas culinarias ancestrales del reino Goblin. Este alimento no solo satisface el hambre, sino que también proporciona una serie de beneficios temporales, incluyendo mejoras en la suerte, fuerza física aumentada, regeneración acelerada y saciedad prolongada. ¡Ideal para guerreros que buscan un impulso completo para enfrentar desafíos épicos y batallas intensas!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Agua Bendita",
+      "image": "imagen.png",
+      "name": "Agua Bendita",
+      "priceUsd": 1,
+      "description": "Cantidad: 15 unidades Descripción: El Agua Bendita es una poderosa poción que combina propiedades ofensivas y curativas, utilizada por la sacerdotisa del reino de Yokai durante tiempos de conflicto. Originalmente encontrado por carroñeros después de la guerra de las 3 horas, este preciado elixir fue posteriormente adquirido por un seguidor del Dios Kuro. Efectos: Causa daño a los enemigos cercanos al tomar. Proporciona curación al jugador al tomar. Origen y Uso: Conocida por su capacidad para purificar y sanar, el Agua Bendita es esencial en la protección contra fuerzas malignas y para restaurar la vitalidad del portador en momentos críticos. Descripción Adicional: Este elixir sagrado es altamente valorado por su dualidad en el combate y la curación, siendo una herramienta fundamental para aquellos que enfrentan desafíos espirituales y físicos en su búsqueda de justicia y equilibrio en el reino de Yokai."
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Amuleto del Brujo",
+      "image": "imagen.png",
+      "name": "Amuleto del Brujo",
+      "priceUsd": 2,
+      "description": "Este artefacto, descubierto por el dios Dinofly en las ruinas de un antiguo imperio durante una de sus expediciones para controlar la oscuridad, se cree que fue elaborado por el brujo del reino seguidor del Dios Erebos. Características del Artefacto: Cantidad: Se entregan 5 unidades de un solo uso. Función: Al hacer clic derecho, afecta a todos los enemigos en un radio de 15 bloques una sola vez. Efectos: Oscuridad II: Sumerge a los enemigos en una oscuridad intensa, reduciendo su visibilidad y aumentando el miedo. Hambre II: Induce un hambre intensa en los enemigos, disminuyendo su capacidad de regeneración de salud. Historia Legendaria: El artefacto, antiguo y poderoso, es testimonio del poder del Dios Erebos y su influencia sobre los seguidores del reino de la oscuridad. Su descubrimiento por Dinofly marcó un punto crucial en su búsqueda por dominar las fuerzas oscuras. ¡Utiliza el poder oscuro de este artefacto y somete a tus enemigos con la oscuridad y el hambre desesperante!"
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Amuleto del Clerigo",
+      "image": "imagen.jpg",
+      "name": "Amuleto del Clerigo",
+      "priceUsd": 2,
+      "description": "Este amuleto, una vez perteneciente a un clérigo traicionado y abandonado a su suerte, fue finalmente intercambiado por oro con el Dios Hiro, conocido como el Dios de la Pobreza, quien otorgó al amuleto un poder de vitalidad que lo convirtió en un artefacto de gran poder. Características del Amuleto: Cantidad: Se entregan 5 unidades de un solo uso. Función: Al hacer clic derecho, afecta a todos los aliados en un radio de 10 bloques una sola vez. Efectos: Absorción X: Proporciona una absorción de daño mejorada. Regeneración III: Acelera significativamente la regeneración de salud de los aliados. Historia Legendaria: El amuleto, cargado con la esencia de vitalidad otorgada por el Dios Hiro, se ha convertido en un símbolo de protección y fuerza para aquellos que lo llevan. Su historia refleja los giros del destino y la influencia de los dioses en los artefactos de poder. ¡Usa este amuleto para fortalecer a tus aliados y protegerlos en las batallas más difíciles con su capacidad de absorción y regeneración mejoradas!"
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Amuleto del Rey Golem",
+      "image": "imagen.jpg",
+      "name": "Amuleto del Rey Golem",
+      "priceUsd": 2,
+      "description": "Este colgante, que pertenecía a un golem diferente a los demás, abandonó su deber de proteger su aldea y buscó ayuda del segundo dios mayor, Kuro, quien le otorgó una resistencia extraordinaria. Con este poder, se dedicó a proteger a su raza de la esclavitud impuesta por su creador desconocido. Características del Colgante: Cantidad: Se entregan 8 unidades de un solo uso. Función: Al hacer clic derecho, afecta a todos los aliados en un radio de 5 bloques una sola vez. Efectos: Lentencia II: Reduce la velocidad de los enemigos afectados. Resistencia VI: Proporciona una resistencia superior a daños físicos y mágicos. Historia Legendaria: Este colgante es un testimonio del poder de Kuro y su benevolencia hacia aquellos que buscan protección y libertad. El golem renegado encontró en este artefacto la fuerza necesaria para cumplir su destino y proteger a los suyos. ¡Utiliza este colgante para fortalecer a tus aliados con su resistencia excepcional y ralentizar a tus enemigos en las batallas más desafiantes!"
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Ancla del Mar Seco",
+      "image": "imagen.png",
+      "name": "Ancla del Mar Seco",
+      "priceUsd": 3,
+      "description": "Este amuleto, encontrado en una de las expediciones de los soldados del reino y entregado como ofrenda al santuario hace milenios, encierra un poder legendario en su interior. Siempre que lo sostengas en la mano izquierda, otorga el bendito efecto de Suerte II, aumentando tus posibilidades de éxito en tus aventuras. Características del Amuleto: Efecto Positivo: Suerte II Origen Místico: Ha sido venerado por generaciones debido a su poder misterioso y beneficioso. ¡Aprovecha el poder del amuleto del santuario y disfruta de la buena fortuna que te guiará en tus caminos!"
+    },
+    {
+      "categoryFolder": "Yokai Coins",
+      "folder": "Bolsa  de 10 Yokai",
+      "image": "imagen.png",
+      "name": "Bolsa  de 10 Yokai",
+      "priceUsd": 1,
+      "description": "¡Hazte con la clave para adquirir tesoros únicos en nuestro mundo con la Bolsa de Monedas \"Yokai\"! Esta bolsa de monedas te permite comerciar con los NPC del servidor y obtener objetos exclusivos. Además, alimenta al misterioso Mob Slotty con una de estas monedas en la zona de misiones y desbloquea recompensas aleatorias, que van desde poderosas armaduras y ítems mágicos hasta valiosos totems para mejorar tu experiencia en combate. Características: Cantidad de 10 monedas yokai. Comercia con NPCs para obtener objetos únicos. Alimenta al Mob Slotty para recibir recompensas aleatorias. Perfecto para potenciar tu equipo y estrategia en el PvP. ¡Aprovecha cada Yokai para transformar tu aventura en algo aún más legendario!"
+    },
+    {
+      "categoryFolder": "Cofres_Ofertas",
+      "folder": "COFRE CON ARMAMENTO",
+      "image": "imagen.jpeg",
+      "name": "COFRE CON ARMAMENTO",
+      "priceUsd": 10,
+      "description": "Recibe un cofre lleno de armamento que incluye pociones, armaduras, armas, escudos e incluso una mascota. Puede contener: Pociones: 5 pociones de Fuerza II (90 segundos) 5 pociones de Curación Instantánea II 5 pociones de Veneno Arrojadizas (90 segundos) 5 pociones de Daño Instantáneo II 5 pociones de Cuerpo Ignífugo (480 segundos) Armaduras: 5 Cascos de Netherite 5 Pecheras de Netherite 5 Pantalones de Netherite 5 Botas de Netherite 2 Cascos de Diamante 2 Pecheras de Diamante 2 Pantalones de Diamante 2 Botas de Diamante Armas: 3 Tridentes 3 Espadas de Netherite 2 Hachas de Netherite 2 Espadas de Diamante 1 Hacha de Diamante Escudos: 10 Escudos Libros encantados (1 de cada 1): Protección IV Protección contra el Fuego IV Protección contra Explosiones IV Protección contra Proyectiles IV Espinas III Caída de Pluma IV Filo V Barrido III Castigo V Aspecto Ígneo II Empuje II Botín II Perdición de los Artrópodos V Propulsión Acuática III Lealtad III Conductividad Empalamiento V Reparación"
+    },
+    {
+      "categoryFolder": "Cofres_Ofertas",
+      "folder": "COFRE DE FAMILIAR",
+      "image": "imagen.jpeg",
+      "name": "COFRE DE FAMILIAR",
+      "priceUsd": 5,
+      "description": "Descubre y cuida a tus 6 nuevos compañeros 2D en Minecraft. Estos familiares únicos, que incluyen demonios, bestias, hadas, slimes, goblins y elementales, te acompañarán en tus aventuras. Aliméntalos con cualquier alimento de Minecraft haciendo clic derecho mientras los sostienes con la mano izquierda. A cambio, te recompensarán con valiosos objetos que mejorarán tu experiencia de juego : Cantidad: 1 Familiar de cada una de las siguientes razas Demonio Bestia Hada Slime Goblin Elemental"
+    },
+    {
+      "categoryFolder": "Cofres_Ofertas",
+      "folder": "COFRE DE RUNAS",
+      "image": "imagen.jpeg",
+      "name": "COFRE DE RUNAS",
+      "priceUsd": 5,
+      "description": "Runas (ítems personalizados) que, al ser colocados en su respectivo slot, tienen la capacidad de otorgarle al jugador distintos efectos al momento de activarse: RUNA SLIME Capacidad de dar super saltos. RUNA ENDER Al estar a 3 corazones en un PvP, te hace teletransportarte a otro lugar cercano para tener la oportunidad de curación. RUNA CIELO Genera cortinas de humo al momento de escapar de un jugador. RUNA SANGRIENTA Invoca mobs que te puedan ayudar a combatir, como guardianes, golems y esqueletos."
+    },
+    {
+      "categoryFolder": "Mascotas",
+      "folder": "CUPON CANJEABLE PARA  FAMILIAR",
+      "image": "imagen.jpg",
+      "name": "CUPON CANJEABLE PARA  FAMILIAR",
+      "priceUsd": 5,
+      "description": "¡Añade un compañero único a tu equipo con nuestro Cupón de Mascota 2D! Canjea este cupón en la zona de misiones y obtén una mascota 2D aleatoria que te acompañará y te proporcionará valiosos ítems al alimentarla. Estas mascotas son esenciales para mejorar tu experiencia en el servidor, ayudándote en tus aventuras y batallas. Características: Canjea el cupón para obtener una mascota 2D aleatoria. Alimenta a tu mascota para recibir útiles ítems y bonificaciones. Perfecto para aumentar tu habilidad y fortaleza en el juego. ¡No pierdas la oportunidad de fortalecer tu equipo con la ayuda de estas adorables y útiles mascotas 2D!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Celulas De Kaiyin",
+      "image": "imagen.png",
+      "name": "Celulas De Kaiyin",
+      "priceUsd": 1,
+      "description": "Cantidad: 5 unidades Descripción: La Carne de Ser Mitad Bestia es un alimento excepcionalmente peculiar, obtenido de una criatura legendaria que posee características tanto de bestia como de humano. Según el consejo del Dios Dino, este alimento se consume mejor sin cocinar para preservar sus propiedades únicas. Efectos Temporales: Incrementa la Fuerza del jugador por 20: Aumenta significativamente la fuerza física del consumidor, potenciando sus habilidades en combate. Rapidez: Mejora la velocidad de movimiento del jugador, permitiéndole moverse más rápido durante un período de tiempo. Descripción Adicional: Este alimento es altamente recomendado para aquellos que buscan un aumento en su fuerza y velocidad, ideal para enfrentar desafíos difíciles o realizar tareas que requieran un desempeño físico superior. ¡Una elección perfecta para aventureros audaces en busca de poder y agilidad!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Coca Peruana",
+      "image": "imagen.png",
+      "name": "Coca Peruana",
+      "priceUsd": 4,
+      "description": "Cantidad: 30 unidades Origen y Leyenda: La Coca Peruana es una delicia exótica originaria de un misterioso mundo de aventureros, específicamente de una región conocida como Perú. Durante una arriesgada expedición, se descubrió este alimento que otorga poderes extraordinarios a quien lo consume. Su fama llegó tan lejos que el mismísimo Dios Dino se interesó en estudiarla, llevándola a su reino para investigar sus propiedades mientras sus habitantes aspiran su sabor sin parar. Efectos al Consumir: Haste III (Velocidad de minería mejorada) Speed IV (Mayor velocidad de movimiento) Hunger II (Saciante, pero puede generar algo de hambre tras su efecto inicial) Descripción Adicional: Este manjar esencial es altamente codiciado por los aventureros del servidor, ofreciendo una ventaja estratégica crucial en las expediciones y batallas. Asegúrate de probar la Coca Peruana y experimentar sus beneficios únicos en tu próxima aventura en el mundo hardcore de Minecraft."
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Collar de la Reina Helada",
+      "image": "imagen.png",
+      "name": "Collar de la Reina Helada",
+      "priceUsd": 2,
+      "description": "Este collar, que perteneció a la Reina Helada y fue arrebatado de su tumba por el semi-dios ladrón Adoy para encarcelar al Ogro Helado, se ha convertido en un artefacto de poder extraordinario. Características del Collar: Cantidad: Se entrega en un set de 10 collares. Función: Al hacer clic derecho, congela a todos los aventureros en un radio de 20 bloques por un breve momento. Historia Legendaria: La Reina Helada sucumbió en un mundo extraño contra un león, dejando este collar como parte de su legado. Ahora, manipulado por Adoy, se ha transformado en una herramienta temida y respetada en manos de los aventureros audaces. ¡Descubre el poder congelante de estos collares y domina el campo de batalla con su capacidad para detener a tus enemigos en seco!"
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Corazón De Hydra",
+      "image": "imagen.png",
+      "name": "Corazón De Hydra",
+      "priceUsd": 2,
+      "description": "Este artefacto, conseguido por el Dios Floo durante una de sus épicas batallas con el comandante Hydra, representa una fusión única entre el corazón del Dios y la esencia del Ser Oscuro. Características del Artefacto: Cantidad: Se entregan 5 unidades. Función: Al hacer clic derecho, afecta a todos los enemigos en un radio de 10 bloques una sola vez. Efectos: Veneno II: Causa daño por veneno de nivel II. Náuseas II: Induce náuseas de nivel II en el objetivo. ¡Descubre el poder oscuro de estos artefactos y utiliza su veneno y náuseas para desestabilizar a tus adversarios en combate!"
+    },
+    {
+      "categoryFolder": "Emboscada a jugadores",
+      "folder": "Cupon Es Hora De La Venganza Sangrienta",
+      "image": "imagen.jpeg",
+      "name": "Cupon Es Hora De La Venganza Sangrienta",
+      "priceUsd": 3,
+      "description": "¡No subestimes el poder de las hadas con nuestro Cupón de Invocación de Hadas Peligrosas! Canjea este cupón en la tragamonedas del servidor e invoca un grupo de hadas sigilosas, capaces de envenenar a sus víctimas y aparecer sin hacer ruido. Detalles del Grupo de Hadas: Miembros: 30 Vex Jefe de Legión: Evocador y Hada Madrina Habilidad Especial: Los Vex envenenan a sus objetivos al atacarlos. Habilidad Pasiva: Movimiento sigiloso que permite aparecer sin ser detectados. ¡Utiliza este cupón para desplegar un ejército de hadas letales y toma ventaja en tus combates con su veneno y sigilo!"
+    },
+    {
+      "categoryFolder": "Emboscada a jugadores",
+      "folder": "Cupon La Noche de Los Muertos Vivientes",
+      "image": "imagen.jpeg",
+      "name": "Cupon La Noche de Los Muertos Vivientes",
+      "priceUsd": 5,
+      "description": "¡Libera una horda de no-muertos con nuestro Cupón de Invocación! Canjea este cupón en la tragamonedas del servidor y desata un grupo muy grande de zombies, incluyendo dos aterradores zombies gigantes. Con este ejército a tu disposición, tus enemigos no tendrán escapatoria. Detalles del Grupo de No-Muertos: Miembros: 50 Zombies, 2 Zombies Gigantes Jefe de Legión: 4 Ilusionistas Habilidad Especial: Los ilusionistas pueden crear copias de sí mismos y confundir a los enemigos. ¡Conquista el campo de batalla con esta horda imparable y siembra el miedo entre tus adversarios con la ayuda de estos terroríficos zombies y sus astutos líderes!"
+    },
+    {
+      "categoryFolder": "Emboscada a jugadores",
+      "folder": "Cupon Legión De Saqueadores",
+      "image": "imagen.jpeg",
+      "name": "Cupon Legión De Saqueadores",
+      "priceUsd": 5,
+      "description": "¡Enfréntate a tus enemigos con nuestro Cupón de Invocación de Mercenarios! Canjea este cupón en la tragamonedas del servidor e indica las coordenadas donde deseas que aparezca un formidable grupo de mercenarios, listo para eliminar a ese aventurero que te miró mal. Detalles del Grupo de Mercenarios: Miembros: 5 Saqueadores, 2 Vindicadores, 2 Brujas Jefe de Legión: Mal Mike \"El Rompe Piernas\" Habilidad Especial: Cada 5 minutos puede invocar una orden de 3 Vindicadores. Habilidad Pasiva: Porta una hacha muy lenta que al impactar, te lesiona gravemente. Incluye Set de 50 manzanas encantadas . ¡No dejes que nadie te subestime! Utiliza este poderoso cupón y demuestra tu dominio en el servidor con la ayuda de estos temibles mercenarios."
+    },
+    {
+      "categoryFolder": "Emboscada a jugadores",
+      "folder": "Cupón de Invocación  Todo Está Pegajoso",
+      "image": "imagen.jpeg",
+      "name": "Cupón de Invocación \"Todo Está Pegajoso\"",
+      "priceUsd": 3,
+      "description": "¡Inunda el campo de batalla con nuestro Cupón de Invocación \"Todo Está Pegajoso\"! Canjea este cupón en la tragamonedas del servidor e invoca un grupo mediano de slimes, listos para pegarse a tus enemigos y causar caos en sus filas. Detalles del Grupo Pegajoso: Miembros: 20 Slimes Jefe de Legión: Rey Slime Gigante Habilidad Especial: El Rey Slime puede dividirse en múltiples slimes más pequeños al ser derrotado. ¡Convierte el terreno de juego en un campo pegajoso y derrota a tus enemigos con la ayuda de este escuadrón de slimes!"
+    },
+    {
+      "categoryFolder": "Emboscada a jugadores",
+      "folder": "Cupón de la Horda del  Gran Kan",
+      "image": "imagen.jpeg",
+      "name": "Cupón de la Horda del  Gran Kan",
+      "priceUsd": 10,
+      "description": "¡Desata el caos con nuestro Cupón de Venganza de la Legión! Canjea este cupón en la tragamonedas del servidor y convoca un imponente ejército de mobs, listos para cobrar venganza en tu nombre. Este grupo está armado hasta los dientes, capaz de utilizar TNT y otras armas devastadoras. Detalles del Grupo de Venganza: Miembros: 30 Saqueadores, 10 Vindicadores, 4 Devastadores, 5 Brujas Jefe de Legión: El Gran Poderoso Kan Habilidad Especial: Lidera el grupo con tácticas destructivas y uso estratégico de TNT. Set de 50 manzanas encantadas. ¡Imponte en el servidor y siembra el terror entre tus enemigos con la ayuda de este poderoso ejército! Nadie se atreverá a desafiarte cuando invoques a la Legión de Venganza."
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Cáliz de Ponce de León",
+      "image": "imagen.png",
+      "name": "Cáliz de Ponce de León",
+      "priceUsd": 3,
+      "description": "Este amuleto llegó al mundo Yokai como un artefacto poderoso, lleno de un líquido que posee propiedades casi tan poderosas como la ambrosía, enfocado principalmente en la vitalidad. Es difícil creer que provenga de un mundo sin magia, o al menos eso se pensaba... Características del Amuleto: Cantidad: Se entregan 5 unidades de un solo uso. Función: Al hacer clic derecho, activa sus efectos una sola vez en el portador. Efectos: Salud al Instante IV: Restaura una cantidad masiva de salud instantáneamente. Impulso a la Salud X: Mejora significativamente la regeneración de salud durante un período prolongado. Historia Legendaria: Este amuleto, con su poder de curación y regeneración, ha sido un tesoro invaluable para los Yokai, mejorando la capacidad de sus portadores para resistir y recuperarse de los embates del combate. ¡Usa este amuleto para fortalecer tu vitalidad y resistencia en los momentos más cruciales de la batalla!"
+    },
+    {
+      "categoryFolder": "Armeria De Heroe",
+      "folder": "Flow del END",
+      "image": "imagen.gif",
+      "name": "Flow del END",
+      "priceUsd": 5,
+      "description": "¡Transforma tu presencia con nuestro Set de Partículas \"Flow del END\"! Estas partículas giratorias te envolverán con un aura misteriosa, inspirada en el icónico Enderman. Diseñado exclusivamente para un efecto estético, este set asegura que destaque tu estilo personal mientras exploras y combates en el servidor. Características: Set de partículas estéticas inspiradas en una aura RGB Mejora visual sin afectar el gameplay. Ideal para quienes buscan personalizar su experiencia de juego. ¡Eleva tu apariencia con estas impactantes partículas y domina el servidor con estilo!"
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Fort-Craft",
+      "image": "imagen.png",
+      "name": "Fort-Craft",
+      "priceUsd": 3,
+      "description": "¡Este pico es muy raro! Según recientes estudios, parece provenir de otra dimensión donde todos bailan extrañamente hermoso. Con su diseño inspirado en Fortnite, este pico no solo te permite romper bloques con estilo, sino que también activa animaciones de baile y sonidos característicos de Fortnite cada vez que lo usas. Características del Pico Dimensional: Diseño: Inspirado en el pico de Fortnite. Animaciones: Ejecución de bailes y movimientos de Fortnite al picar o romper bloques. Sonidos: Incluye efectos de sonido característicos de Fortnite. ¡Añade un toque de diversión y estilo a tu juego con este pico único que te hará destacar en cualquier servidor!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Hierbas Curativas",
+      "image": "imagen.png",
+      "name": "Hierbas Curativas",
+      "priceUsd": 2,
+      "description": "Cantidad: 5 unidades Descripción: La Poción de Curación Avanzada es un recurso invaluable, conocido y utilizado en diversos mundos por su capacidad para acelerar la regeneración de salud y tratar heridas menores de manera eficaz. Efectos Temporales: Regeneración III: Acelera la regeneración natural de la salud del jugador durante un período prolongado, permitiendo una recuperación rápida incluso en situaciones críticas. Health Boost XX: Proporciona un aumento significativo en la salud máxima del jugador, mejorando su resistencia y capacidad para resistir daños. Descripción Adicional: Esta poción es esencial para aquellos que se enfrentan a desafíos que ponen a prueba su resistencia y habilidades de combate. Con su capacidad para fortalecer la salud y regenerar heridas rápidamente, es una herramienta crucial para mantenerse en forma óptima durante las aventuras más exigentes."
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Hongo Ojon",
+      "image": "imagen.png",
+      "name": "Hongo Ojon",
+      "priceUsd": 1,
+      "description": "Cantidad: 10 unidades Descripción: El Hongo Ojón es una comida peculiar con propiedades tanto beneficiosas como venenosas, conocida por su origen en una criatura peligrosa con forma de serpiente. Este singular hongo fue obtenido por un valiente héroe que derrotó a la bestia y entregó uno de sus ojos al Dios Dino como muestra de lealtad y coraje. Efectos al Consumir: Curación a todos los aliados en un radio de 15 bloques. Aplica el efecto de veneno a los enemigos en un radio de 15 bloques. Causa náuseas al consumidor. Origen y Leyendas: Este hongo, extraído de una criatura temible, combina propiedades curativas y venenosas, reflejando la dualidad de su origen mítico y su utilidad estratégica en el campo de batalla. Descripción Adicional: Conocido por su capacidad para sanar aliados y debilitar enemigos, el Hongo Ojón es altamente valorado entre los aventureros que buscan aprovechar su poder en enfrentamientos críticos."
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Manzana de Notch Suprema",
+      "image": "imagen.png",
+      "name": "Manzana de Notch Suprema",
+      "priceUsd": 2,
+      "description": "Este artefacto mágico, una creación experimental del dios Ogma en su intento por superar la sabiduría de nuestro mundo, fue obsequiado al Dios Kuro como un símbolo de armonía y poder. Características de la Manzana Encantada: Cantidad: Se entrega en un set de 10 manzanas. Función: Al hacer clic derecho, activa sus efectos una sola vez. Efectos: Absorción X: Proporciona absorción de daño mejorada. Salud al Instante II: Restaura instantáneamente una cantidad significativa de salud. Impulso a la Salud X: Mejora notablemente la regeneración de salud durante un período prolongado. ¡Disfruta de los beneficios extraordinarios de estas manzanas encantadas y enfrenta tus desafíos con la sabiduría y el poder de los dioses!"
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Motosierra multi usos 5000",
+      "image": "imagen.png",
+      "name": "Motosierra multi usos 5000",
+      "priceUsd": 1,
+      "description": "Esta motosierra, utilizada en el mundo humano como una herramienta básica para cortar madera con una velocidad sin igual, supera a cualquier hacha en eficiencia y rapidez. Características de la Motosierra Acelerada: Velocidad Superior: Corta madera a una velocidad excepcionalmente rápida. Reparación: Se puede reparar utilizando bloques de madera en la mesa de crafteo. Eficiencia: Ideal para tareas que requieren cortes rápidos y precisos en el bosque. ¡Aprovecha la potencia de esta motosierra para simplificar tus labores de tala de árboles y maximizar tu productividad!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Ojo De  Odin",
+      "image": "imagen.png",
+      "name": "Ojo De  Odin",
+      "priceUsd": 2,
+      "description": "Cantidad: 10 unidades Descripción: El Ojo de Bestia Voladora Blanca es un descubrimiento alquímico sorprendente, utilizado por los alquimistas en sus investigaciones para proporcionar una visión excepcional durante las noches oscuras. Efectos Temporales: Visión Nocturna II: Mejora significativamente la visión del jugador en entornos oscuros, permitiendo ver claramente en la oscuridad durante un período extendido. Fuerza II: Aumenta la fuerza física del jugador, proporcionando una ventaja en combate y tareas físicamente exigentes. Resplandor II: Hace que el jugador emita una suave luz, lo que puede ser útil para iluminar áreas cercanas y para ser visto por aliados en la oscuridad. Descripción Adicional: Este recurso esencial es buscado por aventureros y exploradores que buscan una ventaja estratégica y táctica durante sus expediciones nocturnas. Con su capacidad para mejorar la visión, fortalecer el cuerpo y emitir una luz tenue, es un elemento indispensable en el arsenal de cualquier buscador de aventuras."
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Pala Glop Glop",
+      "image": "imagen.png",
+      "name": "Pala Glop Glop",
+      "priceUsd": 3,
+      "description": "¡La leyenda narra que anteriormente fue una caña de un mal pescador, pero quién diría que serviría perfectamente para trabajar la tierra con una eficiencia asombrosa, incluso bajo el agua! Esta pala es capaz de romper todo tipo de bloques con gran velocidad y sin limitaciones bajo el agua. Características de la Pala \"glop glop\": Eficiencia Acuática: Rompe bloques con gran velocidad bajo el agua sin restricciones. Origen Legendario: Anteriormente fue una caña de pescar, ahora transformada en una herramienta excepcional para la agricultura y la excavación. Versatilidad: Ideal para trabajos rápidos y efectivos en cualquier entorno. ¡Descubre el poder de esta pala legendaria y mejora tu eficiencia en la recolección de recursos, tanto en tierra como bajo el agua!"
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Pichueso",
+      "image": "imagen.png",
+      "name": "Pichueso",
+      "priceUsd": 5,
+      "description": "¡Una herramienta muy simple de épocas pasadas donde no se usaba la madera, pero que cuenta con una gran agilidad! Este pico es increíblemente rápido al romper piedra y funciona también como pala, permitiéndote excavar bloques como arena, telaraña y tierra con súper velocidad. Características del Pichueso: Velocidad: Rompe piedra y otros bloques como arena, telaraña y tierra a gran velocidad. Versatilidad: Funciona tanto como pico y como pala. Reparación: Se repara utilizando huesos en la mesa de crafteo. Efecto Positivo: Incremento significativo en la velocidad de ruptura. ¡Optimiza tu minería y excavación con esta herramienta ágil y eficiente, diseñada para darte una ventaja en cualquier tarea!"
+    },
+    {
+      "categoryFolder": "Armeria de Aventurero",
+      "folder": "Pico Luminoso",
+      "image": "imagen.png",
+      "name": "Pico Luminoso",
+      "priceUsd": 1,
+      "description": "Forjado en las profundidades del Nether y cubierto con magia elemental de fuego por el mismo mago señor del fuego de los yokai del Nether, este pico es una obra de arte de la magia antigua. Se dice que está hecho de un misterioso polvo luminoso que proporciona beneficios únicos al portador. Características del Pico Luminoso: Reparación: Se repara utilizando algas en la mesa de crafteo. Velocidad: Pica todo tipo de bloques muy rápido. Efectos Beneficiosos: Proporciona luminosidad al jugador mientras pica. Ofrece visión nocturna para una exploración segura en la oscuridad. ¡Explora el mundo del Nether con confianza y eficiencia usando este pico mágico, diseñado para superar cualquier desafío con su poder elemental y luminoso!"
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Piedra De Fenix",
+      "image": "imagen.png",
+      "name": "Piedra De Fenix",
+      "priceUsd": 2,
+      "description": "Este amuleto, forjado por un hechicero del clan del fuego con la ayuda del Dios Floo, posee un poder tan formidable que el propio mago se carbonizó en el proceso. Características del Amuleto: Cantidad: Se entregan 5 unidades de un solo uso. Función: Al hacer clic derecho, activa su efecto en un radio de 10 bloques, otorgando inmunidad al fuego a los aliados por un período de tiempo. Historia Legendaria: Forjado con la bendición del Dios Floo, este amuleto se convirtió en una herramienta crucial para la protección de los aliados del clan del fuego, permitiéndoles resistir las llamas más ardientes sin sufrir daño. ¡Utiliza el poder protector de este amuleto y defiende a tus aliados con la invencibilidad contra el fuego!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Pollo Ricky Ricon",
+      "image": "imagen.png",
+      "name": "Pollo Ricky Ricon",
+      "priceUsd": 1,
+      "description": "Cantidad: 10 unidades Descripción: El Bocadillo Frito de Cocatriz es un manjar extremadamente popular en el mundo Yokai, elaborado con carne de cocatriz salvaje y preparado con técnicas culinarias tradicionales. Este delicioso bocadillo no solo es una delicia para el paladar, sino que también ofrece beneficios nutricionales excepcionales y una satisfacción duradera. Valor Nutricional: Valor Nutricional XII: Proporciona una gran cantidad de energía y nutrientes esenciales para mantener a los aventureros en plena forma durante sus viajes. Efectos Temporales: Saturación II: Satisface parcialmente el hambre del consumidor y proporciona una sensación de saciedad prolongada. Descripción Adicional: Perfecto para aquellos que buscan una comida sabrosa y nutritiva que los mantenga enérgicos y listos para enfrentar cualquier desafío en su camino."
+    },
+    {
+      "categoryFolder": "RESUCITACIÓN",
+      "folder": "RESUCITAR",
+      "image": "imagen.jpeg",
+      "name": "RESUCITAR",
+      "priceUsd": 2,
+      "description": "¡Recupera la acción al instante con nuestro Desban de Resurrección! Este valioso objeto te permite revivir directamente en el campo de batalla del servidor hardcore. ¡Mantén tu determinación y vuelve a la lucha rápidamente con este poderoso recurso! Características: Permite resucitar Regresa directamente al campo de batalla. Ideal para mantener la emoción y competitividad en tu experiencia de juego hardcore. ¡No te detengas ante ningún desafío! Hazte con tu Desban de Resurrección y asegura tu lugar en la historia del servidor. MANTÉN TU DETERMINACIÓN = )"
+    },
+    {
+      "categoryFolder": "Artefactos Mágicos",
+      "folder": "Rayo De Zeus",
+      "image": "imagen.png",
+      "name": "Rayo De Zeus",
+      "priceUsd": 1,
+      "description": "Este poderoso artefacto, conocido como el Rayo de Zeus, permite a su portador invocar rayos con solo hacer click derecho, los cuales golpean a los enemigos en un radio de 20 bloques. Cada uso incluye 10 cargas de rayos devastadores. Historia Legendaria: El Dios Kuro, impresionado por el control sobre los cielos de un antiguo dios griego, replicó su arma para los humanos, aunque con un poder reducido para su seguridad. Características del Rayo de Zeus: Función: Invoca rayos que causan daño y ciegan a los enemigos en un radio de 20 bloques. Limitación: Un solo uso por carga (10 rayos en total). ¡Desata el poder del Rayo de Zeus y lleva la furia de los cielos a tus enemigos con esta arma legendaria!"
+    },
+    {
+      "categoryFolder": "Bosque de las Ninfas",
+      "folder": "Testiculos De Calamar",
+      "image": "imagen.png",
+      "name": "Testiculos De Calamar",
+      "priceUsd": 1,
+      "description": "Cantidad: 10 unidades Descripción: Los Testiculos De Calamar es una delicia culinaria conocida por su capacidad para satisfacer completamente el hambre con solo una porción. Esta comida, chiclosa y llena de sabor, es apreciada por su utilidad y su origen peculiar. Características: Satisface completamente el hambre del jugador con solo consumir uno, proporcionando una sensación de saciedad inmediata y duradera. Origen y Uso: Obtenido de los misteriosos Calamares Luminosos, este alimento era conocido como un poderoso afrodisíaco utilizado por nobles ancianos y soldados fatigados para recuperar energías y revitalizar el cuerpo. Descripción Adicional: Ideal para aquellos momentos en los que se necesita un rápido y efectivo alivio del hambre, este muslo es tanto una indulgencia como una solución práctica para aventureros en busca de comodidad y satisfacción en sus travesías."
+    }
+  ]
+}
