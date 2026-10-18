@@ -209,7 +209,8 @@ model.
 | T1 | Scaffold Angular 22 project, git init, tooling, strict TS, base folder structure | Delegated writer | Write rule (many files) | **done** (2026-10-17, `eb9106d`) |
 | T2 | Asset pipeline: copy assets out of Drive, generate normalized `catalog.json` (ids, slugs, accented copy, image fallbacks) + unit tests | Delegated writer | Write rule + preparation trigger | **done** (2026-10-17, `b283dd5` `c23504a` `db9d2ec`) |
 | T3 | three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping, hitbox filtering, emissive layer) + unit tests | Delegated writer | Write rule | **done** (2026-10-18, `345f4df` `b9d22f5` `b31d087`) |
-| T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | pending |
+| T3b | Add the missing regression test for keyframe time ordering (43% of real channels depend on an untested `.sort()`); test-only change | Delegated writer | Write rule | **done** (2026-10-18, `974a1f3`) |
+| T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | pending |
 | T6 | Product detail view + 3D preview integration | Delegated writer | Write rule | pending |
 | T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
@@ -248,14 +249,24 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
   history and workflow discipline*, not protecting a reviewer from a wall of diff. Slice
   boundaries should be drawn so each PR reads as one coherent capability.
 - **Forecast**: will substantially exceed 400 authored lines. Slices are chained.
+- **Measured reality (2026-10-18, `git diff --shortstat $(git rev-list --max-parents=0 HEAD) HEAD`)**:
+  130 files, **13,641 insertions / 71 deletions** in total; excluding `public/`, the generated
+  `data/catalog.json` and the `data/catalog.source.json` provenance copy, **59 files,
+  11,595 insertions / 71 deletions are authored**. By area: `src/app/three` 8,238,
+  `scripts` 1,554, `src/tooling` 1,052, `data/catalog.json` 673 (generated), `public` 987.
+  Every slice is therefore far over the 400-line heuristic, and PR 2 in particular is ~8.4k
+  authored lines. **This is a known, accepted property of the plan, not an oversight** — see the
+  honest note above. It is recorded here so the number is visible before any PR is opened, and
+  because nothing has been pushed yet the commits can still be reorganised at that point if a
+  smaller PR 2 is wanted.
 - **Slice plan** (commits are grouped into these PRs in order):
 
-  | PR | Contents | Tasks |
-  |---|---|---|
-  | 1 | Scaffold + asset pipeline + normalized catalog | T1, T2 |
-  | 2 | three.js core: bbmodel parser + item model renderer | T3, T4 |
-  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 |
-  | 4 | i18n, hero scene, docs | T8, T9, T10 |
+  | PR | Contents | Tasks | Authored lines |
+  |---|---|---|---|
+  | 1 | Scaffold + asset pipeline + normalized catalog | T1, T2 | ~3.2k |
+  | 2 | three.js core: bbmodel parser + item model renderer | T3, T3b, T4 | ~8.6k |
+  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 | not yet built |
+  | 4 | i18n, hero scene, docs | T8, T9, T10 | not yet built |
 
 - **PR creation is NOT yet authorized.** No remote exists and nothing has been pushed.
   `branch-pr` and `chained-pr` are resolved by registry name when the user decides to push:
@@ -272,6 +283,9 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-17 | T1 scaffold | Commit `eb9106d`, 30 files. Parent re-ran `npm run build`: exit 0, `main-TL6EBTF6.js` 216.88 kB raw / 59.61 kB transfer | build PASS, `npm test -- --watch=false` PASS (2/2) |
 | 2026-10-17 | T2 pipeline | Commits `b283dd5` (strict TS, `src/assets` removed), `c23504a` (sync pipeline + 70 public files + 3 data inputs), `db9d2ec` (catalog generator + `data/catalog.json`). 3 recon corrections recorded above | `npm test -- --watch=false` PASS 124/124, `npm run build` PASS, `catalog:verify` PASS, determinism PASS |
 | 2026-10-18 | T3 three.js core | Commits `345f4df` (parser/scene/clips), `b9d22f5` (6 spec files + fixtures), `b31d087` (viewer + `/dev/model`). Corrected the false keyframe-shape claim above; measured 337 mirrored faces, 485 numeric-string axes, 6 rotated faces | `npm test -- --watch=false` PASS 211/211 (124 pre-existing), `npm run build` PASS, `catalog:verify` PASS, headless end-to-end + mixer PASS |
+| 2026-10-18 | Parent verification of T3 | Re-derived hitbox truth, 789 keyframes / 167 groups and motion variance from the raw JSON, no reuse of the writer's parser. All four writer claims matched exactly. Found the untested time sort (**72 of 167 channels, 43%, arrive out of order**) | read-only; recorded as T3b |
+| 2026-10-18 | T3b + T4 | Commit `974a1f3` (T3b, test-only: 2 spec files) and `d910440` (T4: `itemmodel/` module, `item-model-viewer.ts`, shared `preview-host.ts`, `/dev/items`) | `npm test -- --watch=false` PASS **350/350** (19 files), `npm run build` PASS, parent re-ran both; `/dev/model` and `/dev/items` both serve 200 |
+| 2026-10-18 | Parent verification of T4 | Independent Rodrigues-matrix implementation (not quaternions) reproduced all four bounds to the written precision; PNG decode + painted-texel sampling settled the UV-space question empirically | read-only; see T4 section |
 
 ---
 
@@ -380,6 +394,112 @@ Facts re-derived from the file while writing the specs (the source comments cite
 component's renderer path is covered only by a successful production build and by the HTTP
 check above; visual confirmation needs a browser.
 
+#### Parent independent verification (T3)
+
+Re-derived from the raw `.bbmodel` in plain Node, with no reuse of the writer's parser, so the
+numbers below are an independent measurement rather than a restatement:
+
+| Check | Method | Observed | Matches writer? |
+|---|---|---|---|
+| Hitbox truth | recursive walk of the raw `outliner` | 4 collision bones (`ob_tlalochitbox` @ `/tlaloc/body_all`, `ob_tlalochitbox2` @ `/tlaloc/leg1`, `ob_tlalochitbox3` @ `/tlaloc/leg2`, `hitbox` @ root) holding **4 cubes**; 106 renderable; 4 + 106 = 110 = total elements | **yes, exactly** |
+| Rendered bones | 22 outliner bones minus 4 hitbox subtrees | **18** | yes |
+| Keyframe volume | sum of every animator's keyframes across all 10 clips | **789** keyframes, **167** bone+channel groups | **yes, exactly** (`789`, `167`) |
+| Substring filter safety | list every bone name matching `/hitbox/i` | 4 of 22 match, and **no visible bone contains `hitbox`** — so `/hitbox/i` has no false positive on this asset | consistent with their documented rationale |
+| Does it actually move? | per bone+channel, compare every keyframe value against the first | **145 of 167 groups (87%) vary** — it is not a statue. `idle` at t=0/1.5/3: `tlaloc`.position y `23→17→23`, `head`.rotation x `10→-15→10`, `hand1`.rotation z `35→62.5→35`, `leg1`.rotation z `20→22.5→20` | yes, and stronger evidence than their `AnimationMixer` probe |
+| Their offset-semantics evidence | find position channels whose first key is `[0,0,0]` | exactly four: `death/staff`, `death_ground/staff`, `spawn/body_all`, `spawn/loincloth0` — **the four bones their comment names** | yes, the cited evidence is accurate |
+
+#### Known gap found by this verification — the time sort is untested
+
+The writer's own README documents the keyframe-shape and UV traps but **does not mention key
+ordering at all**, and no spec covers it:
+
+- **43% of real channels arrive out of order.** 72 of the 167 bone+channel groups store their
+  keyframes with non-ascending `time` (e.g. `tlaloc_basic_spell/tlaloc.rotation` is stored as
+  `[0.4, 0, 0.65, 1.3]`; `tlaloc_basic_spell/hand1.rotation` as `[0, 0.4, 0.65, 0.55, 1.3, 0.2, 0.95]`).
+  70 of 157 animator keyframe arrays are stored out of order.
+- `parse.ts` line 588 — `const times = [...frames.keys()].sort((a, b) => a - b)` — is what makes
+  those 43% correct. three.js `Interpolant.search()` binary-searches `times` on the assumption
+  that it is ascending, so an unsorted array yields wrong interpolation rather than an error.
+- **The sort is covered by zero tests.** `parse.spec.ts:310` feeds `time: 0, time: 1` and
+  `parse.spec.ts:338` feeds object keys `0, 2` — both already ascending. Deleting the `.sort()`
+  today leaves all 211 tests green while silently corrupting 43% of the animation.
+
+This is the highest-value follow-up on T3 and is recorded as `T3b` below rather than fixed
+silently here, because a test must be added without touching the code it guards.
+
+### T3b — the time-sort regression test (commit `974a1f3`)
+
+Test-only; `parse.ts` was **not** touched, and the sort was already correct, so nothing failed.
+
+| Check | Command | Observed |
+|---|---|---|
+| Tests | `npm test -- --watch=false` | exit 0; 19 files, **350/350** |
+
+What was added, and why it is stronger than the fixture I asked for:
+
+- `parse.spec.ts` gains a `describe('keyframe time ordering')` block whose comment records the
+  measured rationale (43% of channels non-ascending; three.js `Interpolant.search()`
+  binary-searches `times` and assumes ascending order). It sorts a deliberately scrambled array
+  **and asserts the full `values` array**, so a "sort" that reorders the times without carrying
+  their data points along still fails.
+- `tlaloc-asset.spec.ts` gains a **real-asset staleness gate**: it asserts, against
+  `tlaloc.bbmodel` itself, that the out-of-order counts are non-zero and that every emitted
+  track is ascending. That is a better guard than synthetic fixtures alone — if the asset is
+  ever re-exported so the sort stops being load-bearing, the gate says so.
+
+### T4 — Minecraft item model renderer (commit `d910440`)
+
+| Check | Command | Observed |
+|---|---|---|
+| Tests | `npm test -- --watch=false` | exit 0; **19 files, 350/350** (211 pre-existing all still green, 139 new) |
+| Build | `npm run build` | exit 0; initial 238.17 kB raw / 65.02 kB transfer; lazy `item-model-viewer` 19.04 kB, `bbmodel-viewer` 14.48 kB, three.js chunk 584.35 kB |
+| Dev routes | `Invoke-WebRequest` on the running dev server | `/dev/model` 200, `/dev/items` 200, `/models/items/tlaloc/tlaloc_hat.json` 200 (16,658 bytes) |
+| Shared host refactor | `bbmodel-viewer.ts` −123 lines → `preview-host.ts` (203) | the 211 pre-existing bbmodel tests still pass and `/dev/model` still serves |
+
+#### Parent independent verification of T4
+
+**The rotation and bounds maths is confirmed by a second, independent implementation.** The
+writer uses quaternions; I re-derived every number with **Rodrigues rotation matrices** — a
+different formulation, so a shared bug would have to occur twice in two different algebras:
+
+| Quantity | Writer's asserted value | My Rodrigues result | |
+|---|---|---|---|
+| hat, authored corners | 11.88 × 23.05 × 24.82 | `[11.8779, 23.0483, 24.8173]` | ✓ |
+| hat, rotation applied | 19.82 × 23.05 × 23.77 | `[19.8175, 23.0483, 23.7669]` | ✓ |
+| staff, authored corners | 23.32 × 35.9 × 10.5 | `[23.3217, 35.9026, 10.5]` | ✓ |
+| staff, rotation applied | 12.06 × 41.35 × 10.5 | `[12.06, 41.3497, 10.5]` | ✓ |
+| hat rotated `min.z` | `-1.2433061219327186` (their spec) | `-1.2433` | ✓ to 9 dp |
+| staff rotated `min.y` | `-17.524737587392284` (their spec) | `-17.5247` | ✓ to 9 dp |
+
+Element counts independently confirmed: **29** hat elements, **37** staff elements, every one of
+them carrying a rotation, and **zero** elements using the multi-rotation array form — so the
+writer's disclosure that the sequence ordering is a documented choice rather than a verified
+vanilla behaviour is accurate, not hand-waving.
+
+#### The UV space question, settled empirically
+
+The hat's UVs reach **24** while `ITEM_UV_SPACE` is **16**, which looked like it might address
+pixels past the edge of a 64-wide texture. The writer's assumption was checked against the
+actual pixels rather than against documentation: I decoded both PNGs from scratch (inflate +
+per-scanline un-filtering) and measured, for every face, what fraction of its UV rect lands on
+painted texels under each hypothesis.
+
+| Model | UV space 16 (implemented) | UV space = `texture_size` (64) |
+|---|---|---|
+| `tlaloc_staff` | **83.8%** of faces fully painted; 86.8% mean coverage | **0.0%** fully painted; 0.5% mean coverage |
+| `tlaloc_hat` | **71.3%** fully painted; 74.0% mean coverage | 17.2% fully painted; 24.2% mean coverage |
+
+**The implemented convention is correct and the alternative is not close.** Corroborating
+independent check: the staff's texture has a painted bounding box of exactly 37×37 px, and
+`9.25 / 16 × 64 = 37` — the UVs and the paint agree.
+
+The two out-of-atlas faces are a **defect in the asset, not in the parser**. Exactly two faces,
+both `down` on the hat, carry `uv [4.5, 22.5, 3.75, 24]` and `[3.75, 22.5, 4.5, 24]` — a
+`v` of 22.5..24 is pixel 90..96 of a 64-tall texture. The parser detects this, reports it as a
+non-fatal warning (`2 face(s) sample outside the 64x64 texture and will be clamped`), and
+`tlaloc-items.spec.ts` pins both faces and their exact UV values. That is the right behaviour:
+warn precisely and keep rendering.
+
 ## Resolved decisions
 
 - **RESOLVED in T2 — runtime assets live in `public/`, not `src/assets/`.** Angular 22
@@ -413,7 +533,19 @@ check above; visual confirmation needs a browser.
 
 ## Next step
 
-T3 is done. T4 and the catalog/UI chain are now unblocked:
+**T4 is done and verified; T3b closed the gap that verification found.** The remaining
+unverified surface is a single item, recorded honestly and not hidden:
+
+- **Nobody has seen the 3D previews rendered.** jsdom has no WebGL, so every check so far is
+  structural: the parser produces the right numbers, the mixer moves the bones, the bundle
+  builds, the routes serve. Visual confirmation needs a real browser. A dev server serves
+  `http://localhost:4300/dev/model` (animated Tlaloc) and `http://localhost:4300/dev/items`
+  (the four item models with a `display`-context switcher). Attempted a browser check through
+  BrowserOS neo's MCP tools; **they are not connected in this session** (only `engram`,
+  `context7`, `elevenlabs` and `opencode` are), so the visual step is still open. No silent
+  fallback to another browser surface was taken.
+
+Next up is T5 (catalog UI). T5–T7 are unblocked:
 
 - **T4** — Minecraft item model renderer (model JSON + texture → 3D preview).
 - **T5** — catalog UI. T6 consumes both: the product detail view renders `tlaloc.bbmodel`
