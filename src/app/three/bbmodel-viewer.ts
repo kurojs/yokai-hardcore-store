@@ -1,9 +1,10 @@
 /**
  * Thin Angular host for the Blockbench pipeline.
  *
- * Everything interesting lives in `./bbmodel/`: this component owns the canvas, the
- * lifecycle and the cleanup, and nothing else. It is loaded lazily from `/dev/model` so
- * three.js stays out of the initial application bundle.
+ * Everything interesting lives in `./bbmodel/`, and the WebGL plumbing is shared with the
+ * item preview in `./preview-host.ts`: this component owns the canvas, the lifecycle and the
+ * cleanup, and nothing else. It is loaded lazily from `/dev/model` so three.js stays out of
+ * the initial application bundle.
  */
 
 import {
@@ -17,19 +18,14 @@ import {
   viewChild,
 } from '@angular/core';
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import { createBbModelScene, type BbModelScene } from './bbmodel';
+import { createPreviewHost, describeError, type PreviewHost } from './preview-host';
 
 // Root-absolute on purpose: the component is mounted at `/dev/model`, so a relative
 // `models/...` would resolve against `/dev/` and 404.
 const DEFAULT_MODEL_URL = '/models/bosses/tlaloc.bbmodel';
 const INITIAL_CLIP = 'idle';
-
-/** Turns an unknown thrown value into something worth showing. */
-function messageOf(error: unknown): string {
-  return error instanceof Error ? error.message : String(error);
-}
 
 @Component({
   selector: 'app-bbmodel-viewer',
@@ -132,14 +128,10 @@ export class BbModelViewer implements OnDestroy {
 
   private readonly stage = viewChild.required<ElementRef<HTMLDivElement>>('stage');
 
-  private readonly threeScene = new THREE.Scene();
+  private host: PreviewHost | null = null;
   private modelScene: BbModelScene | null = null;
-  private renderer: THREE.WebGLRenderer | null = null;
-  private camera: THREE.PerspectiveCamera | null = null;
-  private controls: OrbitControls | null = null;
   private mixer: THREE.AnimationMixer | null = null;
   private readonly actions = new Map<string, THREE.AnimationAction>();
-  private resizeObserver: ResizeObserver | null = null;
   private destroyed = false;
 
   constructor() {
@@ -150,15 +142,10 @@ export class BbModelViewer implements OnDestroy {
 
   ngOnDestroy(): void {
     this.destroyed = true;
-    this.resizeObserver?.disconnect();
-    this.resizeObserver = null;
-    this.renderer?.setAnimationLoop(null);
-    this.controls?.dispose();
     this.mixer?.stopAllAction();
     this.modelScene?.dispose();
-    this.renderer?.dispose();
-    this.renderer?.domElement.remove();
-    this.renderer = null;
+    this.host?.dispose();
+    this.host = null;
   }
 
   playClip(name: string): void {
@@ -170,70 +157,32 @@ export class BbModelViewer implements OnDestroy {
   }
 
   private async start(): Promise<void> {
-    const host = this.stage().nativeElement;
-
-    let renderer: THREE.WebGLRenderer;
+    let host: PreviewHost;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      host = createPreviewHost(this.stage().nativeElement);
     } catch (cause) {
-      this.error.set(`WebGL is unavailable in this browser: ${messageOf(cause)}`);
+      // No WebGL is a normal outcome on some machines, and it is the one failure this
+      // component can do nothing about: report it and leave the rest of the page intact.
+      this.error.set(`WebGL is unavailable in this browser: ${describeError(cause)}`);
       return;
     }
     if (this.destroyed) {
-      renderer.dispose();
+      host.dispose();
       return;
     }
 
-    this.renderer = renderer;
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    host.append(renderer.domElement);
-
-    const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 2000);
-    this.camera = camera;
-    this.threeScene.background = new THREE.Color(0x0b0d12);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    this.controls = controls;
-
-    // A Minecraft-style model needs flat, unlit-looking shading: no environment map, one
-    // hemisphere fill and one directional key so faces stay distinguishable.
-    this.threeScene.add(new THREE.HemisphereLight(0xffffff, 0x334455, 2.2));
-    const key = new THREE.DirectionalLight(0xffffff, 2.4);
-    key.position.set(1, 2, 1.5);
-    this.threeScene.add(key);
-
-    this.resizeObserver = new ResizeObserver(() => this.resize(host));
-    this.resizeObserver.observe(host);
-    this.resize(host);
-
-    const clock = new THREE.Clock();
-    renderer.setAnimationLoop(() => {
-      const delta = clock.getDelta();
-      this.mixer?.update(delta);
-      this.controls?.update();
-      renderer.render(this.threeScene, camera);
-    });
+    this.host = host;
+    // The mixer is created when the model arrives, so the loop reads it through `this`.
+    host.setUpdate((delta) => this.mixer?.update(delta));
 
     await this.load(this.modelUrl());
   }
 
-  private resize(host: HTMLDivElement): void {
-    const renderer = this.renderer;
-    const camera = this.camera;
-    if (renderer === null || camera === null) return;
-
-    const width = host.clientWidth || window.innerWidth;
-    const height = host.clientHeight || window.innerHeight;
-    renderer.setSize(width, height, false);
-    camera.aspect = width / Math.max(height, 1);
-    camera.updateProjectionMatrix();
-  }
-
   private async load(url: string): Promise<void> {
     try {
+      const host = this.host;
+      if (host === null) return;
+
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`GET ${url} responded ${response.status} ${response.statusText}`);
@@ -246,40 +195,14 @@ export class BbModelViewer implements OnDestroy {
       }
 
       this.modelScene = built;
-      this.threeScene.add(built.root);
-      this.frameCamera(built);
+      host.add(built.root);
+      host.frameCamera(built.stats.boundingBox);
       this.describe(built);
       this.bindClips(built);
     } catch (cause) {
       if (this.destroyed) return;
-      this.error.set(`Could not render ${url}: ${messageOf(cause)}`);
+      this.error.set(`Could not render ${url}: ${describeError(cause)}`);
     }
-  }
-
-  private frameCamera(built: BbModelScene): void {
-    const camera = this.camera;
-    const controls = this.controls;
-    if (camera === null || controls === null) return;
-
-    const { min, max } = built.stats.boundingBox;
-    const center = new THREE.Vector3(
-      (min[0] + max[0]) / 2,
-      (min[1] + max[1]) / 2,
-      (min[2] + max[2]) / 2,
-    );
-    const size = new THREE.Vector3(max[0] - min[0], max[1] - min[1], max[2] - min[2]);
-    const radius = Math.max(size.length() / 2, 0.001);
-    const distance = (radius / Math.sin(THREE.MathUtils.degToRad(camera.fov) / 2)) * 1.2;
-
-    camera.position.copy(center).add(new THREE.Vector3(0.75, 0.45, 0.75).multiplyScalar(distance));
-    camera.near = Math.max(distance / 1000, 0.01);
-    camera.far = distance * 20;
-    camera.updateProjectionMatrix();
-
-    controls.target.copy(center);
-    controls.minDistance = radius * 0.5;
-    controls.maxDistance = distance * 4;
-    controls.update();
   }
 
   private describe(built: BbModelScene): void {
