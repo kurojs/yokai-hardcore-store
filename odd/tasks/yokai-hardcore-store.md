@@ -163,6 +163,15 @@ Animation keyframe data is stored as an **object keyed by time**, not an array. 
 `Object.values(...).length` counting returns 0 keyframes and silently produces a static
 model.
 
+> **CORRECTED in T3 — this claim is FALSE for this asset.** Measured over the file:
+> `animators[uuid].keyframes` is an **array** in **157 of 157** animators, holding **789**
+> keyframes; `channel` is a **string** (`"position"` 73, `"rotation"` 716, never
+> `"scale"`), not a numeric index; every `data_points` array has length 1. The
+> "23 channels / 0+1+2" reading came from a different set of facts (max keyframes per
+> animator = 23, and the first animator's keyframe times = 0, 1.5, 3), not from channel
+> indices. `parse.ts` still accepts a timestamp-keyed object form defensively, because a
+> wrong shape guess here would silently freeze the model — but the real file never uses it.
+
 ---
 
 ## TDD and checks
@@ -199,7 +208,7 @@ model.
 |---|---|---|---|---|
 | T1 | Scaffold Angular 22 project, git init, tooling, strict TS, base folder structure | Delegated writer | Write rule (many files) | **done** (2026-10-17, `eb9106d`) |
 | T2 | Asset pipeline: copy assets out of Drive, generate normalized `catalog.json` (ids, slugs, accented copy, image fallbacks) + unit tests | Delegated writer | Write rule + preparation trigger | **done** (2026-10-17, `b283dd5` `c23504a` `db9d2ec`) |
-| T3 | three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping, hitbox filtering, emissive layer) + unit tests | Delegated writer | Write rule | pending |
+| T3 | three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping, hitbox filtering, emissive layer) + unit tests | Delegated writer | Write rule | **done** (2026-10-18, `345f4df` `b9d22f5` `b31d087`) |
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | pending |
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | pending |
 | T6 | Product detail view + 3D preview integration | Delegated writer | Write rule | pending |
@@ -231,16 +240,27 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 
 ## Delivery
 
-- **Delivery strategy**: `ask-on-risk` (default).
-- **Chain strategy**: not yet chosen — will be asked if the forecast exceeds ~400 authored
-  changed lines.
-- **Forecast**: this feature will substantially exceed 400 authored lines. Expect chained
-  PR slices, one per task group.
-- **Slice plan** (draft, to be confirmed with the user before the first push):
-  1. scaffold + asset pipeline + catalog
-  2. three.js 3D core
-  3. catalog UI + detail + cart
-  4. i18n + hero scene + docs
+- **Delivery strategy**: `ask-on-risk`.
+- **Chain strategy**: **`stacked-to-main`** — chosen by the user on 2026-10-17 after the
+  authored-line count exceeded the ~400 budget. Each slice merges to `main` in order.
+- **Honest note on why chained PRs are wanted here**: this is a single-developer portfolio
+  repository with **no human reviewer**. The value of slicing is therefore *reviewable
+  history and workflow discipline*, not protecting a reviewer from a wall of diff. Slice
+  boundaries should be drawn so each PR reads as one coherent capability.
+- **Forecast**: will substantially exceed 400 authored lines. Slices are chained.
+- **Slice plan** (commits are grouped into these PRs in order):
+
+  | PR | Contents | Tasks |
+  |---|---|---|
+  | 1 | Scaffold + asset pipeline + normalized catalog | T1, T2 |
+  | 2 | three.js core: bbmodel parser + item model renderer | T3, T4 |
+  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 |
+  | 4 | i18n, hero scene, docs | T8, T9, T10 |
+
+- **PR creation is NOT yet authorized.** No remote exists and nothing has been pushed.
+  `branch-pr` and `chained-pr` are resolved by registry name when the user decides to push:
+  - `C:\Users\kuuro\.claude\skills\chained-pr\SKILL.md`
+  - `C:\Users\kuuro\.claude\skills\branch-pr\SKILL.md`
 
 ---
 
@@ -251,6 +271,7 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-17 | Recon + audit | Parsed bbmodel (110 cubes, 10 anims), item models, both schematics; audited 27 repos vs README badges | read-only, no build |
 | 2026-10-17 | T1 scaffold | Commit `eb9106d`, 30 files. Parent re-ran `npm run build`: exit 0, `main-TL6EBTF6.js` 216.88 kB raw / 59.61 kB transfer | build PASS, `npm test -- --watch=false` PASS (2/2) |
 | 2026-10-17 | T2 pipeline | Commits `b283dd5` (strict TS, `src/assets` removed), `c23504a` (sync pipeline + 70 public files + 3 data inputs), `db9d2ec` (catalog generator + `data/catalog.json`). 3 recon corrections recorded above | `npm test -- --watch=false` PASS 124/124, `npm run build` PASS, `catalog:verify` PASS, determinism PASS |
+| 2026-10-18 | T3 three.js core | Commits `345f4df` (parser/scene/clips), `b9d22f5` (6 spec files + fixtures), `b31d087` (viewer + `/dev/model`). Corrected the false keyframe-shape claim above; measured 337 mirrored faces, 485 numeric-string axes, 6 rotated faces | `npm test -- --watch=false` PASS 211/211 (124 pre-existing), `npm run build` PASS, `catalog:verify` PASS, headless end-to-end + mixer PASS |
 
 ---
 
@@ -334,6 +355,31 @@ plain Node, where the `new URL(...)` form is correct and was kept.
 
 ---
 
+### T3 — three.js core (commits `345f4df`, `b9d22f5`, `b31d087`)
+
+| Check | Command | Observed |
+|---|---|---|
+| Tests | `npm test -- --watch=false` | exit 0; **12 files, 211/211** — the 124 pre-existing tests still pass, 87 are new across 6 files |
+| Build | `npm run build` | exit 0; initial 236.50 kB raw / 66.29 kB transfer; lazy `bbmodel-viewer` chunk 598.07 kB / 127.12 kB |
+| Catalog gate untouched | `npm run catalog:verify` | exit 0; 48 products, 10 categories, 48 local images, 0 residual accent tokens |
+| Headless end-to-end | esbuild bundle of `createBbModelScene` over the real asset, plain Node | 110 source cubes = 106 rendered + 4 hitbox + 0 hidden; 18 bones; 10 clips; 167 tracks; 789 keyframes; 2 textures, emissive index 1 |
+| Hitbox truth | independent recursive walk of the raw JSON | 4 cubes under `ob_tlalochitbox`, `ob_tlalochitbox2`, `ob_tlalochitbox3`, `hitbox` — equals the parser's count |
+| Animation actually moves | `AnimationMixer` + `idle` at t=1.5 s | root bone `[2.55, 45.15, 1]`, `moved: true` |
+| Disposal | after `scene.dispose()` | root children 0; each texture disposed once (a double-dispose was found and fixed) |
+| Dev route wiring | `ng serve --port 4300` + HTTP requests | `/dev/model` 200; `/models/bosses/tlaloc.bbmodel` 200 / 226,032 bytes; `/dev/models/...` returns the HTML fallback, which is why the URL must be root-absolute |
+
+Facts re-derived from the file while writing the specs (the source comments cite them):
+
+- **337 of 660 faces** are authored with `uv[0] > uv[2]` and must stay mirrored — not 6. The
+  6 faces that carry a UV `rotation` (1 × 90°, 5 × 270°) are a different set.
+- **485 of 789 keyframes** carry at least one numeric-string axis (`"0"`), not 340.
+- Interpolation: `catmullrom` 554, `linear` 235, no `step`.
+- `format_version` 4.0; resolution 128×128; textures `tlaloc.png` + `tlaloc_e.png`.
+
+**Not verified here**: the WebGL presentation itself. jsdom has no WebGL context, so the
+component's renderer path is covered only by a successful production build and by the HTTP
+check above; visual confirmation needs a browser.
+
 ## Resolved decisions
 
 - **RESOLVED in T2 — runtime assets live in `public/`, not `src/assets/`.** Angular 22
@@ -367,11 +413,15 @@ plain Node, where the `new URL(...)` form is correct and was kept.
 
 ## Next step
 
-T3 and T4 are now unblocked and independent of each other:
+T3 is done. T4 and the catalog/UI chain are now unblocked:
 
-- **T3** — three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping,
-  hitbox filtering, emissive layer) + unit tests.
 - **T4** — Minecraft item model renderer (model JSON + texture → 3D preview).
+- **T5** — catalog UI. T6 consumes both: the product detail view renders `tlaloc.bbmodel`
+  through `createBbModelScene`, which is now a stable contract.
+
+The viewer component at `src/app/three/bbmodel-viewer.ts` is deliberately generic: a
+`modelUrl` input plus clip buttons, so T6 can reuse it instead of writing a second renderer.
+Its `/dev/model` route is the visual harness for T4 and T9.
 
 **Open product decision carried from T2**: `modelPath` is `null` for all 48 products.
 The 4 item models in the repo (`tlaloc_hat`, `tlaloc_staff`, `netherite_sword`, `paper`) are
