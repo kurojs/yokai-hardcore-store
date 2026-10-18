@@ -19,6 +19,21 @@ interface RawBone {
   readonly children?: readonly (string | RawBone)[];
 }
 
+interface RawKeyframe {
+  readonly channel?: string;
+  readonly time?: number;
+}
+
+interface RawAnimator {
+  readonly name?: string;
+  readonly keyframes?: readonly RawKeyframe[];
+}
+
+interface RawAnimation {
+  readonly name?: string;
+  readonly animators?: Readonly<Record<string, RawAnimator>>;
+}
+
 interface RawDocument {
   readonly name?: string;
   readonly elements: readonly {
@@ -27,7 +42,7 @@ interface RawDocument {
     readonly to: readonly number[];
   }[];
   readonly outliner: readonly (string | RawBone)[];
-  readonly animations?: readonly unknown[];
+  readonly animations?: readonly RawAnimation[];
 }
 
 /**
@@ -39,6 +54,14 @@ interface RawDocument {
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const ASSET_PATH = path.join(REPO_ROOT, 'public', 'models', 'bosses', 'tlaloc.bbmodel');
 const RAW = JSON.parse(fs.readFileSync(ASSET_PATH, 'utf8')) as RawDocument;
+
+/** True when a time sequence never decreases, which is what three.js requires. */
+function isAscending(times: readonly number[]): boolean {
+  for (let index = 1; index < times.length; index += 1) {
+    if (!(times[index] >= times[index - 1])) return false;
+  }
+  return true;
+}
 
 const ROOT_BONE_UUID = '5965fba1-8086-c3d1-754f-33f34bb5d04d';
 
@@ -149,6 +172,54 @@ describe('tlaloc.bbmodel', () => {
     for (const track of idle?.tracks ?? []) {
       expect(track.times.length).toBeGreaterThan(1);
     }
+  });
+
+  /**
+   * The file stores keyframes in authoring order, not in time order, and the pipeline has to
+   * repair that before three.js sees it: `Interpolant.search()` binary-searches `times` and
+   * assumes ascending order, so an unsorted track interpolates the wrong pair of keys
+   * silently instead of throwing. Measured independently from the raw JSON: 70 of the 157
+   * animator keyframe arrays, and 72 of the 167 (bone, channel) groups they reduce to, are
+   * non-ascending. Both counts are asserted below so this stays a staleness gate.
+   */
+  it('sorting out-of-order keyframes is load-bearing for this asset, and done for every track', () => {
+    const animators = (RAW.animations ?? []).flatMap((animation) =>
+      Object.values(animation.animators ?? {}),
+    );
+    const timeSequences = animators
+      .map((animator) => (animator.keyframes ?? []).map((keyframe) => keyframe.time ?? 0))
+      .filter((times) => times.length > 0);
+    const nonAscending = timeSequences.filter((times) => !isAscending(times));
+
+    expect(timeSequences).toHaveLength(157);
+    expect(nonAscending).toHaveLength(70);
+
+    const channelSequences = animators.flatMap((animator) => {
+      const byChannel = new Map<string, number[]>();
+      for (const keyframe of animator.keyframes ?? []) {
+        const channel = keyframe.channel ?? '';
+        const times = byChannel.get(channel);
+        if (times === undefined) byChannel.set(channel, [keyframe.time ?? 0]);
+        else times.push(keyframe.time ?? 0);
+      }
+      return [...byChannel.values()];
+    });
+
+    expect(channelSequences).toHaveLength(167);
+    expect(channelSequences.filter((times) => !isAscending(times))).toHaveLength(72);
+
+    // The repair is visible on every track, not only on the ones that needed it.
+    const unsortedTracks: string[] = [];
+    for (const clip of scene.clips) {
+      for (const track of clip.tracks) {
+        const times = [...track.times];
+        if (!isAscending(times) || new Set(times).size !== times.length) {
+          unsortedTracks.push(`${clip.name}/${track.name}: ${times.join(',')}`);
+        }
+      }
+    }
+    expect(unsortedTracks).toEqual([]);
+    expect(scene.stats.tracks).toBe(channelSequences.length);
   });
 
   it('binds the root bone track to the root bone, not to the scene root', () => {
