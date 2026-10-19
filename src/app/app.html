@@ -21,9 +21,13 @@
         >
       </nav>
 
-      <!-- A count, not a control: there is no cart route yet, so this must not navigate. The
-           live region announces a change politely without stealing focus from the page. -->
-      <p class="cart-indicator" role="status" aria-live="polite">{{ cartLabel() }}</p>
+      <!-- The count is the link's visible text and part of its accessible name, so the header
+           says how much is in the cart and where to go. The hidden status repeats the text: a
+           live region announces a changed count politely without taking focus from the page. -->
+      <a class="cart-indicator" routerLink="/cart"
+        >{{ cartLabel() }}<span class="visually-hidden">. {{ cartLinkHint }}</span></a
+      >
+      <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
     </div>
   </div>
 </header>

@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { CartStore } from './core/cart/cart-store';
-import { cartCountLabel } from './core/ui-text';
+import { CART_LINK_HINT, cartCountLabel } from './core/ui-text';
 
 /**
  * The application shell: header, routed content, footer.
@@ -28,12 +28,15 @@ export class App {
   /**
    * The cart indicator's text: `Carrito vacío` or `Carrito: 3 artículos`.
    *
-   * A label rather than a link on purpose. The cart page is T7's work, and a header control
-   * that navigates nowhere is worse than one that only reports. When that page exists, this
-   * becomes its way in and nothing else about the shell changes.
+   * It is the visible text of a link to `/cart`. The link's accessible name appends a visually
+   * hidden {@link CART_LINK_HINT}, because the count alone reads as a status rather than as a
+   * destination. A separate hidden live region repeats the same text, so adding to the cart
+   * announces the new count politely without stealing focus.
    *
    * It reads the store rather than storage, so the count is what the visitor can actually buy:
    * lines the catalog no longer contains are already excluded upstream.
    */
   protected readonly cartLabel = computed(() => cartCountLabel(this.cart.itemCount()));
+
+  protected readonly cartLinkHint = CART_LINK_HINT;
 }

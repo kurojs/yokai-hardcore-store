@@ -43,15 +43,24 @@ export function itemCountLabel(count: number): string {
 /**
  * The shell's cart indicator: `Carrito vacío`, or `Carrito: 3 artículos`.
  *
- * It is a label, not a link. T7 owns the cart page and will turn this into the way in; until
- * then the indicator says what is in the cart and nothing more, because a navigation that leads
- * nowhere is worse than no navigation.
+ * It is the visible text of the header's link to `/cart`. The link's accessible name appends the
+ * hidden {@link CART_LINK_HINT}, so assistive technology hears both what the link leads to and
+ * how much is in the cart. A separate visually hidden status region repeats this text so a count
+ * change is announced politely without moving focus.
  */
 export function cartCountLabel(count: number): string {
   if (!Number.isFinite(count)) return 'Carrito';
   const safe = Math.max(0, Math.trunc(count));
   return safe === 0 ? 'Carrito vacío' : `Carrito: ${itemCountLabel(safe)}`;
 }
+
+/**
+ * The hidden half of the header cart link's accessible name.
+ *
+ * `Carrito: 3 artículos` alone is a status, not a destination. Appending this keeps the count in
+ * the name while telling a screen reader where activating the link goes.
+ */
+export const CART_LINK_HINT = 'Ir a la página del carrito';
 
 /**
  * The confirmation announced after a product is added.

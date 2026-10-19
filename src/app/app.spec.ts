@@ -14,8 +14,9 @@ import { jsonResponse } from './core/catalog/testing/http';
  * the demo disclaimer — rather than pixel structure, and they assert the links by their rendered
  * `href`, because that is what proves `routerLink` points at a route that exists.
  *
- * The cart count is checked from both ends: it must not be a link (the cart page is T7's work),
- * and it must actually follow the store once something is added.
+ * The cart count is checked from both ends: it must be a link to `/cart` whose accessible name
+ * includes the count and the destination, and it must actually follow the store once something
+ * is added while a separate polite live region keeps announcing the change.
  */
 describe('App', () => {
   beforeEach(async () => {
@@ -68,19 +69,21 @@ describe('App', () => {
     expect(host.querySelector('.skip-link')?.getAttribute('href')).toBe('#main');
   });
 
-  it('shows the cart count as a status, never as a link', async () => {
+  it('links the cart count to the cart page and keeps a polite live region', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
     const indicator = host.querySelector('.cart-indicator');
 
-    expect(indicator?.textContent?.trim()).toBe('Carrito vacío');
-    // A polite live region: adding to the cart announces the new count without moving focus.
-    expect(indicator?.getAttribute('role')).toBe('status');
-    expect(indicator?.getAttribute('aria-live')).toBe('polite');
-    // T7 owns the cart page; until it exists this control must not navigate anywhere.
-    expect(indicator?.closest('a')).toBeNull();
-    expect(host.querySelector('a[href="/cart"]')).toBeNull();
+    expect(indicator?.tagName).toBe('A');
+    expect(indicator?.getAttribute('href')).toBe('/cart');
+    // The accessible name includes the count and the destination, not just one of them.
+    expect(indicator?.textContent).toContain('Carrito vacío');
+    expect(indicator?.textContent).toContain('Ir a la página del carrito');
+
+    // A separate polite live region announces count changes without stealing focus.
+    const announcer = host.querySelector('[role="status"][aria-live="polite"]');
+    expect(announcer?.textContent?.trim()).toBe('Carrito vacío');
   });
 
   it('follows the cart store once something is added', async () => {
@@ -97,7 +100,10 @@ describe('App', () => {
     cart.add('10-algodones-de-azucar', 2);
     await fixture.whenStable();
 
-    expect(host.querySelector('.cart-indicator')?.textContent?.trim()).toBe(
+    expect(host.querySelector('.cart-indicator')?.textContent).toContain(
+      'Carrito: 2 artículos',
+    );
+    expect(host.querySelector('[role="status"]')?.textContent?.trim()).toBe(
       'Carrito: 2 artículos',
     );
   });
