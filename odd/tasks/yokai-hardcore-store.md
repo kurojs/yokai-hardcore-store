@@ -212,10 +212,10 @@ model.
 | T3b | Add the missing regression test for keyframe time ordering (43% of real channels depend on an untested `.sort()`); test-only change | Delegated writer | Write rule | **done** (2026-10-18, `974a1f3`) |
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `87e641d` `081d446` `330d4c4` `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
-| T6 | Product detail view + 3D preview integration | Delegated writer | Write rule | pending |
+| T6 | Product detail view, image-first (no 3D on SKUs) + cart handoff seam | Delegated writer | Write rule | pending |
 | T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
-| T9 | Hero scene: animated Tlaloc boss + optional voxel backdrop from schematic | Delegated writer | Write rule | pending |
+| T9 | Landing decorative 3D: animated Tlaloc plus downloaded Minecraft-style decoration (voxel props, animated), anchored to the storefront palette | Delegated writer | Write rule | pending |
 | T10 | Docs: README, ASSETS.md, LICENSES.md, architecture notes | Delegated writer | Write rule | pending |
 
 Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 → T10.
@@ -644,16 +644,25 @@ categories and all 48 products.** Two gaps are recorded rather than hidden:
 Next is **T6 (product detail + 3D preview)**. What it can build on:
 
 - `src/app/three/bbmodel-viewer.ts` takes a `modelUrl` input and renders any `.bbmodel` through
-  `createBbModelScene`; it needs no change to be reused by a detail page.
+  `createBbModelScene`; it needs no change to be reused by T9's landing scene.
 - `shared/ProductCard` is already presentational and router-free, so T6 wraps it in the link the
   grid is missing today, and `CatalogStore` already exposes `categories`, `entries`, `prices`,
   `findCategory` and `countInCategory`.
-- A product route must decide what to do while `modelPath` is `null` for all 48 products (see the
-  open product decision below) — image-first, model when one exists.
+- **T6 builds no 3D.** The product page is image-first by decision (below), so it is a layout and
+  routing task with a cart seam, not a three.js task.
 
-**Open product decision carried from T2**: `modelPath` is `null` for all 48 products.
-The 4 item models in the repo (`tlaloc_hat`, `tlaloc_staff`, `netherite_sword`, `paper`) are
-boss-encounter assets with no catalog counterpart, and `ITEM_MODEL_ALIASES` ships empty by
-design rather than guessing a mapping from name similarity. Deciding which models should
-map to which products (if any) is a product decision, not an engineering one. Until it is
-answered, product detail pages must degrade gracefully to the 2D image.
+**RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
+The user's decision: the models are wanted only as **decoration on the landing**, animated, and
+further Minecraft-style decorative assets may be **downloaded** to make the landing feel like the
+game. "No quiero items, quiero cosas decorativas." Consequences:
+
+- No product ever maps to a model. `ITEM_MODEL_ALIASES` stays empty and `modelPath` stays `null`.
+  Product detail is image-first with the real store photography, permanently — not as an interim
+  degradation.
+- The four item models (`tlaloc_hat`, `tlaloc_staff`, `netherite_sword`, `paper`) and the animated
+  `tlaloc.bbmodel` become landing scenery in **T9**, alongside downloaded voxel props.
+- Downloading is authorized for decorative assets. Licensing and provenance must be recorded per
+  asset (T10 `LICENSES.md`), and every downloaded asset is copied into the repo — nothing is
+  fetched from a third party at runtime.
+- The `.schem`/`.schematic` backdrop idea is dropped as unnecessary now that the scene is
+  decoration-led rather than a reconstruction of the map.
