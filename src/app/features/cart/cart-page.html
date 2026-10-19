@@ -22,13 +22,7 @@
           <li class="line">
             <figure class="line__media">
               @if (line.product.imagePath; as src) {
-                <img
-                  class="line__image"
-                  [src]="src"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img class="line__image" [src]="src" alt="" loading="lazy" decoding="async" />
               } @else {
                 <div class="line__image line__image--empty" aria-hidden="true"></div>
               }

@@ -85,7 +85,9 @@ describe('buildCartLineViews', () => {
       { slug: 'producto-retirado', quantity: 5 },
       { slug: 'pocion', quantity: 3 },
     ];
-    const prices = new Map(catalog.map((item) => [item.product.slug, item.product.priceUsd] as const));
+    const prices = new Map(
+      catalog.map((item) => [item.product.slug, item.product.priceUsd] as const),
+    );
 
     const views = buildCartLineViews(lines, catalog);
     const viewTotal = views.reduce((total, view) => total + view.lineTotalUsd, 0);

@@ -32,7 +32,10 @@ function seed(lines: readonly SeededLine[]): void {
 }
 
 function stubCatalog(): void {
-  vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(readCommittedCatalogDocument())));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => jsonResponse(readCommittedCatalogDocument())),
+  );
 }
 
 async function render(): Promise<{ fixture: ComponentFixture<CartPage>; host: HTMLElement }> {
@@ -47,10 +50,7 @@ async function waitForLines(fixture: ComponentFixture<CartPage>, host: HTMLEleme
   });
 }
 
-async function waitForEmpty(
-  fixture: ComponentFixture<CartPage>,
-  host: HTMLElement,
-): Promise<void> {
+async function waitForEmpty(fixture: ComponentFixture<CartPage>, host: HTMLElement): Promise<void> {
   await vi.waitFor(async () => {
     await fixture.whenStable();
     expect(host.querySelector('.cart-empty')).not.toBeNull();
@@ -153,7 +153,9 @@ describe('CartPage', () => {
     const cart = TestBed.inject(CartStore);
 
     host
-      .querySelector<HTMLButtonElement>('[aria-label="Añadir una unidad de 10 ALGODONES DE AZUCAR"]')
+      .querySelector<HTMLButtonElement>(
+        '[aria-label="Añadir una unidad de 10 ALGODONES DE AZUCAR"]',
+      )
       ?.click();
 
     await vi.waitFor(async () => {

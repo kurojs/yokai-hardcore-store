@@ -19,17 +19,17 @@ import { CartStore } from '../../core/cart/cart-store';
 import { CART_STORAGE_KEY } from '../../core/cart/cart-persistence';
 import { readCommittedCatalogDocument } from '../../core/catalog/testing/committed-catalog';
 import { jsonResponse } from '../../core/catalog/testing/http';
-import {
-  CHECKOUT_CONFIRMATION_MESSAGE,
-  CHECKOUT_DEMO_DISCLOSURE,
-} from '../../core/ui-text';
+import { CHECKOUT_CONFIRMATION_MESSAGE, CHECKOUT_DEMO_DISCLOSURE } from '../../core/ui-text';
 import { CheckoutPage } from './checkout-page';
 
 @Component({ selector: 'app-spec-cart', template: '' })
 class SpecCartPage {}
 
 function stubCatalog(): void {
-  vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(readCommittedCatalogDocument())));
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => jsonResponse(readCommittedCatalogDocument())),
+  );
 }
 
 function seedCart(): void {

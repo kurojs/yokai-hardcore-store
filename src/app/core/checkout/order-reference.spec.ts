@@ -39,12 +39,10 @@ describe('createOrderReference', () => {
   });
 
   it('wraps the nonce instead of growing the suffix', () => {
-    expect(createOrderReference(new Date('2026-10-18T12:00:00Z'), ORDER_REFERENCE_NONCE_SPACE)).toBe(
-      'YOKAI-20261018-0000',
-    );
-    expect(createOrderReference(new Date('2026-10-18T12:00:00Z'), -1)).toBe(
-      'YOKAI-20261018-ZZZZ',
-    );
+    expect(
+      createOrderReference(new Date('2026-10-18T12:00:00Z'), ORDER_REFERENCE_NONCE_SPACE),
+    ).toBe('YOKAI-20261018-0000');
+    expect(createOrderReference(new Date('2026-10-18T12:00:00Z'), -1)).toBe('YOKAI-20261018-ZZZZ');
   });
 
   it('turns an unusable nonce into zero', () => {

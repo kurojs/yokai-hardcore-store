@@ -43,11 +43,11 @@ function summaryValues(host: HTMLElement): string[] {
 describe('cart and checkout totals agreement', () => {
   beforeEach(async () => {
     localStorage.clear();
-    localStorage.setItem(
-      CART_STORAGE_KEY,
-      JSON.stringify({ version: 1, lines: SEEDED_LINES }),
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: 1, lines: SEEDED_LINES }));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => jsonResponse(readCommittedCatalogDocument())),
     );
-    vi.stubGlobal('fetch', vi.fn(async () => jsonResponse(readCommittedCatalogDocument())));
 
     await TestBed.configureTestingModule({
       imports: [CartPage, CheckoutPage],
