@@ -23,6 +23,8 @@ import { readCommittedCatalogDocument } from './core/catalog/testing/committed-c
 import { jsonResponse } from './core/catalog/testing/http';
 import { CatalogPage } from './features/catalog/catalog-page';
 import { HomePage } from './features/home/home-page';
+import { productRoutes } from './features/product/product.routes';
+import { ProductPage } from './features/product/product-page';
 
 describe('routes', () => {
   beforeEach(() => {
@@ -41,11 +43,15 @@ describe('routes', () => {
     expect(routes.map((route) => route.path)).toEqual([
       '',
       'catalog',
+      'product',
       'dev/model',
       'dev/items',
       '**',
     ]);
     expect(routes[0]?.pathMatch).toBe('full');
+    // The product slice owns exactly `/product/:slug`; `/product` alone has nothing to show and
+    // falls through to the landing page like any other unknown URL.
+    expect(productRoutes.map((route) => route.path)).toEqual([':slug']);
   });
 
   it('renders the landing page at the root URL', async () => {
@@ -72,6 +78,18 @@ describe('routes', () => {
     const page = harness.routeDebugElement?.componentInstance as CatalogPage;
     expect(page).toBeInstanceOf(CatalogPage);
     expect(page.slug()).toBe('mascotas');
+  });
+
+  it('passes the product slug to the detail page as an input', async () => {
+    const harness = await RouterTestingHarness.create();
+
+    await harness.navigateByUrl('/product/10-algodones-de-azucar');
+
+    // Lazily loaded through `loadComponent`, so reaching this assertion also proves the route
+    // can be resolved; the page's own states are specified in `product-page.spec.ts`.
+    const page = harness.routeDebugElement?.componentInstance as ProductPage;
+    expect(page).toBeInstanceOf(ProductPage);
+    expect(page.slug()).toBe('10-algodones-de-azucar');
   });
 
   it('redirects an unknown URL to the landing page instead of failing', async () => {

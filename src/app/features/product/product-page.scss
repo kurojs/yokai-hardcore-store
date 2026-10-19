@@ -1,0 +1,110 @@
+/* Product detail layout. Tokens, `.page-width`, `.state*`, `.button` and `.card-grid` come from
+   `styles.scss`, so this file only holds the page's own two-column hero and the breadcrumb. */
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+  padding-block: var(--space-4);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.breadcrumb__link {
+  color: var(--color-text-muted);
+  transition: color var(--transition);
+}
+
+.breadcrumb__link:hover {
+  color: var(--color-accent);
+}
+
+.breadcrumb__separator {
+  color: var(--color-border-strong);
+}
+
+.product__layout {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+/* The photograph leads on a phone and sits beside the purchase controls from tablet up. */
+@media (min-width: 48rem) {
+  .product__layout {
+    grid-template-columns: minmax(0, 3fr) minmax(18rem, 2fr);
+  }
+}
+
+.product__media {
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.product__image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.product__image--empty {
+  background: linear-gradient(135deg, var(--color-surface-raised), var(--color-bg));
+}
+
+.product__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.product__category {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
+.product__category-link:hover {
+  text-decoration: underline;
+}
+
+.product__name {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: -0.01em;
+}
+
+/* Prices are numbers to be compared, so they keep the mono face the cards use. */
+.product__price {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+}
+
+.product__buy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+}
+
+/* Always in the layout, so the live region exists before it has something to announce. */
+.product__confirmation {
+  min-height: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--color-accent);
+}
+
+.product__description {
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.product__section-title {
+  margin-bottom: var(--space-3);
+  font-size: 1.5rem;
+}

@@ -7,7 +7,13 @@
  * declaration.
  */
 
-import { buildCatalogIndex, countInCategory, findCategoryBySlug, searchTextFor } from './catalog-index';
+import {
+  buildCatalogIndex,
+  countInCategory,
+  findCategoryBySlug,
+  findEntryByProductSlug,
+  searchTextFor,
+} from './catalog-index';
 import { SUPPORTED_SCHEMA_VERSION } from './catalog-model';
 import { category, indexOf, product } from './testing/entities';
 
@@ -131,5 +137,35 @@ describe('findCategoryBySlug', () => {
     expect(findCategoryBySlug(index, '')).toBeNull();
     expect(findCategoryBySlug(index, null)).toBeNull();
     expect(findCategoryBySlug(index, undefined)).toBeNull();
+  });
+});
+
+describe('findEntryByProductSlug', () => {
+  it('finds the entry for a product slug', () => {
+    expect(findEntryByProductSlug(index, 'cupon')?.product.name).toBe('Cupón Canjeable');
+    expect(findEntryByProductSlug(index, 'cupon')?.category.id).toBe('mascotas');
+  });
+
+  it('trims the slug before matching, because a URL can carry stray whitespace', () => {
+    expect(findEntryByProductSlug(index, ' cofre ')?.product.id).toBe('cofre');
+  });
+
+  it('returns null for an unknown, blank or absent slug', () => {
+    expect(findEntryByProductSlug(index, 'no-such-product')).toBeNull();
+    expect(findEntryByProductSlug(index, '')).toBeNull();
+    expect(findEntryByProductSlug(index, '   ')).toBeNull();
+    expect(findEntryByProductSlug(index, null)).toBeNull();
+    expect(findEntryByProductSlug(index, undefined)).toBeNull();
+  });
+
+  it('matches the slug rather than the id', () => {
+    // The two are separate so renaming an id does not silently change an address.
+    const renamed = indexOf(
+      [category('mascotas')],
+      [product('internal-id', 'mascotas', { slug: 'public-slug' })],
+    );
+
+    expect(findEntryByProductSlug(renamed, 'public-slug')?.product.id).toBe('internal-id');
+    expect(findEntryByProductSlug(renamed, 'internal-id')).toBeNull();
   });
 });

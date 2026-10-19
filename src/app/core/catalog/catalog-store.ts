@@ -1,7 +1,14 @@
 import { Injectable, computed, resource } from '@angular/core';
 
 import { loadCatalog } from './catalog-loader';
-import { buildCatalogIndex, countInCategory, findCategoryBySlug, type CatalogEntry, type CatalogIndex } from './catalog-index';
+import {
+  buildCatalogIndex,
+  countInCategory,
+  findCategoryBySlug,
+  findEntryByProductSlug,
+  type CatalogEntry,
+  type CatalogIndex,
+} from './catalog-index';
 import type { Category } from './catalog-model';
 
 /**
@@ -70,6 +77,18 @@ export class CatalogStore {
   findCategory(slug: string | null | undefined): Category | null {
     const index = this.index();
     return index === null ? null : findCategoryBySlug(index, slug);
+  }
+
+  /**
+   * Finds a product by slug, or `null` when there is none or nothing is loaded yet.
+   *
+   * "Not loaded" and "not found" both answer `null` here and are deliberately told apart by the
+   * caller with `isReady`; a store that threw on a missing slug would make an unknown URL an
+   * exception instead of a page state.
+   */
+  findProduct(slug: string | null | undefined): CatalogEntry | null {
+    const index = this.index();
+    return index === null ? null : findEntryByProductSlug(index, slug);
   }
 
   /** How many products belong to `categoryId`. Zero when unknown. */

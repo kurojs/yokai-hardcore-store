@@ -15,6 +15,13 @@ export const routes: Routes = [
       import('./features/catalog/catalog.routes').then((module) => module.catalogRoutes),
   },
   {
+    path: 'product',
+    // The slice owns `/product/:slug`; the title is set by the page because it needs the
+    // catalog, which is not loaded when a route title is resolved.
+    loadChildren: () =>
+      import('./features/product/product.routes').then((module) => module.productRoutes),
+  },
+  {
     path: 'dev/model',
     title: 'Model preview',
     // Lazy on purpose: three.js is only needed on this developer route, and loading it

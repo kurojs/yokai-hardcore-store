@@ -1,0 +1,83 @@
+@if (errorMessage(); as message) {
+  <section class="page-width state" role="alert">
+    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <p class="state__message">{{ message }}</p>
+    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+  </section>
+} @else if (!isReady()) {
+  <p class="page-width state state--loading" aria-live="polite">Cargando producto…</p>
+} @else if (isUnknownProduct()) {
+  <section class="page-width state">
+    <h1 class="state__title">No encontramos ese producto</h1>
+    <p class="state__message">
+      Puede que el producto haya cambiado de nombre o ya no exista en la tienda.
+    </p>
+    <a class="button button--primary" routerLink="/catalog">Ver todo el catálogo</a>
+  </section>
+} @else if (view(); as view) {
+  <article class="product page-width">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a class="breadcrumb__link" routerLink="/catalog">Catálogo</a>
+      <span class="breadcrumb__separator" aria-hidden="true">/</span>
+      <a class="breadcrumb__link" [routerLink]="['/catalog', view.category.slug]">{{
+        view.category.name
+      }}</a>
+    </nav>
+
+    <div class="product__layout">
+      <figure class="product__media">
+        @if (view.product.imagePath; as src) {
+          <img
+            class="product__image"
+            [src]="src"
+            [alt]="view.product.name"
+            fetchpriority="high"
+            decoding="async"
+          />
+        } @else {
+          <div class="product__image product__image--empty" aria-hidden="true"></div>
+        }
+      </figure>
+
+      <div class="product__info">
+        <p class="product__category">
+          <a class="product__category-link" [routerLink]="['/catalog', view.category.slug]">{{
+            view.category.name
+          }}</a>
+        </p>
+
+        <h1 class="product__name">{{ view.product.name }}</h1>
+        <p class="product__price">{{ view.product.priceUsd | price }}</p>
+
+        <div class="product__buy">
+          <app-quantity-stepper [value]="quantity()" (valueChange)="setQuantity($event)" />
+          <app-add-to-cart-button [productName]="view.product.name" (add)="addToCart()" />
+        </div>
+
+        <p class="product__confirmation" role="status" aria-live="polite">{{ addedMessage() }}</p>
+      </div>
+    </div>
+
+    <section class="product__description" aria-labelledby="descripcion-title">
+      <h2 id="descripcion-title" class="product__section-title">{{ descriptionTitle }}</h2>
+      <app-product-description [description]="view.product.description" />
+    </section>
+  </article>
+
+  @if (view.related; as related) {
+    <section class="page-width section" aria-labelledby="relacionados-title">
+      <div class="section__head">
+        <h2 id="relacionados-title">{{ relatedTitle() }}</h2>
+      </div>
+      <ul class="card-grid">
+        @for (entry of related.entries; track entry.product.slug) {
+          <li>
+            <a class="card-link" [routerLink]="['/product', entry.product.slug]">
+              <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}

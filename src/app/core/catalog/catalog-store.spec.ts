@@ -68,6 +68,28 @@ describe('CatalogStore', () => {
     expect(store.countInCategory('no-such-id')).toBe(0);
   });
 
+  it('finds a product by slug and answers null for anything else', async () => {
+    stubFetch(readCommittedCatalogDocument());
+    const store = TestBed.inject(CatalogStore);
+    await vi.waitFor(() => expect(store.isReady()).toBe(true));
+
+    const entry = store.findProduct('10-algodones-de-azucar');
+    expect(entry?.product.name).toBe('10 ALGODONES DE AZUCAR');
+    expect(entry?.category.slug).toBe('alimento-yokai-para-guerreros-y-pets');
+    expect(store.findProduct('no-such-slug')).toBeNull();
+    expect(store.findProduct(null)).toBeNull();
+  });
+
+  it('answers null before the catalog is ready instead of throwing', () => {
+    // "Not loaded" and "not found" both answer null; the caller tells them apart with `isReady`,
+    // which is what keeps an unknown URL a page state rather than an exception.
+    stubFetch(readCommittedCatalogDocument());
+    const store = TestBed.inject(CatalogStore);
+
+    expect(store.findProduct('10-algodones-de-azucar')).toBeNull();
+    expect(store.isReady()).toBe(false);
+  });
+
   it('reports the transport failure and stays not-ready', async () => {
     vi.stubGlobal(
       'fetch',

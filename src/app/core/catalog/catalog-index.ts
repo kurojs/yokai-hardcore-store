@@ -98,6 +98,27 @@ export function findCategoryBySlug(
   return index.categoryBySlug.get(slug) ?? null;
 }
 
+/**
+ * Finds the entry for a product slug, or `null` when the catalog holds no such product.
+ *
+ * A linear scan over 48 entries rather than a third map: the product detail page resolves one
+ * slug per render, the index already exists to be read, and a `productBySlug` map would be one
+ * more structure to keep consistent with `entries` for no measurable gain today. If the catalog
+ * grows to thousands, this is the function to turn into a map.
+ *
+ * Slug rather than id on purpose: the URL carries the slug, and the two fields are separate so
+ * that renaming a product's id does not silently change its address.
+ */
+export function findEntryByProductSlug(
+  index: CatalogIndex,
+  slug: string | null | undefined,
+): CatalogEntry | null {
+  if (slug === null || slug === undefined) return null;
+  const trimmed = slug.trim();
+  if (trimmed.length === 0) return null;
+  return index.entries.find((entry) => entry.product.slug === trimmed) ?? null;
+}
+
 /** How many products belong to `categoryId`. */
 export function countInCategory(index: CatalogIndex, categoryId: string): number {
   return index.countByCategory.get(categoryId) ?? 0;
