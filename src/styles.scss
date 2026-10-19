@@ -26,6 +26,7 @@
   --color-text: #e7ecf5;
   --color-text-muted: #9aa7bb;
   --color-accent: #5eead4;
+  --color-accent-hover: #7ff3e0;
   --color-danger: #fca5a5;
 
   --radius-sm: 0.375rem;
@@ -126,6 +127,71 @@ a {
   max-width: var(--measure);
   margin-inline: auto;
   padding-inline: var(--space-4);
+}
+
+/**
+ * A responsive card grid, used by both the landing page and the catalog.
+ *
+ * `auto-fill` with a minimum column width keeps the cards readable from a phone to a wide
+ * screen without a single breakpoint. The list markers are reset here because the grid is a
+ * `<ul>`: a list is the honest semantic for a collection of cards, and the browser default
+ * would put a bullet where a card should be.
+ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/**
+ * The link wrapper a container puts around a presentational card.
+ *
+ * The cards themselves render no anchor — that is what keeps them router-free and reusable —
+ * so the slice supplies the link and this class makes it fill its grid cell.
+ */
+.card-link {
+  display: block;
+  height: 100%;
+  border-radius: var(--radius-md);
+}
+
+/* Buttons are part of the design system too: the landing page call to action and the catalog's
+   retry action must not disagree about height, radius or focus treatment. */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--transition),
+    border-color var(--transition),
+    color var(--transition);
+}
+
+.button:hover {
+  background: var(--color-surface-raised);
+}
+
+.button--primary {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.button--primary:hover {
+  background: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
 }
 
 /**

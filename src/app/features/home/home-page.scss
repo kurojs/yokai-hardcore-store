@@ -1,0 +1,104 @@
+/* Landing page layout. Colours, spacing and the card grid come from `styles.scss`; only the
+   hero's own wash and the section rhythm are local. */
+
+.hero {
+  padding-block: var(--space-7) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  /* A single accent wash behind the headline, fading into the page. It is the only decoration
+     on the page, so the product photography stays the loudest thing on screen. */
+  background:
+    radial-gradient(60rem 24rem at 15% -20%, rgb(94 234 212 / 14%), transparent 70%),
+    linear-gradient(180deg, var(--color-surface), var(--color-bg));
+}
+
+.hero__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 46rem;
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+.hero__title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: -0.01em;
+}
+
+.hero__lead {
+  max-width: 40rem;
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.hero__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  margin: var(--space-4) 0 0;
+}
+
+.hero__stat dt {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.hero__stat dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+}
+
+.section {
+  padding-block: var(--space-6);
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.section__head h2 {
+  font-size: 1.5rem;
+}
+
+.section__note {
+  max-width: 32rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.state {
+  padding-block: var(--space-7);
+}
+
+.state--loading {
+  color: var(--color-text-muted);
+}
+
+.state__title {
+  margin-bottom: var(--space-2);
+  font-size: 1.25rem;
+}
+
+.state__message {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
+}

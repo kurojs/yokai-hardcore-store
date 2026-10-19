@@ -1,0 +1,82 @@
+<section class="hero">
+  <div class="page-width">
+    <div class="hero__inner">
+      <p class="hero__eyebrow">Comunidad de Minecraft</p>
+      <h1 class="hero__title">Equípate para el inframundo</h1>
+      <p class="hero__lead">
+        Alimentos, artefactos y tesoros de Yokai Hardcore, listos para tu próxima partida. Explora
+        las categorías y arma tu inventario.
+      </p>
+
+      <div class="hero__actions">
+        <a class="button button--primary" routerLink="/catalog">Ver catálogo</a>
+        <a class="button" href="#categorias">Explorar categorías</a>
+      </div>
+
+      @if (isReady()) {
+        <dl class="hero__stats">
+          <div class="hero__stat">
+            <dt>Productos</dt>
+            <dd>{{ countLabel() }}</dd>
+          </div>
+          <div class="hero__stat">
+            <dt>Categorías</dt>
+            <dd>{{ categoryCount() }}</dd>
+          </div>
+          @if (fromPrice(); as price) {
+            <div class="hero__stat">
+              <dt>Desde</dt>
+              <dd>{{ price }}</dd>
+            </div>
+          }
+        </dl>
+      }
+    </div>
+  </div>
+</section>
+
+@if (errorMessage(); as message) {
+  <section class="page-width state" role="alert">
+    <h2 class="state__title">No pudimos cargar el catálogo</h2>
+    <p class="state__message">{{ message }}</p>
+    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+  </section>
+} @else if (!isReady()) {
+  <p class="page-width state state--loading" aria-live="polite">Cargando catálogo…</p>
+} @else {
+  <section class="section page-width" id="categorias" aria-labelledby="categorias-title">
+    <div class="section__head">
+      <h2 id="categorias-title">Categorías</h2>
+      <p class="section__note">
+        {{ countLabel() }} repartidos en {{ categoryCount() }} categorías.
+      </p>
+    </div>
+
+    <ul class="card-grid">
+      @for (category of categories(); track category.id) {
+        <li>
+          <a class="card-link" [routerLink]="['/catalog', category.slug]">
+            <app-category-card [category]="category" [productCount]="countIn(category.id)" />
+          </a>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <section class="section page-width" aria-labelledby="destacados-title">
+    <div class="section__head">
+      <h2 id="destacados-title">Destacados</h2>
+      <p class="section__note">
+        Una muestra de la colección. El detalle y la vista 3D llegan pronto.
+      </p>
+    </div>
+
+    <ul class="card-grid">
+      @for (entry of featured(); track entry.product.id) {
+        <li>
+          <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+        </li>
+      }
+    </ul>
+  </section>
+}

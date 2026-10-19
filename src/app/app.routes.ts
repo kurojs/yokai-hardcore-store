@@ -2,6 +2,13 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
+    path: '',
+    // `pathMatch: 'full'` matters here: the landing slice's only child is the empty path, so
+    // without it this route would claim every URL before the developer routes below.
+    pathMatch: 'full',
+    loadChildren: () => import('./features/home/home.routes').then((module) => module.homeRoutes),
+  },
+  {
     path: 'dev/model',
     title: 'Model preview',
     // Lazy on purpose: three.js is only needed on this developer route, and loading it
@@ -16,4 +23,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./three/item-model-viewer').then((module) => module.ItemModelViewer),
   },
+  // An unknown URL is a typo or a stale bookmark, not an error page worth interrupting a
+  // shopper with: send them to the landing page instead.
+  { path: '**', redirectTo: '' },
 ];

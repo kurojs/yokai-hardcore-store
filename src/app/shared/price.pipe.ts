@@ -21,10 +21,7 @@ export class PricePipe implements PipeTransform {
    * @returns `$1.00`-style text, or `''` for `null`, `undefined` or a non-finite amount, so a
    *   missing price renders as nothing rather than as `$NaN`.
    */
-  transform(
-    amount: number | null | undefined,
-    locale: string = DEFAULT_PRICE_LOCALE,
-  ): string {
+  transform(amount: number | null | undefined, locale: string = DEFAULT_PRICE_LOCALE): string {
     return amount === null || amount === undefined ? '' : formatUsdPrice(amount, locale);
   }
 }
