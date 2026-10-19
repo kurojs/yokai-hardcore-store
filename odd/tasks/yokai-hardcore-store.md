@@ -213,7 +213,7 @@ model.
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `87e641d` `081d446` `330d4c4` `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
 | T6 | Product detail view, image-first (no 3D on SKUs) + cart core + shell count | Delegated writer | Write rule | **done** (2026-10-19, `bddadc5` `f264421` `8d1553e` `22fa58c` `fe41acc` `63462bb`) |
-| T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
+| T7 | Cart page, demo checkout and the header link | Delegated writer | Write rule | **done** (2026-10-19, `373002f` `bedf8fc` `dbe9180` `0004c22` `54ae53c`) |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
 | T9 | Landing decorative 3D: animated Tlaloc plus downloaded Minecraft-style decoration (voxel props, animated), anchored to the storefront palette | Delegated writer | Write rule | pending |
 | T10 | Docs: README, ASSETS.md, LICENSES.md, architecture notes | Delegated writer | Write rule | pending |
@@ -295,6 +295,8 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-19 | Parent verification of T5 | Re-derived independently from `data/catalog.json` and the built bundle, not from the writer's report. Confirmed: the catalog is **globally alphabetical and NOT grouped by category** (the writer's correction against my brief was right — a "featured" spread sliced from the top would have been wrong); `mascotas` = 1 product (`CUPÓN CANJEABLE PARA FAMILIAR`, $5); `priceUsd <= 2` = 25 products; **48/48** products carry accents or `¡`/`¿`; `bannerImage` is null for exactly 3 categories (`mascotas`, `armeria-de-heroe`, `resucitacion`), which is also 3 of the 4 single-product categories; all 10 `productCount` values match the real counts. Bundle has **0** matches for `cloudfront` / `dunb17ur4ymx4` / `G:\`. `searchTextFor` really routes name+description+category through `foldForSearch`; `ProductCard` has no `routerLink`/`href`. Re-ran the suite (525/525) and the build (exit 0) myself | read-only; the writer's 5-commit table understated its own range — there are 7 work-unit commits plus the doc commit |
 | 2026-10-19 | T6 — cart core + product detail | Commits `bddadc5` (pure cart domain, signal store, persistence adapter), `f264421` (lossless description structure), `8d1553e` (quantity stepper + add-to-cart), `22fa58c` (product slice + related rule), `fe41acc` (grid/landing card links), `63462bb` (non-navigating shell count) | `npm test -- --watch=false` PASS **661/661** (46 files), `npm run build` PASS at 269.68 kB initial / 75.23 kB transfer with `product-page` lazy at 14.57 kB, `catalog:verify` PASS, no budget warning |
 | 2026-10-19 | Parent verification of T6 | **Corrected my own brief**: it claimed descriptions carry line breaks and structural blocks separated by newlines. Measured: **0 of 48 descriptions contain CR or LF**. The structure is inline labels only (`Cantidad:` in 30 products, `Efectos Temporales:` in 17), and the writer was right to replace the line splitter with a lossless label heuristic. Also confirmed: `cofre-de-runas` genuinely has no colon label (504 chars, one block); the single-product `mascotas` slug is `cupon-canjeable-para-familiar`; `data/`, `public/`, `scripts/`, `src/tooling/`, `src/app/three/` untouched; **no `/cart` route**; **no `three/` import** in the cart or product code. The writer's self-reported "three accent-less strings in `catalog-page.ts`" does **not** exist — grep finds only the correctly accented `Cargando el catálogo…`, so that uncertainty was noise, not a defect. Re-ran the suite (661/661) and the build myself | read-only; the deleted temporary persistence spec was redundant — `cart-persistence.spec.ts` permanently covers 27 cases of the same matrix |
+| 2026-10-19 | T7 — cart page, demo checkout, header link | Commits `373002f` (cart line views + one shared `OrderSummary`), `bedf8fc` (cart page), `dbe9180` (demo checkout), `0004c22` (header link), `54ae53c` (Prettier normalization) | `npm test -- --watch=false` PASS **714/714** (54 files), `npm run build` PASS at 272.48 kB initial / 76.14 kB transfer with `cart-page` 7.92 kB and `checkout-page` 11.70 kB lazy, `catalog:verify` PASS, no budget warning |
+| 2026-10-19 | Parent verification of T7 | **Second brief correction, and a bigger one than T6.** The brief said every product image is `/products/<slug>/imagen.png`. Measured across the real catalog: **35 `.png`, 9 `.jpeg`, 3 `.jpg`, 1 `.gif`** — 13 of 48 products would have broken had any code composed the filename. Nothing does: every image comes from `imagePath`/`bannerImage` read out of the catalog, so only a stale comment in `product-page.ts` and a false claim in this document needed fixing (`53f2237` plus the T2 note above). Also verified: checkout has exactly **one** `<input>` and no card/CVV/expiry field anywhere (the only matches for those words are a spec asserting their absence and a comment), `data/`, `public/`, `scripts/`, `src/tooling/`, `src/app/three/` untouched, and re-ran the suite (714/714) and the build myself | read-only; port 4300 was already held by a foreign `ng serve` (PID 2132, not mine), so the writer correctly used 4301 instead of killing it |
 
 ---
 
@@ -611,9 +613,13 @@ gap T3/T4 recorded.
   confirmed these were already the effective defaults, and both `tsc` and `ng build` stayed
   green with the keys added and no source change.
 - **Catalog paths are served root-relative, not repo-relative.** `localImage` /
-  `bannerImage` are `/products/<id>/imagen.png` and `/categories/<id>/banner`, so they work
-  directly as an `<img src>` fallback. A repo-relative `public/...` path would 404 in the
-  browser, which defeats the point of recording a fallback at all.
+  `bannerImage` are like `/products/<id>/imagen.png` and `/categories/<id>/<banner file>`, so
+  they work directly as an `<img src>` fallback. A repo-relative `public/...` path would 404 in
+  the browser, which defeats the point of recording a fallback at all.
+  **CORRECTED 2026-10-19:** the extension is *not* uniform. Measured across the 48 products:
+  **35 `.png`, 9 `.jpeg`, 3 `.jpg`, 1 `.gif`**, and the 7 non-null banners are 6 `.jpg` + 1
+  `.png`. `imagePath`/`bannerImage` must always be read from the catalog; composing a filename
+  with a `.png` convention silently breaks 13 of 48 products.
 - **`data/source-index.json` is committed.** `sync-assets` generates it and `build-catalog`
   reads it, so committing it keeps the catalog reproducible from a clean checkout without
   the source drive.
@@ -631,29 +637,31 @@ gap T3/T4 recorded.
 
 ## Next step
 
-**T6 is done: every product has a detail page, the cart works and survives a reload, and the
-cards are finally links.** Two gaps are recorded rather than hidden:
+**T7 is done: the store is complete end to end.** Browse, search, filter, product detail, cart,
+demo checkout. 714 tests, clean build, every route deep-linkable. Two gaps are recorded rather
+than hidden:
 
 - **Nobody has looked at the UI in a browser.** The dev-server matrix proves the routes serve and
   the specs prove the DOM they render into jsdom, but jsdom has no layout engine and no WebGL. No
   browser tool is connected in this session (only `engram`, `context7`, `elevenlabs` and
   `opencode`), so the visual pass is still open — the same gap T3/T4 recorded, now covering the
-  storefront, the product pages and the 3D previews.
-- **There is still no cart page.** The header count is intentionally not a link, because `/cart`
-  does not exist until T7. The cart itself is real and tested; only the page that manages it is
-  missing.
+  storefront, product pages, cart and checkout as well as the 3D previews.
+- **The store is Spanish-only and the polish pass has not happened.** No i18n, no reduced-motion
+  handling for the future hero, no deliberate a11y audit, and the landing page has no 3D scene yet.
 
-Next is **T7 (cart page + demo checkout)**. What it can build on:
+Next is **T8 (i18n ES/EN/JA + a11y + responsive polish)**. What it can build on:
 
+- `core/ui-text.ts` is already the single string table, so the extraction surface exists even
+  though it is currently a flat Spanish object. Every page already reads its copy through it.
+- `kurojs/Portfolio` is the user's own Astro site with an ES/EN/JA i18n pattern worth reusing
+  rather than inventing.
+- `shared/` already holds the presentational primitives whose labels need translating, and the
+  header already uses a visually hidden live region, so the a11y audit starts from something sane.
 - `src/app/three/bbmodel-viewer.ts` takes a `modelUrl` input and renders any `.bbmodel` through
   `createBbModelScene`; it needs no change to be reused by T9's landing scene.
-- `core/cart/` already owns the whole cart: `CartStore` exposes `lines`, `itemCount` and `totals`,
-  and the pure mutators (`addLine`, `setLineQuantity`, `removeLine`, `clearCart`) are already
-  tested. T7 needs the **page**, the quantity editing UI, the checkout form, and the header link
-  that T6 deliberately left out.
-- `shared/quantity-stepper.ts` and `shared/add-to-cart-button.ts` are presentational and reusable
-  in the cart rows.
-- **No 3D anywhere in T7.** The product page is image-first by decision (below).
+
+After T8 comes **T9**, and it is the one task with a download step: the landing gets an animated
+Tlaloc plus downloaded Minecraft-style decoration, with provenance recorded per asset for T10.
 
 **RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
 The user's decision: the models are wanted only as **decoration on the landing**, animated, and
@@ -715,3 +723,44 @@ route exists, and no new code imports `three/`.
 that returns the same 640-byte SPA shell for a real slug, a real category and a bogus slug alike —
 which proves routing survives deep links and proves nothing about how the page looks. Only a real
 browser can close that.
+
+### T7 — cart page, demo checkout and the header link (5 work units)
+
+Commits: `373002f` (cart line views + one shared `OrderSummary`), `bedf8fc` (cart page),
+`dbe9180` (demo checkout), `0004c22` (header link), `54ae53c` (Prettier normalization).
+
+**The cart and the checkout cannot disagree, by construction.** Both bind the same
+`CartStore.totals` signal and both render the same `shared/order-summary.ts`. A dedicated
+`cart-checkout-agreement.spec.ts` mounts both pages over one seeded cart and compares the rendered
+rows and values. Rebuilding the summary twice would have been the obvious way to get a
+one-cent-after-a-refund bug in a store that has no refunds.
+
+A line whose product has left the catalog produces **no row, no unit and no money** — it matches
+`cartSubtotalUsd`, which already skips unknown slugs, so the header count, the line rows and the
+total agree even after the catalog changes under a stored cart.
+
+**The checkout is a demo and says so before you press anything**: one Minecraft username field
+(Java rule, 3–16, `A-Z a-z 0-9 _`), a visible disclosure that no payment is processed and no order
+is created, and no payment field of any kind — the spec asserts exactly one `<input>` exists and
+that `tarjeta`/`cvv`/`caducidad` appear nowhere. Submitting generates a local reference
+(`YOKAI-YYYYMMDD-XXXX`, pure and tested), clears the cart, and shows a confirmation that states it
+lives only in this tab. A reload loses it and `/checkout` then redirects to `/cart`, which is
+honest rather than a fake persisted order.
+
+The header count became a link whose accessible name carries both the count and the destination,
+plus a separate visually hidden polite status region so count changes still announce without the
+link's name churning.
+
+**Second brief correction.** The brief asserted every product image is
+`/products/<slug>/imagen.png`. Measured: **35 `.png`, 9 `.jpeg`, 3 `.jpg`, 1 `.gif`** across the
+48 products (banners: 6 `.jpg`, 1 `.png`). Any code composing that filename would have broken 13
+products. Nothing does — every image is the `imagePath` read from the catalog — but a stale comment
+in `product-page.ts` and a false claim in this document were corrected (`53f2237`).
+
+Parent re-ran: **714/714 tests in 54 files**, build exit 0 at **272.48 kB raw / 76.14 kB
+transfer**, `catalog:verify` exit 0, no budget warning. `data/`, `public/`, `scripts/`,
+`src/tooling/` and `src/app/three/` untouched.
+
+**Still unverified**: live-region behaviour with a real screen reader, focus movement in a real
+browser, responsive wrapping of long ALL-CAPS names, and contrast. Browser tooling is still not
+connected in this session.
