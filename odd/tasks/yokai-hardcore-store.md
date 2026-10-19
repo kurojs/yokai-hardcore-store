@@ -212,7 +212,7 @@ model.
 | T3b | Add the missing regression test for keyframe time ordering (43% of real channels depend on an untested `.sort()`); test-only change | Delegated writer | Write rule | **done** (2026-10-18, `974a1f3`) |
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `87e641d` `081d446` `330d4c4` `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
-| T6 | Product detail view, image-first (no 3D on SKUs) + cart handoff seam | Delegated writer | Write rule | pending |
+| T6 | Product detail view, image-first (no 3D on SKUs) + cart core + shell count | Delegated writer | Write rule | **done** (2026-10-19, `bddadc5` `f264421` `8d1553e` `22fa58c` `fe41acc` `63462bb`) |
 | T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
 | T9 | Landing decorative 3D: animated Tlaloc plus downloaded Minecraft-style decoration (voxel props, animated), anchored to the storefront palette | Delegated writer | Write rule | pending |
@@ -293,6 +293,8 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-19 | T5 / 3 of 4 — shell + landing page | Commit `5a41c0b`: shell in `app.*`, `features/home/` with `selectFeatured`, component input binding + scroll restoration, Spanish `index.html`, `**` fallback | PASS 509/509, build PASS |
 | 2026-10-19 | T5 / 4 of 4 — catalog slice | Commit `aa6ad8f`: `features/catalog/` page, filter bar, routes, `/catalog/:slug` | PASS **525/525** (37 files), build PASS, `catalog:verify` PASS, dev-server route matrix PASS |
 | 2026-10-19 | Parent verification of T5 | Re-derived independently from `data/catalog.json` and the built bundle, not from the writer's report. Confirmed: the catalog is **globally alphabetical and NOT grouped by category** (the writer's correction against my brief was right — a "featured" spread sliced from the top would have been wrong); `mascotas` = 1 product (`CUPÓN CANJEABLE PARA FAMILIAR`, $5); `priceUsd <= 2` = 25 products; **48/48** products carry accents or `¡`/`¿`; `bannerImage` is null for exactly 3 categories (`mascotas`, `armeria-de-heroe`, `resucitacion`), which is also 3 of the 4 single-product categories; all 10 `productCount` values match the real counts. Bundle has **0** matches for `cloudfront` / `dunb17ur4ymx4` / `G:\`. `searchTextFor` really routes name+description+category through `foldForSearch`; `ProductCard` has no `routerLink`/`href`. Re-ran the suite (525/525) and the build (exit 0) myself | read-only; the writer's 5-commit table understated its own range — there are 7 work-unit commits plus the doc commit |
+| 2026-10-19 | T6 — cart core + product detail | Commits `bddadc5` (pure cart domain, signal store, persistence adapter), `f264421` (lossless description structure), `8d1553e` (quantity stepper + add-to-cart), `22fa58c` (product slice + related rule), `fe41acc` (grid/landing card links), `63462bb` (non-navigating shell count) | `npm test -- --watch=false` PASS **661/661** (46 files), `npm run build` PASS at 269.68 kB initial / 75.23 kB transfer with `product-page` lazy at 14.57 kB, `catalog:verify` PASS, no budget warning |
+| 2026-10-19 | Parent verification of T6 | **Corrected my own brief**: it claimed descriptions carry line breaks and structural blocks separated by newlines. Measured: **0 of 48 descriptions contain CR or LF**. The structure is inline labels only (`Cantidad:` in 30 products, `Efectos Temporales:` in 17), and the writer was right to replace the line splitter with a lossless label heuristic. Also confirmed: `cofre-de-runas` genuinely has no colon label (504 chars, one block); the single-product `mascotas` slug is `cupon-canjeable-para-familiar`; `data/`, `public/`, `scripts/`, `src/tooling/`, `src/app/three/` untouched; **no `/cart` route**; **no `three/` import** in the cart or product code. The writer's self-reported "three accent-less strings in `catalog-page.ts`" does **not** exist — grep finds only the correctly accented `Cargando el catálogo…`, so that uncertainty was noise, not a defect. Re-ran the suite (661/661) and the build myself | read-only; the deleted temporary persistence spec was redundant — `cart-persistence.spec.ts` permanently covers 27 cases of the same matrix |
 
 ---
 
@@ -629,27 +631,29 @@ gap T3/T4 recorded.
 
 ## Next step
 
-**T5 is done: the storefront has a shell, a landing page and working catalog browsing for all 10
-categories and all 48 products.** Two gaps are recorded rather than hidden:
+**T6 is done: every product has a detail page, the cart works and survives a reload, and the
+cards are finally links.** Two gaps are recorded rather than hidden:
 
 - **Nobody has looked at the UI in a browser.** The dev-server matrix proves the routes serve and
   the specs prove the DOM they render into jsdom, but jsdom has no layout engine and no WebGL. No
   browser tool is connected in this session (only `engram`, `context7`, `elevenlabs` and
   `opencode`), so the visual pass is still open — the same gap T3/T4 recorded, now covering the
-  storefront as well as the 3D previews.
-- **Product cards are not links.** `ProductCard` is presentational and the catalog grid does not
-  wrap it, because there is no product route until T6. The landing page says so in one line of
-  copy instead of shipping a card that looks clickable and is not.
+  storefront, the product pages and the 3D previews.
+- **There is still no cart page.** The header count is intentionally not a link, because `/cart`
+  does not exist until T7. The cart itself is real and tested; only the page that manages it is
+  missing.
 
-Next is **T6 (product detail + 3D preview)**. What it can build on:
+Next is **T7 (cart page + demo checkout)**. What it can build on:
 
 - `src/app/three/bbmodel-viewer.ts` takes a `modelUrl` input and renders any `.bbmodel` through
   `createBbModelScene`; it needs no change to be reused by T9's landing scene.
-- `shared/ProductCard` is already presentational and router-free, so T6 wraps it in the link the
-  grid is missing today, and `CatalogStore` already exposes `categories`, `entries`, `prices`,
-  `findCategory` and `countInCategory`.
-- **T6 builds no 3D.** The product page is image-first by decision (below), so it is a layout and
-  routing task with a cart seam, not a three.js task.
+- `core/cart/` already owns the whole cart: `CartStore` exposes `lines`, `itemCount` and `totals`,
+  and the pure mutators (`addLine`, `setLineQuantity`, `removeLine`, `clearCart`) are already
+  tested. T7 needs the **page**, the quantity editing UI, the checkout form, and the header link
+  that T6 deliberately left out.
+- `shared/quantity-stepper.ts` and `shared/add-to-cart-button.ts` are presentational and reusable
+  in the cart rows.
+- **No 3D anywhere in T7.** The product page is image-first by decision (below).
 
 **RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
 The user's decision: the models are wanted only as **decoration on the landing**, animated, and
@@ -666,3 +670,48 @@ game. "No quiero items, quiero cosas decorativas." Consequences:
   fetched from a third party at runtime.
 - The `.schem`/`.schematic` backdrop idea is dropped as unnecessary now that the scene is
   decoration-led rather than a reconstruction of the map.
+
+### T6 — product detail, cart core and the shell count (6 work units)
+
+Commits: `bddadc5` (pure cart domain + signal store + persistence adapter), `f264421` (lossless
+description structure), `8d1553e` (quantity stepper + add-to-cart), `22fa58c` (product slice +
+related rule), `fe41acc` (grid and landing card links), `63462bb` (non-navigating shell count).
+
+**Cart is core, not a slice, and that is the load-bearing design decision.** The product page
+(T6) and the cart page (T7) both need it, and `features/README.md` forbids slices depending on
+each other. `core/README.md` already places state stores and persistence adapters there, so the
+dependency graph stays acyclic. Only `{slug, quantity}` is persisted — never a price — so a stale
+stored price cannot win; totals are computed from the live catalog at render time.
+
+Persistence was verified as a degradation matrix, permanently, in `cart-persistence.spec.ts`
+(27 cases): corrupt JSON, non-object document, missing/foreign version, `lines` not an array,
+`null` standing in for a stored `NaN`, fractional quantity, absurd quantity, duplicate slugs,
+unknown slug after a catalog change, storage that throws on read/write/remove, and absent
+storage. Outcomes are `empty | ok | repaired | discarded | unavailable`; nothing throws.
+
+**The brief was wrong and the writer was right.** This task's brief asserted that descriptions
+carry newlines and separate structural blocks. Measured fact: **0 of 48 descriptions contain CR or
+LF**. The real structure is inline labels — `Cantidad:` in 30 products, `Efectos Temporales:` in
+17 — so a line splitter would have produced one giant paragraph. The shipped rule is a label
+heuristic whose safety property is that joining the rendered blocks reproduces the source
+exactly, which is asserted for all 48 real descriptions (295 blocks, 92 distinct labels, zero
+lossy reconstructions). `cofre-de-runas` is the one description with no label at all and is pinned
+as a single block.
+
+Related products widen from same-category to one-per-other-category when the category is
+single-product, which is 4 of the 10 categories; all four are covered by a loop. The heading
+changes with the rule so a lone-product category never claims "Más de Mascotas".
+
+The shell shows `Carrito vacío` / `Carrito: N artículos` in a `role="status"` `aria-live="polite"`
+`<p>`. It is deliberately **not** a link: `/cart` does not exist until T7, and a dead link is worse
+than none. A spec asserts `closest('a') === null`.
+
+Verification, re-run by the parent: **661/661 tests in 46 files**, build exit 0 at **269.68 kB
+raw / 75.23 kB transfer** with `product-page` lazy at 14.57 kB, `catalog:verify` exit 0. No file
+under `data/`, `public/`, `scripts/`, `src/tooling/` or `src/app/three/` was touched, no `/cart`
+route exists, and no new code imports `three/`.
+
+**Still unverified**: anything depending on real layout. Every check is jsdom plus an HTTP fetch
+that returns the same 640-byte SPA shell for a real slug, a real category and a bogus slug alike —
+which proves routing survives deep links and proves nothing about how the page looks. Only a real
+browser can close that.
