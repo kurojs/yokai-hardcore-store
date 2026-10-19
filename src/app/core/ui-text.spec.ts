@@ -1,4 +1,10 @@
-import { productCountLabel } from './ui-text';
+import {
+  addedToCartMessage,
+  cartCountLabel,
+  itemCountLabel,
+  productCountLabel,
+  relatedProductsTitle,
+} from './ui-text';
 
 describe('productCountLabel', () => {
   it('uses the singular for exactly one product', () => {
@@ -19,5 +25,59 @@ describe('productCountLabel', () => {
     expect(productCountLabel(-3)).toBe('0 productos');
     expect(productCountLabel(2.9)).toBe('2 productos');
     expect(productCountLabel(Number.NaN)).toBe('');
+  });
+});
+
+describe('itemCountLabel', () => {
+  it('pluralises the cart unit', () => {
+    expect(itemCountLabel(0)).toBe('0 artículos');
+    expect(itemCountLabel(1)).toBe('1 artículo');
+    expect(itemCountLabel(3)).toBe('3 artículos');
+  });
+
+  it('floors and clamps like the product count', () => {
+    expect(itemCountLabel(-1)).toBe('0 artículos');
+    expect(itemCountLabel(2.9)).toBe('2 artículos');
+    expect(itemCountLabel(Number.NaN)).toBe('');
+  });
+});
+
+describe('cartCountLabel', () => {
+  it('says the cart is empty rather than showing a bare zero', () => {
+    expect(cartCountLabel(0)).toBe('Carrito vacío');
+  });
+
+  it('names the unit count once there is something in it', () => {
+    expect(cartCountLabel(1)).toBe('Carrito: 1 artículo');
+    expect(cartCountLabel(5)).toBe('Carrito: 5 artículos');
+  });
+
+  it('degrades an unusable count to the bare label', () => {
+    expect(cartCountLabel(Number.NaN)).toBe('Carrito');
+  });
+});
+
+describe('addedToCartMessage', () => {
+  it('repeats the new count so a second addition announces something different', () => {
+    const product = '10 ALGODONES DE AZUCAR';
+
+    expect(addedToCartMessage(product, 1)).toBe(
+      'Añadido al carrito: 10 ALGODONES DE AZUCAR. 1 artículo en el carrito.',
+    );
+    expect(addedToCartMessage(product, 2)).toBe(
+      'Añadido al carrito: 10 ALGODONES DE AZUCAR. 2 artículos en el carrito.',
+    );
+  });
+
+  it('never transforms the product name', () => {
+    expect(addedToCartMessage('CUPÓN CANJEABLE PARA FAMILIAR', 1)).toContain(
+      'CUPÓN CANJEABLE PARA FAMILIAR',
+    );
+  });
+});
+
+describe('relatedProductsTitle', () => {
+  it('names the category the strip stays inside', () => {
+    expect(relatedProductsTitle('Mascotas')).toBe('Más de Mascotas');
   });
 });
