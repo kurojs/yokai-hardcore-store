@@ -81,6 +81,9 @@
           [totalUsd]="totals().totalUsd"
           [heading]="summaryTitle"
         />
+        <a class="cart__checkout button button--primary" routerLink="/checkout">{{
+          checkoutLabel
+        }}</a>
         <a class="cart__continue" routerLink="/catalog">{{ continueLabel }}</a>
       </aside>
     </div>

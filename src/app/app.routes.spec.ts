@@ -15,20 +15,25 @@
  */
 
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 
 import { appConfig } from './app.config';
 import { routes } from './app.routes';
+import { CartStore } from './core/cart/cart-store';
+import { CatalogStore } from './core/catalog/catalog-store';
 import { readCommittedCatalogDocument } from './core/catalog/testing/committed-catalog';
 import { jsonResponse } from './core/catalog/testing/http';
 import { CatalogPage } from './features/catalog/catalog-page';
 import { CartPage } from './features/cart/cart-page';
+import { CheckoutPage } from './features/checkout/checkout-page';
 import { HomePage } from './features/home/home-page';
 import { productRoutes } from './features/product/product.routes';
 import { ProductPage } from './features/product/product-page';
 
 describe('routes', () => {
   beforeEach(() => {
+    localStorage.clear();
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => jsonResponse(readCommittedCatalogDocument())),
@@ -38,6 +43,7 @@ describe('routes', () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    localStorage.clear();
   });
 
   it('keeps the slice routes, the developer routes and the fallback in that order', () => {
@@ -46,6 +52,7 @@ describe('routes', () => {
       'catalog',
       'product',
       'cart',
+      'checkout',
       'dev/model',
       'dev/items',
       '**',
@@ -99,6 +106,36 @@ describe('routes', () => {
 
     await harness.navigateByUrl('/cart');
 
+    expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(CartPage);
+  });
+
+  it('renders the demo checkout at /checkout when the cart holds something', async () => {
+    const catalog = TestBed.inject(CatalogStore);
+    const cart = TestBed.inject(CartStore);
+    await vi.waitFor(() => expect(catalog.isReady()).toBe(true));
+    cart.add('10-algodones-de-azucar', 1);
+
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/checkout');
+
+    await vi.waitFor(() => {
+      expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(CheckoutPage);
+    });
+  });
+
+  it('sends an empty cart away from /checkout and back to the cart page', async () => {
+    const router = TestBed.inject(Router);
+    const harness = await RouterTestingHarness.create();
+
+    await harness.navigateByUrl('/checkout');
+
+    await vi.waitFor(
+      async () => {
+        await harness.fixture.whenStable();
+        expect(router.url).toBe('/cart');
+      },
+      { timeout: 3000 },
+    );
     expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(CartPage);
   });
 

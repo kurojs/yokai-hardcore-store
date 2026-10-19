@@ -11,6 +11,8 @@
  * functions become the keys it translates, and nothing else has to move.
  */
 
+import type { MinecraftUsernameProblem } from './checkout/username';
+
 /**
  * `48 productos`, or `1 producto` for the singular case.
  *
@@ -148,4 +150,60 @@ export function cartLineDecreaseLabel(productName: string): string {
 
 export function cartRemoveLabel(productName: string): string {
   return `Quitar ${productName} del carrito`;
+}
+
+/** The cart page's way into the checkout. */
+export const CART_CHECKOUT_LABEL = 'Ir al checkout';
+
+/**
+ * The demo checkout.
+ *
+ * The disclosure next to the submit button is not decoration and is not in a footer: a page that
+ * looks like a checkout must say, where the visitor is about to act, that it is not one. The
+ * confirmation repeats it, because a reference and a total can look like a receipt even when
+ * the heading says "demostración".
+ */
+export const CHECKOUT_TITLE = 'Revisar y confirmar';
+export const CHECKOUT_LEAD = 'Revisa tu pedido y completa la demostración. No se procesa ningún pago.';
+
+export const CHECKOUT_LOADING_MESSAGE = 'Cargando checkout…';
+export const CHECKOUT_REDIRECT_MESSAGE = 'Tu carrito está vacío. Volviendo al carrito…';
+
+export const CHECKOUT_REVIEW_TITLE = 'Tu pedido';
+export const CHECKOUT_EDIT_CART_LABEL = 'Editar carrito';
+export const CHECKOUT_DELIVERY_TITLE = 'Datos de entrega';
+
+export const MINECRAFT_USERNAME_LABEL = 'Nombre de usuario de Minecraft';
+export const MINECRAFT_USERNAME_HELP =
+  'Entre 3 y 16 caracteres: letras sin acentos, números y guion bajo (_).';
+
+export const CHECKOUT_SUBMIT_LABEL = 'Completar demostración';
+export const CHECKOUT_DEMO_DISCLOSURE =
+  'Demostración: este checkout no procesa pagos ni crea pedidos. No se te cobrará nada y no se guarda ningún dato en un servidor.';
+
+export const CHECKOUT_CONFIRMATION_TITLE = 'Demostración completada';
+export const CHECKOUT_CONFIRMATION_MESSAGE =
+  'No se realizó ningún cargo y no se creó ningún pedido. Este comprobante existe solo en esta pestaña y desaparece si recargas la página.';
+
+export const DEMO_RECEIPT_TITLE = 'Comprobante de demostración';
+export const ORDER_REFERENCE_LABEL = 'Referencia local';
+export const CHECKOUT_BACK_LABEL = 'Volver al catálogo';
+
+/**
+ * The sentence shown under the username field for the first rule it failed.
+ *
+ * Each message says what to do, not merely that something is wrong, and none of them mentions a
+ * colour or an icon: the error has to be readable as text.
+ */
+export function minecraftUsernameProblemMessage(problem: MinecraftUsernameProblem): string {
+  switch (problem) {
+    case 'empty':
+      return 'Escribe tu nombre de usuario de Minecraft.';
+    case 'too-short':
+      return 'El nombre debe tener al menos 3 caracteres.';
+    case 'too-long':
+      return 'El nombre no puede tener más de 16 caracteres.';
+    case 'illegal-characters':
+      return 'Solo se permiten letras sin acentos, números y guion bajo (_).';
+  }
 }

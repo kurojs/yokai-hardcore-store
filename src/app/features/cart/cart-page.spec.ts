@@ -142,6 +142,7 @@ describe('CartPage', () => {
 
     // $1.00 × 2 + $5.00 × 1 = $7.00.
     expect(summaryValues(host)).toEqual(['3 artículos', '$7.00', '$7.00']);
+    expect(host.querySelector('.cart__checkout')?.getAttribute('href')).toBe('/checkout');
   });
 
   it('raises a line quantity through the store and reprices the row and the summary', async () => {

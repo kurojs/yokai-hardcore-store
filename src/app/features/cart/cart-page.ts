@@ -30,6 +30,7 @@ import { CartStore } from '../../core/cart/cart-store';
 import { MAX_LINE_QUANTITY } from '../../core/cart/cart-model';
 import { buildCartLineViews } from '../../core/cart/cart-summary';
 import {
+  CART_CHECKOUT_LABEL,
   CART_CONTINUE_LABEL,
   CART_EMPTY_ACTION,
   CART_EMPTY_MESSAGE,
@@ -91,6 +92,7 @@ export class CartPage {
   protected readonly emptyAction = CART_EMPTY_ACTION;
   protected readonly summaryTitle = CART_SUMMARY_TITLE;
   protected readonly continueLabel = CART_CONTINUE_LABEL;
+  protected readonly checkoutLabel = CART_CHECKOUT_LABEL;
   protected readonly removeLabel = CART_REMOVE_LABEL;
   protected readonly unitPriceLabel = UNIT_PRICE_LABEL;
   protected readonly quantityCaption = QUANTITY_LABEL;

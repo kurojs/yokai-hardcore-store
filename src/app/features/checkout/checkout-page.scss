@@ -1,0 +1,197 @@
+/* Demo checkout. Tokens, `.page-width`, `.state*` and `.button` come from `styles.scss`; this
+   file holds the two-column review/form layout, the field, and the local receipt. */
+
+.checkout {
+  padding-block: var(--space-5);
+}
+
+.checkout__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: -0.01em;
+}
+
+.checkout__lead {
+  max-width: 42rem;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.checkout__layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 60rem) {
+  .checkout__layout {
+    grid-template-columns: minmax(0, 1fr) 24rem;
+  }
+}
+
+.checkout__review-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.checkout__review-head h2,
+.checkout__form-title {
+  font-size: 1.125rem;
+}
+
+.checkout__edit {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.checkout__edit:hover {
+  color: var(--color-accent);
+}
+
+.review {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+}
+
+/* Quantity, name and line total. `minmax(0, 1fr)` plus `anywhere` keeps a long ALL CAPS name
+   from widening the column. */
+.review__line {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.9375rem;
+}
+
+.review__quantity {
+  font-family: var(--font-mono);
+  color: var(--color-text-muted);
+}
+
+.review__name {
+  overflow-wrap: anywhere;
+}
+
+.review__total {
+  font-family: var(--font-mono);
+}
+
+.checkout__form {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.field {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.field__label {
+  font-weight: 600;
+}
+
+.field__input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.field__input--invalid {
+  border-color: var(--color-danger);
+}
+
+.field__help {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+/* The error is text first: colour and border are reinforcement, never the only signal. */
+.field__error {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+/* Next to the submit button, where the visitor is about to act — not in the footer. */
+.checkout__demo {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border-strong);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+  font-size: 0.875rem;
+  color: var(--color-text);
+}
+
+.checkout__submit {
+  justify-self: start;
+}
+
+.checkout-confirmation {
+  max-width: 42rem;
+}
+
+.receipt {
+  margin-block: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.receipt__title {
+  margin-bottom: var(--space-3);
+  font-size: 1rem;
+}
+
+.receipt__rows {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+}
+
+.receipt__row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 0.9375rem;
+}
+
+.receipt__row dt {
+  color: var(--color-text-muted);
+}
+
+.receipt__row dd {
+  margin: 0;
+}
+
+.receipt__reference,
+.receipt__money {
+  font-family: var(--font-mono);
+}
+
+.receipt__row--total {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--color-border);
+  font-weight: 600;
+}

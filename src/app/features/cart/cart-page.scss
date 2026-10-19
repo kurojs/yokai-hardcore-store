@@ -157,6 +157,10 @@
   gap: var(--space-3);
 }
 
+.cart__checkout {
+  justify-self: stretch;
+}
+
 .cart__continue {
   justify-self: start;
   font-size: 0.875rem;

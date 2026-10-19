@@ -27,6 +27,13 @@ export const routes: Routes = [
     loadChildren: () => import('./features/cart/cart.routes').then((module) => module.cartRoutes),
   },
   {
+    path: 'checkout',
+    // The slice owns `/checkout`; the page redirects an empty cart on its own, after the
+    // catalog has loaded, because that is when the restored cart actually exists.
+    loadChildren: () =>
+      import('./features/checkout/checkout.routes').then((module) => module.checkoutRoutes),
+  },
+  {
     path: 'dev/model',
     title: 'Model preview',
     // Lazy on purpose: three.js is only needed on this developer route, and loading it

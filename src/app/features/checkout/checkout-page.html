@@ -1,0 +1,118 @@
+@if (errorMessage(); as message) {
+  <section class="page-width state" role="alert">
+    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <p class="state__message">{{ message }}</p>
+    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+  </section>
+} @else if (!isReady()) {
+  <p class="page-width state state--loading" aria-live="polite">{{ loadingMessage }}</p>
+} @else if (confirmation(); as order) {
+  <section
+    class="page-width state checkout-confirmation"
+    aria-labelledby="checkout-confirmation-title"
+  >
+    <h1
+      #confirmationHeading
+      id="checkout-confirmation-title"
+      class="state__title"
+      tabindex="-1"
+    >
+      {{ confirmationTitle }}
+    </h1>
+    <p class="state__message">{{ confirmationMessage }}</p>
+
+    <section class="receipt" aria-labelledby="receipt-title">
+      <h2 id="receipt-title" class="receipt__title">{{ receiptTitle }}</h2>
+      <dl class="receipt__rows">
+        <div class="receipt__row">
+          <dt>{{ referenceLabel }}</dt>
+          <dd class="receipt__reference">{{ order.reference }}</dd>
+        </div>
+        <div class="receipt__row">
+          <dt>{{ usernameLabel }}</dt>
+          <dd>{{ order.username }}</dd>
+        </div>
+        <div class="receipt__row">
+          <dt>{{ itemsLabel }}</dt>
+          <dd>{{ itemCountText(order.itemCount) }}</dd>
+        </div>
+        <div class="receipt__row receipt__row--total">
+          <dt>{{ totalLabel }}</dt>
+          <dd class="receipt__money">{{ order.totalUsd | price }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <a class="button button--primary" routerLink="/catalog">{{ backLabel }}</a>
+  </section>
+} @else if (isRedirecting()) {
+  <p class="page-width state state--loading" aria-live="polite">{{ redirectMessage }}</p>
+} @else {
+  <div class="page-width checkout">
+    <header class="checkout__head">
+      <h1 class="checkout__title">{{ title }}</h1>
+      <p class="checkout__lead">{{ lead }}</p>
+    </header>
+
+    <div class="checkout__layout">
+      <section class="checkout__review" aria-labelledby="checkout-review-title">
+        <div class="checkout__review-head">
+          <h2 id="checkout-review-title">{{ reviewTitle }}</h2>
+          <a class="checkout__edit" routerLink="/cart">{{ editCartLabel }}</a>
+        </div>
+
+        <ul class="review">
+          @for (line of lineViews(); track line.product.slug) {
+            <li class="review__line">
+              <span class="review__quantity">{{ line.quantity }} ×</span>
+              <span class="review__name">{{ line.product.name }}</span>
+              <span class="review__total">{{ line.lineTotalUsd | price }}</span>
+            </li>
+          }
+        </ul>
+
+        <app-order-summary
+          [itemCount]="totals().itemCount"
+          [subtotalUsd]="totals().subtotalUsd"
+          [totalUsd]="totals().totalUsd"
+        />
+      </section>
+
+      <form class="checkout__form" (submit)="submit($event)" novalidate>
+        <h2 class="checkout__form-title">{{ deliveryTitle }}</h2>
+
+        <div class="field">
+          <label class="field__label" for="mc-username">{{ usernameLabel }}</label>
+          <input
+            #usernameInput
+            id="mc-username"
+            name="username"
+            type="text"
+            class="field__input"
+            [class.field__input--invalid]="showError()"
+            [value]="draftValue()"
+            (input)="onInput($event)"
+            [attr.aria-invalid]="showError() ? 'true' : null"
+            [attr.aria-describedby]="
+              showError() ? 'mc-username-help mc-username-error' : 'mc-username-help'
+            "
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+          />
+          <p id="mc-username-help" class="field__help">{{ usernameHelp }}</p>
+          @if (showError()) {
+            <p id="mc-username-error" class="field__error" role="alert">{{ errorText() }}</p>
+          }
+        </div>
+
+        <p class="checkout__demo" role="note">{{ demoDisclosure }}</p>
+
+        <button type="submit" class="button button--primary checkout__submit">
+          {{ submitLabel }}
+        </button>
+      </form>
+    </div>
+  </div>
+}
