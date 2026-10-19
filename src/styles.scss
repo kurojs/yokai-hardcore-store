@@ -195,6 +195,59 @@ a {
 }
 
 /**
+ * Section rhythm and headed sections.
+ *
+ * Both pages open with a hero-like header and then stack sections, so the vertical scale and the
+ * head layout live here rather than being copied into two slice stylesheets.
+ */
+.section {
+  padding-block: var(--space-6);
+}
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.section__head h2 {
+  font-size: 1.5rem;
+}
+
+.section__note {
+  max-width: 32rem;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/**
+ * The three load states every page needs: loading, failure and empty.
+ *
+ * The failure and empty states use different copy but the same shape, so they share these
+ * classes instead of each slice inventing its own spacing.
+ */
+.state {
+  padding-block: var(--space-7);
+}
+
+.state--loading {
+  color: var(--color-text-muted);
+}
+
+.state__title {
+  margin-bottom: var(--space-2);
+  font-size: 1.25rem;
+}
+
+.state__message {
+  margin-bottom: var(--space-4);
+  color: var(--color-text-muted);
+}
+
+/**
  * Placeholder treatments for categories without a banner image.
  *
  * `categoryPlaceholderVariant` in `app/core/catalog/category-visual.ts` hashes a category slug

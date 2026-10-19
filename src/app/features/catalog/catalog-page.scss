@@ -1,0 +1,67 @@
+/* Catalog-specific chrome. The page-wide utilities (`.page-width`, `.state*`, `.card-grid`,
+   `.button`) come from `styles.scss`, so only the header and the category chips are local. */
+
+.catalog-head {
+  padding-block: var(--space-6) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  background: linear-gradient(180deg, var(--color-surface), var(--color-bg));
+}
+
+.catalog-head__eyebrow {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+}
+
+.catalog-head__title {
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  letter-spacing: -0.01em;
+}
+
+.catalog-head__lead {
+  max-width: 48rem;
+  margin-top: var(--space-2);
+  color: var(--color-text-muted);
+}
+
+.catalog-body {
+  padding-block: var(--space-5);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.chip {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  transition:
+    color var(--transition),
+    background var(--transition),
+    border-color var(--transition);
+}
+
+.chip:hover {
+  color: var(--color-text);
+  border-color: var(--color-border-strong);
+}
+
+.chip.is-active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.results-line {
+  margin: var(--space-4) 0 var(--space-3);
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}

@@ -9,6 +9,12 @@ export const routes: Routes = [
     loadChildren: () => import('./features/home/home.routes').then((module) => module.homeRoutes),
   },
   {
+    path: 'catalog',
+    // The slice owns both `/catalog` and `/catalog/:slug`; see `catalog.routes.ts`.
+    loadChildren: () =>
+      import('./features/catalog/catalog.routes').then((module) => module.catalogRoutes),
+  },
+  {
     path: 'dev/model',
     title: 'Model preview',
     // Lazy on purpose: three.js is only needed on this developer route, and loading it

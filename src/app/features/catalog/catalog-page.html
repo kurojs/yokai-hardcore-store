@@ -1,0 +1,72 @@
+<section class="catalog-head">
+  <div class="page-width">
+    <p class="catalog-head__eyebrow">Catálogo</p>
+    <h1 class="catalog-head__title">{{ heading() }}</h1>
+    <p class="catalog-head__lead">{{ lead() }}</p>
+  </div>
+</section>
+
+@if (errorMessage(); as message) {
+  <section class="page-width state" role="alert">
+    <h2 class="state__title">No pudimos cargar el catálogo</h2>
+    <p class="state__message">{{ message }}</p>
+    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+  </section>
+} @else if (!isReady()) {
+  <p class="page-width state state--loading" aria-live="polite">Cargando catálogo…</p>
+} @else if (isUnknownCategory()) {
+  <section class="page-width state">
+    <h2 class="state__title">No encontramos esa categoría</h2>
+    <p class="state__message">Revisa la dirección o vuelve al catálogo completo.</p>
+    <a class="button button--primary" routerLink="/catalog">Ver todo el catálogo</a>
+  </section>
+} @else {
+  <div class="page-width catalog-body">
+    <nav class="chips" aria-label="Categorías">
+      <a
+        class="chip"
+        routerLink="/catalog"
+        [class.is-active]="category() === null"
+        [attr.aria-current]="category() === null ? 'page' : null"
+        >Todas</a
+      >
+      @for (item of categories(); track item.id) {
+        <a
+          class="chip"
+          [routerLink]="['/catalog', item.slug]"
+          [class.is-active]="item.id === category()?.id"
+          [attr.aria-current]="item.id === category()?.id ? 'page' : null"
+          >{{ item.name }}</a
+        >
+      }
+    </nav>
+
+    <app-catalog-filter-bar
+      [text]="text()"
+      [maxPriceUsd]="maxPriceUsd()"
+      [sort]="sort()"
+      [prices]="prices()"
+      (textChange)="text.set($event)"
+      (maxPriceChange)="maxPriceUsd.set($event)"
+      (sortChange)="sort.set($event)"
+    />
+
+    @if (results().length > 0) {
+      <p class="results-line" aria-live="polite">{{ countLabel() }}</p>
+
+      <ul class="card-grid">
+        @for (entry of results(); track entry.product.id) {
+          <li>
+            <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+          </li>
+        }
+      </ul>
+    } @else {
+      <div class="state">
+        <h2 class="state__title">Ningún producto coincide</h2>
+        <p class="state__message">Prueba con otra búsqueda o quita los filtros.</p>
+        <button type="button" class="button" (click)="clearFilters()">Limpiar filtros</button>
+      </div>
+    }
+  </div>
+}
