@@ -27,6 +27,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "catalog.json",
+                "input": "data",
+                "output": "/data"
               }
             ],
             "styles": [

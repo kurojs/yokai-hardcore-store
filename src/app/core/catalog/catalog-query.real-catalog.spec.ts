@@ -10,38 +10,13 @@
  * `data/catalog.json` is read, never written.
  */
 
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-
 import { parseCatalogResponse } from './catalog-validation';
 import { buildCatalogIndex, countInCategory } from './catalog-index';
 import { applyQuery, matchesSearch } from './catalog-query';
-
-/**
- * Repository root, found by walking up from this spec's own location.
- *
- * Walking up rather than counting `../..` keeps the spec working if the file moves, and it
- * deliberately avoids `new URL('../../', import.meta.url)`: the Vite/Vitest transform
- * rewrites that literal form into an asset URL, which `fileURLToPath` then rejects.
- */
-function findRepoRoot(start: string): string {
-  let directory = start;
-  for (let depth = 0; depth < 12; depth += 1) {
-    if (fs.existsSync(path.join(directory, 'data', 'catalog.json'))) return directory;
-    const parent = path.dirname(directory);
-    if (parent === directory) break;
-    directory = parent;
-  }
-  throw new Error(`could not find data/catalog.json above ${start}`);
-}
-
-const REPO_ROOT = findRepoRoot(path.dirname(fileURLToPath(import.meta.url)));
+import { readCommittedCatalogDocument } from './testing/committed-catalog';
 
 /** The committed catalog, through the same boundary the browser uses. */
-const catalog = parseCatalogResponse(
-  JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'data', 'catalog.json'), 'utf8')) as unknown,
-);
+const catalog = parseCatalogResponse(readCommittedCatalogDocument());
 const index = buildCatalogIndex(catalog);
 
 /** Product ids matched by a free-text query over the real catalog. */
