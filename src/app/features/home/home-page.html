@@ -67,14 +67,16 @@
     <div class="section__head">
       <h2 id="destacados-title">Destacados</h2>
       <p class="section__note">
-        Una muestra de la colección. El detalle y la vista 3D llegan pronto.
+        Una muestra de la colección. Cada producto tiene su ficha completa.
       </p>
     </div>
 
     <ul class="card-grid">
       @for (entry of featured(); track entry.product.id) {
         <li>
-          <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+          <a class="card-link" [routerLink]="['/product', entry.product.slug]">
+            <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+          </a>
         </li>
       }
     </ul>

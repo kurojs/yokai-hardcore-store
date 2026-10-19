@@ -3,8 +3,8 @@
  *
  * The page is mostly a view over the shared store, so what is worth pinning is the three states
  * and the fact that the cards receive real catalog values: a page that renders an empty grid
- * when the fetch fails would look like a store with nothing to sell. The category links are
- * asserted by `href`, because that is the one thing a visitor can actually act on.
+ * when the fetch fails would look like a store with nothing to sell. The category and product
+ * links are asserted by `href`, because that is the one thing a visitor can actually act on.
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -78,11 +78,27 @@ describe('HomePage', () => {
       expect(host.querySelectorAll('app-category-card')).toHaveLength(10);
     });
 
-    const hrefs = [...host.querySelectorAll('a.card-link')].map((link) =>
+    const hrefs = [...host.querySelectorAll('#categorias a.card-link')].map((link) =>
       link.getAttribute('href'),
     );
     expect(hrefs).toContain('/catalog/mascotas');
     expect(hrefs).toHaveLength(10);
+  });
+
+  it('links each featured product to its detail page', async () => {
+    stubFetch(readCommittedCatalogDocument());
+
+    const { fixture, host } = await render();
+    await vi.waitFor(async () => {
+      await fixture.whenStable();
+      expect(host.querySelectorAll('app-product-card')).toHaveLength(4);
+    });
+
+    const hrefs = [
+      ...host.querySelectorAll('section[aria-labelledby="destacados-title"] a.card-link'),
+    ].map((link) => link.getAttribute('href'));
+    expect(hrefs).toHaveLength(4);
+    expect(hrefs.every((href) => href?.startsWith('/product/'))).toBe(true);
   });
 
   it('shows the failure and recovers when the visitor retries', async () => {

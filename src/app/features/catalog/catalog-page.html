@@ -57,7 +57,9 @@
       <ul class="card-grid">
         @for (entry of results(); track entry.product.id) {
           <li>
-            <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+            <a class="card-link" [routerLink]="['/product', entry.product.slug]">
+              <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+            </a>
           </li>
         }
       </ul>

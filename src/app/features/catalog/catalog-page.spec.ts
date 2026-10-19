@@ -87,8 +87,23 @@ describe('CatalogPage', () => {
     expect(host.querySelector('h1')?.textContent?.trim()).toBe('Mascotas');
     expect(host.querySelector('.results-line')?.textContent?.trim()).toBe('1 producto');
     expect(products(host)[0]?.textContent).toContain('CUPÓN CANJEABLE PARA FAMILIAR');
+    expect(host.querySelector('a.card-link')?.getAttribute('href')).toBe(
+      '/product/cupon-canjeable-para-familiar',
+    );
     // The category chip for the current category is the active one.
     expect(host.querySelector('.chip.is-active')?.getAttribute('aria-current')).toBe('page');
+  });
+
+  it('links every card to its product detail page', async () => {
+    const { fixture, host } = await render();
+    await waitForProducts(fixture, host, 48);
+
+    const hrefs = [...host.querySelectorAll('.card-grid a.card-link')].map((link) =>
+      link.getAttribute('href'),
+    );
+    expect(hrefs).toHaveLength(48);
+    expect(hrefs).toContain('/product/10-algodones-de-azucar');
+    expect(hrefs.every((href) => href?.startsWith('/product/'))).toBe(true);
   });
 
   it('reports an unknown slug instead of silently showing the whole catalog', async () => {
