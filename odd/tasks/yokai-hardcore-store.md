@@ -211,7 +211,7 @@ model.
 | T3 | three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping, hitbox filtering, emissive layer) + unit tests | Delegated writer | Write rule | **done** (2026-10-18, `345f4df` `b9d22f5` `b31d087`) |
 | T3b | Add the missing regression test for keyframe time ordering (43% of real channels depend on an untested `.sort()`); test-only change | Delegated writer | Write rule | **done** (2026-10-18, `974a1f3`) |
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
-| T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
+| T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `87e641d` `081d446` `330d4c4` `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
 | T6 | Product detail view + 3D preview integration | Delegated writer | Write rule | pending |
 | T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
@@ -267,7 +267,7 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
   |---|---|---|---|
   | 1 | Scaffold + asset pipeline + normalized catalog | T1, T2 | ~3.2k |
   | 2 | three.js core: bbmodel parser + item model renderer | T3, T3b, T4 | ~8.6k |
-  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 | T5 built (4 commits, see the T5 section); T6/T7 pending |
+  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 | T5 built (7 work-unit commits + doc, see the T5 section); T6/T7 pending |
   | 4 | i18n, hero scene, docs | T8, T9, T10 | not yet built |
 
 - **PR creation is NOT yet authorized.** No remote exists and nothing has been pushed.
@@ -288,10 +288,11 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-18 | Parent verification of T3 | Re-derived hitbox truth, 789 keyframes / 167 groups and motion variance from the raw JSON, no reuse of the writer's parser. All four writer claims matched exactly. Found the untested time sort (**72 of 167 channels, 43%, arrive out of order**) | read-only; recorded as T3b |
 | 2026-10-18 | T3b + T4 | Commit `974a1f3` (T3b, test-only: 2 spec files) and `d910440` (T4: `itemmodel/` module, `item-model-viewer.ts`, shared `preview-host.ts`, `/dev/items`) | `npm test -- --watch=false` PASS **350/350** (19 files), `npm run build` PASS, parent re-ran both; `/dev/model` and `/dev/items` both serve 200 |
 | 2026-10-18 | Parent verification of T4 | Independent Rodrigues-matrix implementation (not quaternions) reproduced all four bounds to the written precision; PNG decode + painted-texel sampling settled the UV-space question empirically | read-only; see T4 section |
-| 2026-10-19 | T5 / 1 of 4 — catalog data access | Commit `1800b73`: served-asset loader, `resource`-backed root `CatalogStore`, `data` asset entry in `angular.json`, spec-only fixtures behind a `tsconfig.app.json` exclude | `npm test -- --watch=false` PASS 475/475, `npm run build` PASS, `dist/…/browser/data/catalog.json` present (68,481 bytes) |
+| 2026-10-19 | T5 / 1 of 4 — pure core + catalog data access | Commits `87e641d` (price formatter, `foldForSearch`, UI text table), `081d446` (boundary validation), `330d4c4` (derived index + query predicates), `1800b73` (served-asset loader, `resource`-backed root `CatalogStore`, `data` asset entry in `angular.json`, spec-only fixtures behind a `tsconfig.app.json` exclude) | `npm test -- --watch=false` PASS 475/475 at `1800b73`, `npm run build` PASS, `dist/…/browser/data/catalog.json` present (68,481 bytes) |
 | 2026-10-19 | T5 / 2 of 4 — presentation primitives | Commit `1a3a77e`: design tokens in `styles.scss`, `price` pipe, `ProductCard`, `CategoryCard`, `productCountLabel` | PASS 494/494, build PASS, no `anyComponentStyle` warning |
 | 2026-10-19 | T5 / 3 of 4 — shell + landing page | Commit `5a41c0b`: shell in `app.*`, `features/home/` with `selectFeatured`, component input binding + scroll restoration, Spanish `index.html`, `**` fallback | PASS 509/509, build PASS |
 | 2026-10-19 | T5 / 4 of 4 — catalog slice | Commit `aa6ad8f`: `features/catalog/` page, filter bar, routes, `/catalog/:slug` | PASS **525/525** (37 files), build PASS, `catalog:verify` PASS, dev-server route matrix PASS |
+| 2026-10-19 | Parent verification of T5 | Re-derived independently from `data/catalog.json` and the built bundle, not from the writer's report. Confirmed: the catalog is **globally alphabetical and NOT grouped by category** (the writer's correction against my brief was right — a "featured" spread sliced from the top would have been wrong); `mascotas` = 1 product (`CUPÓN CANJEABLE PARA FAMILIAR`, $5); `priceUsd <= 2` = 25 products; **48/48** products carry accents or `¡`/`¿`; `bannerImage` is null for exactly 3 categories (`mascotas`, `armeria-de-heroe`, `resucitacion`), which is also 3 of the 4 single-product categories; all 10 `productCount` values match the real counts. Bundle has **0** matches for `cloudfront` / `dunb17ur4ymx4` / `G:\`. `searchTextFor` really routes name+description+category through `foldForSearch`; `ProductCard` has no `routerLink`/`href`. Re-ran the suite (525/525) and the build (exit 0) myself | read-only; the writer's 5-commit table understated its own range — there are 7 work-unit commits plus the doc commit |
 
 ---
 
