@@ -22,6 +22,7 @@ import { routes } from './app.routes';
 import { readCommittedCatalogDocument } from './core/catalog/testing/committed-catalog';
 import { jsonResponse } from './core/catalog/testing/http';
 import { CatalogPage } from './features/catalog/catalog-page';
+import { CartPage } from './features/cart/cart-page';
 import { HomePage } from './features/home/home-page';
 import { productRoutes } from './features/product/product.routes';
 import { ProductPage } from './features/product/product-page';
@@ -44,6 +45,7 @@ describe('routes', () => {
       '',
       'catalog',
       'product',
+      'cart',
       'dev/model',
       'dev/items',
       '**',
@@ -90,6 +92,14 @@ describe('routes', () => {
     const page = harness.routeDebugElement?.componentInstance as ProductPage;
     expect(page).toBeInstanceOf(ProductPage);
     expect(page.slug()).toBe('10-algodones-de-azucar');
+  });
+
+  it('renders the cart page at /cart', async () => {
+    const harness = await RouterTestingHarness.create();
+
+    await harness.navigateByUrl('/cart');
+
+    expect(harness.routeDebugElement?.componentInstance).toBeInstanceOf(CartPage);
   });
 
   it('redirects an unknown URL to the landing page instead of failing', async () => {

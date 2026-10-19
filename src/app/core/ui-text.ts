@@ -109,3 +109,43 @@ export const ORDER_SUMMARY_TOTAL_LABEL = 'Total';
  * and it is shorter than inventing a shipping row with a zero in it.
  */
 export const ORDER_SUMMARY_NOTE = 'Productos digitales: sin envío ni impuestos.';
+
+/**
+ * The cart page's own copy.
+ *
+ * It lives here rather than in the template for the same reason as the rest of this file: T8
+ * turns these constants into translation keys, and a search for a sentence is cheaper than a
+ * search for a fragment of markup.
+ */
+export const CART_TITLE = 'Tu carrito';
+export const CART_LOADING_MESSAGE = 'Cargando carrito…';
+export const CART_EMPTY_TITLE = 'Tu carrito está vacío';
+export const CART_EMPTY_MESSAGE = 'Todavía no has añadido ningún producto al carrito.';
+export const CART_EMPTY_ACTION = 'Ver el catálogo';
+export const CART_SUMMARY_TITLE = 'Resumen del carrito';
+export const CART_CONTINUE_LABEL = 'Seguir comprando';
+export const CART_REMOVE_LABEL = 'Quitar';
+export const UNIT_PRICE_LABEL = 'Precio unitario';
+
+/**
+ * Accessible names for one cart row's controls.
+ *
+ * Each row has the same buttons as every other row, so the product name is what tells a screen
+ * reader which "Quitar" it is on. A visible "Quitar" plus the name in the accessible name keeps
+ * both voice control (the visible word) and assistive technology (the full context).
+ */
+export function cartLineQuantityLabel(productName: string): string {
+  return `Cantidad de ${productName}`;
+}
+
+export function cartLineIncreaseLabel(productName: string): string {
+  return `Añadir una unidad de ${productName}`;
+}
+
+export function cartLineDecreaseLabel(productName: string): string {
+  return `Quitar una unidad de ${productName}`;
+}
+
+export function cartRemoveLabel(productName: string): string {
+  return `Quitar ${productName} del carrito`;
+}

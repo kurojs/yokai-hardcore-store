@@ -1,0 +1,169 @@
+/* Cart page. Tokens, `.page-width`, `.state*` and `.button` come from `styles.scss`; this file
+   holds the line layout and the summary column only. */
+
+.cart {
+  padding-block: var(--space-5);
+}
+
+.cart__title {
+  margin-bottom: var(--space-4);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  letter-spacing: -0.01em;
+}
+
+.cart__layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+@media (min-width: 60rem) {
+  .cart__layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}
+
+.lines {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* One row: photograph, identity, quantity, line total, remove. On a phone the controls wrap
+   under the product; from tablet up they sit on one line. */
+.line {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  grid-template-areas:
+    'media info'
+    'quantity total'
+    'remove remove';
+  gap: var(--space-3);
+  align-items: center;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+@media (min-width: 48rem) {
+  .line {
+    grid-template-columns: 5rem minmax(0, 1fr) auto auto auto;
+    grid-template-areas: 'media info quantity total remove';
+    gap: var(--space-4);
+  }
+}
+
+.line__media {
+  grid-area: media;
+  overflow: hidden;
+  margin: 0;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+}
+
+.line__image {
+  width: 5rem;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+
+.line__image--empty {
+  background: linear-gradient(135deg, var(--color-surface-raised), var(--color-bg));
+}
+
+.line__info {
+  grid-area: info;
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+/* Names are source-faithful and sometimes long and SHOUTING; breaking anywhere is what keeps
+   a 39-character ALL CAPS name from pushing the controls out of the row. */
+.line__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.line__name:hover {
+  color: var(--color-accent);
+}
+
+.line__category {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.line__caption {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.line__money {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+}
+
+.line__quantity {
+  grid-area: quantity;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  justify-self: start;
+}
+
+.line__total {
+  grid-area: total;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  justify-self: start;
+}
+
+@media (min-width: 48rem) {
+  .line__total {
+    justify-self: end;
+    text-align: right;
+  }
+}
+
+.line__remove {
+  grid-area: remove;
+  justify-self: start;
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+
+.line__remove:hover {
+  color: var(--color-danger);
+}
+
+.cart__aside {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.cart__continue {
+  justify-self: start;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.cart__continue:hover {
+  color: var(--color-accent);
+}

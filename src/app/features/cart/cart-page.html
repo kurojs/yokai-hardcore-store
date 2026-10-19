@@ -1,0 +1,88 @@
+@if (errorMessage(); as message) {
+  <section class="page-width state" role="alert">
+    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <p class="state__message">{{ message }}</p>
+    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+  </section>
+} @else if (!isReady()) {
+  <p class="page-width state state--loading" aria-live="polite">{{ loadingMessage }}</p>
+} @else if (isEmpty()) {
+  <section class="page-width state cart-empty">
+    <h1 class="state__title">{{ emptyTitle }}</h1>
+    <p class="state__message">{{ emptyMessage }}</p>
+    <a class="button button--primary" routerLink="/catalog">{{ emptyAction }}</a>
+  </section>
+} @else {
+  <div class="page-width cart">
+    <h1 class="cart__title">{{ title }}</h1>
+
+    <div class="cart__layout">
+      <ul class="lines">
+        @for (line of lineViews(); track line.product.slug) {
+          <li class="line">
+            <figure class="line__media">
+              @if (line.product.imagePath; as src) {
+                <img
+                  class="line__image"
+                  [src]="src"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              } @else {
+                <div class="line__image line__image--empty" aria-hidden="true"></div>
+              }
+            </figure>
+
+            <div class="line__info">
+              <a class="line__name" [routerLink]="['/product', line.product.slug]">{{
+                line.product.name
+              }}</a>
+              <p class="line__category">{{ line.category.name }}</p>
+              <p class="line__unit">
+                <span class="line__caption">{{ unitPriceLabel }}</span>
+                <span class="line__money">{{ line.unitPriceUsd | price }}</span>
+              </p>
+            </div>
+
+            <div class="line__quantity">
+              <span class="line__caption">{{ quantityCaption }}</span>
+              <app-quantity-stepper
+                [value]="line.quantity"
+                [max]="maxQuantity"
+                [label]="quantityLabel(line.product.name)"
+                [increaseLabel]="increaseLabel(line.product.name)"
+                [decreaseLabel]="decreaseLabel(line.product.name)"
+                (valueChange)="setQuantity(line.product.slug, $event)"
+              />
+            </div>
+
+            <p class="line__total">
+              <span class="line__caption">{{ totalLabel }}</span>
+              <span class="line__money">{{ line.lineTotalUsd | price }}</span>
+            </p>
+
+            <button
+              type="button"
+              class="line__remove"
+              [attr.aria-label]="removeLabelFor(line.product.name)"
+              (click)="remove(line.product.slug)"
+            >
+              {{ removeLabel }}
+            </button>
+          </li>
+        }
+      </ul>
+
+      <aside class="cart__aside" [attr.aria-label]="summaryTitle">
+        <app-order-summary
+          [itemCount]="totals().itemCount"
+          [subtotalUsd]="totals().subtotalUsd"
+          [totalUsd]="totals().totalUsd"
+          [heading]="summaryTitle"
+        />
+        <a class="cart__continue" routerLink="/catalog">{{ continueLabel }}</a>
+      </aside>
+    </div>
+  </div>
+}

@@ -22,6 +22,11 @@ export const routes: Routes = [
       import('./features/product/product.routes').then((module) => module.productRoutes),
   },
   {
+    path: 'cart',
+    // The slice owns `/cart`; see `cart.routes.ts`.
+    loadChildren: () => import('./features/cart/cart.routes').then((module) => module.cartRoutes),
+  },
+  {
     path: 'dev/model',
     title: 'Model preview',
     // Lazy on purpose: three.js is only needed on this developer route, and loading it
