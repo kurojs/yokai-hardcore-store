@@ -7,18 +7,24 @@
       <span class="brand__text">Yokai Hardcore</span>
     </a>
 
-    <nav class="nav" aria-label="Navegación principal">
-      <a
-        routerLink="/"
-        routerLinkActive="is-active"
-        ariaCurrentWhenActive="page"
-        [routerLinkActiveOptions]="{ exact: true }"
-        >Inicio</a
-      >
-      <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page"
-        >Catálogo</a
-      >
-    </nav>
+    <div class="shell__actions">
+      <nav class="nav" aria-label="Navegación principal">
+        <a
+          routerLink="/"
+          routerLinkActive="is-active"
+          ariaCurrentWhenActive="page"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Inicio</a
+        >
+        <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page"
+          >Catálogo</a
+        >
+      </nav>
+
+      <!-- A count, not a control: there is no cart route yet, so this must not navigate. The
+           live region announces a change politely without stealing focus from the page. -->
+      <p class="cart-indicator" role="status" aria-live="polite">{{ cartLabel() }}</p>
+    </div>
   </div>
 </header>
 

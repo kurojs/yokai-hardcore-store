@@ -2,20 +2,37 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { App } from './app';
+import { CartStore } from './core/cart/cart-store';
+import { CatalogStore } from './core/catalog/catalog-store';
+import { readCommittedCatalogDocument } from './core/catalog/testing/committed-catalog';
+import { jsonResponse } from './core/catalog/testing/http';
 
 /**
  * Specs for the shell.
  *
- * They assert the furniture a visitor needs — landmarks, the two primary links, the demo
- * disclaimer — rather than pixel structure, and they assert the links by their rendered
+ * They assert the furniture a visitor needs — landmarks, the two primary links, the cart count,
+ * the demo disclaimer — rather than pixel structure, and they assert the links by their rendered
  * `href`, because that is what proves `routerLink` points at a route that exists.
+ *
+ * The cart count is checked from both ends: it must not be a link (the cart page is T7's work),
+ * and it must actually follow the store once something is added.
  */
 describe('App', () => {
   beforeEach(async () => {
+    localStorage.clear();
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => jsonResponse(readCommittedCatalogDocument())),
+    );
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter([])],
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    localStorage.clear();
   });
 
   it('creates the shell', () => {
@@ -49,6 +66,40 @@ describe('App', () => {
     const host = fixture.nativeElement as HTMLElement;
 
     expect(host.querySelector('.skip-link')?.getAttribute('href')).toBe('#main');
+  });
+
+  it('shows the cart count as a status, never as a link', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+    const indicator = host.querySelector('.cart-indicator');
+
+    expect(indicator?.textContent?.trim()).toBe('Carrito vacío');
+    // A polite live region: adding to the cart announces the new count without moving focus.
+    expect(indicator?.getAttribute('role')).toBe('status');
+    expect(indicator?.getAttribute('aria-live')).toBe('polite');
+    // T7 owns the cart page; until it exists this control must not navigate anywhere.
+    expect(indicator?.closest('a')).toBeNull();
+    expect(host.querySelector('a[href="/cart"]')).toBeNull();
+  });
+
+  it('follows the cart store once something is added', async () => {
+    const fixture = TestBed.createComponent(App);
+    const host = fixture.nativeElement as HTMLElement;
+    const catalog = TestBed.inject(CatalogStore);
+    const cart = TestBed.inject(CartStore);
+
+    await vi.waitFor(async () => {
+      await fixture.whenStable();
+      expect(catalog.isReady()).toBe(true);
+    });
+
+    cart.add('10-algodones-de-azucar', 2);
+    await fixture.whenStable();
+
+    expect(host.querySelector('.cart-indicator')?.textContent?.trim()).toBe(
+      'Carrito: 2 artículos',
+    );
   });
 
   it('keeps the demo disclaimer in the footer, where a buyer can find it', async () => {
