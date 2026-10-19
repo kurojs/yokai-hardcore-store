@@ -88,3 +88,24 @@ export function relatedProductsTitle(categoryName: string): string {
  * says so.
  */
 export const OTHER_PRODUCTS_TITLE = 'Otros productos';
+
+/**
+ * The order summary both the cart page and the demo checkout render.
+ *
+ * The labels live here, and the markup lives in one shared component, because two pages showing
+ * the same three numbers with two different sets of words would look like two different
+ * calculations even when the values agree.
+ */
+export const ORDER_SUMMARY_TITLE = 'Resumen del pedido';
+
+export const ORDER_SUMMARY_ITEMS_LABEL = 'Artículos';
+export const ORDER_SUMMARY_SUBTOTAL_LABEL = 'Subtotal';
+export const ORDER_SUMMARY_TOTAL_LABEL = 'Total';
+
+/**
+ * The store sells in-game goods, so there is neither shipping nor tax to add.
+ *
+ * Saying so is more honest than leaving a visitor to wonder why the total equals the subtotal,
+ * and it is shorter than inventing a shipping row with a zero in it.
+ */
+export const ORDER_SUMMARY_NOTE = 'Productos digitales: sin envío ni impuestos.';
