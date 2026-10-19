@@ -211,7 +211,7 @@ model.
 | T3 | three.js core: `.bbmodel` parser → three.js scene (bone hierarchy, UV mapping, hitbox filtering, emissive layer) + unit tests | Delegated writer | Write rule | **done** (2026-10-18, `345f4df` `b9d22f5` `b31d087`) |
 | T3b | Add the missing regression test for keyframe time ordering (43% of real channels depend on an untested `.sort()`); test-only change | Delegated writer | Write rule | **done** (2026-10-18, `974a1f3`) |
 | T4 | Minecraft item model renderer (model JSON + texture → 3D preview), incl. vanilla item models | Delegated writer | Write rule | **done** (2026-10-18, `d910440`; vanilla item models deferred, see open items) |
-| T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | pending |
+| T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
 | T6 | Product detail view + 3D preview integration | Delegated writer | Write rule | pending |
 | T7 | Cart + demo checkout + persistence | Delegated writer | Write rule | pending |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
@@ -224,9 +224,11 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 
 ## Acceptance criteria
 
-- [ ] `npm run build` succeeds with zero errors on a clean checkout.
-- [ ] `npm test` passes for all covered logic.
-- [ ] All 48 products render with correct accents and no duplicate/empty entries.
+- [x] `npm run build` succeeds with zero errors on a clean checkout. (green on the branch since
+      T5; a truly clean clone is still unverified because nothing has been pushed)
+- [x] `npm test` passes for all covered logic. (37 files, 525/525)
+- [x] All 48 products render with correct accents and no duplicate/empty entries. (catalog grid
+      renders 48 cards in jsdom; accents live in the validated data, not in the UI)
 - [ ] Category browse, search and filters work across all 10 categories.
 - [ ] Product detail shows a working interactive 3D preview where a model exists.
 - [ ] The Tlaloc boss renders with visible bone hierarchy and at least `idle` animation
@@ -265,7 +267,7 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
   |---|---|---|---|
   | 1 | Scaffold + asset pipeline + normalized catalog | T1, T2 | ~3.2k |
   | 2 | three.js core: bbmodel parser + item model renderer | T3, T3b, T4 | ~8.6k |
-  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 | not yet built |
+  | 3 | Catalog UI, product detail, cart + checkout | T5, T6, T7 | T5 built (4 commits, see the T5 section); T6/T7 pending |
   | 4 | i18n, hero scene, docs | T8, T9, T10 | not yet built |
 
 - **PR creation is NOT yet authorized.** No remote exists and nothing has been pushed.
@@ -286,6 +288,10 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-18 | Parent verification of T3 | Re-derived hitbox truth, 789 keyframes / 167 groups and motion variance from the raw JSON, no reuse of the writer's parser. All four writer claims matched exactly. Found the untested time sort (**72 of 167 channels, 43%, arrive out of order**) | read-only; recorded as T3b |
 | 2026-10-18 | T3b + T4 | Commit `974a1f3` (T3b, test-only: 2 spec files) and `d910440` (T4: `itemmodel/` module, `item-model-viewer.ts`, shared `preview-host.ts`, `/dev/items`) | `npm test -- --watch=false` PASS **350/350** (19 files), `npm run build` PASS, parent re-ran both; `/dev/model` and `/dev/items` both serve 200 |
 | 2026-10-18 | Parent verification of T4 | Independent Rodrigues-matrix implementation (not quaternions) reproduced all four bounds to the written precision; PNG decode + painted-texel sampling settled the UV-space question empirically | read-only; see T4 section |
+| 2026-10-19 | T5 / 1 of 4 — catalog data access | Commit `1800b73`: served-asset loader, `resource`-backed root `CatalogStore`, `data` asset entry in `angular.json`, spec-only fixtures behind a `tsconfig.app.json` exclude | `npm test -- --watch=false` PASS 475/475, `npm run build` PASS, `dist/…/browser/data/catalog.json` present (68,481 bytes) |
+| 2026-10-19 | T5 / 2 of 4 — presentation primitives | Commit `1a3a77e`: design tokens in `styles.scss`, `price` pipe, `ProductCard`, `CategoryCard`, `productCountLabel` | PASS 494/494, build PASS, no `anyComponentStyle` warning |
+| 2026-10-19 | T5 / 3 of 4 — shell + landing page | Commit `5a41c0b`: shell in `app.*`, `features/home/` with `selectFeatured`, component input binding + scroll restoration, Spanish `index.html`, `**` fallback | PASS 509/509, build PASS |
+| 2026-10-19 | T5 / 4 of 4 — catalog slice | Commit `aa6ad8f`: `features/catalog/` page, filter bar, routes, `/catalog/:slug` | PASS **525/525** (37 files), build PASS, `catalog:verify` PASS, dev-server route matrix PASS |
 
 ---
 
@@ -500,8 +506,97 @@ non-fatal warning (`2 face(s) sample outside the 64x64 texture and will be clamp
 `tlaloc-items.spec.ts` pins both faces and their exact UV values. That is the right behaviour:
 warn precisely and keep rendering.
 
+### T5 — catalog UI: shell, landing page, browsing
+(commits `1800b73`, `1a3a77e`, `5a41c0b`, `aa6ad8f`)
+
+Four work units, each one leaving the application working end to end:
+
+1. `1800b73` — catalog data access. `data` asset entry in `angular.json`, `catalog-loader.ts`
+   (transport and validation failures kept distinct), `resource`-backed root `CatalogStore`,
+   spec fixtures behind a `tsconfig.app.json` exclude.
+2. `1a3a77e` — presentation primitives. Design tokens in `styles.scss` anchored to `#0b0d12`,
+   the `price` pipe, `ProductCard`, `CategoryCard`, `productCountLabel`.
+3. `5a41c0b` — shell and landing page. `app.*` (header, skip link, main, footer), the `home/`
+   slice with `selectFeatured`, `withComponentInputBinding` + scroll restoration, Spanish
+   `index.html`, `**` fallback.
+4. `aa6ad8f` — the `catalog/` slice. Page, filter bar, routes, `/catalog/:slug`.
+
+| Check | Command | Observed |
+|---|---|---|
+| Tests | `npm test -- --watch=false` | exit 0; **37 files, 525/525** — the 350 pre-existing tests are untouched and green, 175 are new |
+| Build | `npm run build` | exit 0; initial **258.68 kB raw / 70.27 kB transfer**, `styles` 3.40 kB; lazy `catalog-page` 10.89 kB, `home-page` 8.62 kB, `three` chunk 584.36 kB |
+| Budgets | build output | no `initial` and no `anyComponentStyle` warning (limits 500 kB / 1 MB and 4 kB / 8 kB) |
+| Catalog asset in dist | `Get-Item dist/…/browser/data/catalog.json` | present, 68,481 bytes, served at `/data/catalog.json` |
+| Catalog untouched | `git diff --stat 330d4c4 HEAD -- data public scripts src/tooling` | **empty** — no data, asset or tooling file changed by T5 |
+| Catalog gate | `npm run catalog:verify` | exit 0; 48 products, 10 categories, 48 local images, 0 fallbacks, 0 residual accent tokens, 0 double-space defects |
+| Dev server routes | `Invoke-WebRequest` on `localhost:4300` | `/` 200 html 640 B, `/catalog` 200, `/catalog/mascotas` 200, `/catalog/no-existe` 200, `/dev/model` 200, `/dev/items` 200, `/no-existe` 200 (SPA fallback) |
+| Served catalog | `Invoke-WebRequest /data/catalog.json` | 200 `application/json`, 68,481 bytes |
+| Product image | `Invoke-WebRequest /products/10-algodones-de-azucar/imagen.png` | 200 `image/png`, 25,802 bytes |
+| Document shell | parse of the served HTML | `lang="es"`, `<title>Yokai Hardcore Store</title>`, `<app-root>` present |
+| No CDN, no `G:\` | grep the built `dist/**/*.js` and `*.css` for `cloudfront` / `G:\` | **0 matches** |
+| Placeholder contract | count `category-visual--v` in the built CSS | **6** classes, matching `CATEGORY_PLACEHOLDER_VARIANTS` |
+
+Data facts the new specs pin, measured rather than assumed:
+
+- 48 products / 10 categories; category order in the document is `alimento…`,
+  `armeria-de-aventurero`, `armeria-de-heroe`, `artefactos-magicos`, `bosque-de-las-ninfas`,
+  `cofres-ofertas`, `emboscada-a-jugadores`, `mascotas`, `resucitacion`, `yokai-coins`, but
+  **products are ordered alphabetically by name**, not grouped by category.
+- `selectFeatured(entries, 4)` therefore yields the first product of
+  `alimento…` → `bosque-de-las-ninfas` → `artefactos-magicos` → `armeria-de-aventurero`.
+- `mascotas` holds exactly one product, `CUPÓN CANJEABLE PARA FAMILIAR`, at $5.00.
+- Price ceilings against the real catalog: `2` → **25 products**, `1` → 12, `3` → 34, `4` → 38,
+  `5` → 46, `10` → 48.
+- `price-asc` over all 48 runs `$1.00` … `$10.00`; `name-asc` with the `es` collator puts
+  `3 Ramen` first because `numeric: true` orders the quantity prefix by value.
+
+**Not verified here**: nobody has looked at the pages in a browser. The dev-server matrix proves
+serving and the specs prove rendering into jsdom, but there is no WebGL and no layout engine in
+either. No browser tool is connected in this session, so the visual pass is still open — the same
+gap T3/T4 recorded.
+
 ## Resolved decisions
 
+- **RESOLVED in T5 — the catalog is a served asset, not an imported module.**
+  `angular.json` copies `data/catalog.json` to `/data/catalog.json`, and
+  `core/catalog/catalog-loader.ts` fetches it with a plain `fetch` wrapped in
+  `@angular/core`'s `resource()`. One source of truth with no generated second copy under
+  `src/`, and the asynchronous shape Phase 2 needs when the same URL answers from the
+  Spring Boot API. `httpResource` was rejected because it lives behind `provideHttpClient`,
+  which would add a provider and a dependency the storefront does not otherwise use.
+- **RESOLVED in T5 — the catalog is validated at the boundary, never cast.**
+  `catalog-validation.ts` returns the app's own types and structurally drops `imageUrl` and
+  `sourceFolder`; `Category.productCount` is checked against the products, then dropped.
+  "Never point an `<img>` at the Tebex CDN" and "never render generator provenance" are
+  therefore properties of the type rather than rules someone has to remember.
+- **RESOLVED in T5 — search folds accents and never touches slugs.** `foldForSearch` is
+  NFD, strip combining marks, lowercase. The catalog is itself inconsistent (`AZUCAR` in a
+  name, `Azúcar` in a description) and a Spanish user on an English layout cannot type
+  accents. The surface is product name, product description and category name; slugs are
+  URL identity and would make two-letter queries hit arbitrary records. Multi-term is AND.
+- **RESOLVED in T5 — the category is the URL; text, price and sort are signals.**
+  `/catalog` and `/catalog/:slug` are two routes loading one component, so a category view
+  is linkable and the param arrives as an input through `withComponentInputBinding`. The
+  other controls stay in signals: putting them in the URL would mean a router navigation
+  and a history entry per keystroke. The accepted cost is that opening another category
+  recreates the component and clears them.
+- **RESOLVED in T5 — header and footer live in `app.*`, not in `shared/`.**
+  `shared/README.md` scopes that folder to pieces with more than one consumer and forbids
+  routing inside it, and a `shell/` folder would be a fifth top-level folder the
+  architectural contract does not define.
+- **RESOLVED in T5 — cards are presentational articles; the slice supplies the link.**
+  `ProductCard` and `CategoryCard` render `<article>` and inject nothing (no `RouterLink`,
+  no store), which is what lets the landing page and the catalog grid share them. Category
+  cards are wrapped in `<a routerLink>`. Product cards are not links yet: detail is T6.
+- **RESOLVED in T5 — a `null` image is a state, not an error.** 3 of 10 categories have no
+  banner, so `CategoryCard` renders `categoryMonogram` over one of six gradient classes
+  chosen by an FNV-1a hash of the slug: stable across reloads, varied across cards, colours
+  kept in `styles.scss` rather than in a sanitised style binding. A product with
+  `imagePath: null` renders a neutral block, never a broken `<img>` and never the CDN.
+- **RESOLVED in T5 — `tsconfig.app.json` excludes `src/**/testing/**`.** Spec-only
+  fixtures read the committed catalog through `node:fs` while the app program sets
+  `types: []`. They stay type-checked by `tsconfig.spec.json`, which includes the `node`
+  types, and nothing under `testing/` is reachable from `main.ts`.
 - **RESOLVED in T2 — runtime assets live in `public/`, not `src/assets/`.** Angular 22
   serves runtime assets from the generated `assets` glob, which already reads `public/`.
   The scaffold created `src/assets/` but never wired it into `angular.json`, so it was dead
@@ -533,27 +628,27 @@ warn precisely and keep rendering.
 
 ## Next step
 
-**T4 is done and verified; T3b closed the gap that verification found.** The remaining
-unverified surface is a single item, recorded honestly and not hidden:
+**T5 is done: the storefront has a shell, a landing page and working catalog browsing for all 10
+categories and all 48 products.** Two gaps are recorded rather than hidden:
 
-- **Nobody has seen the 3D previews rendered.** jsdom has no WebGL, so every check so far is
-  structural: the parser produces the right numbers, the mixer moves the bones, the bundle
-  builds, the routes serve. Visual confirmation needs a real browser. A dev server serves
-  `http://localhost:4300/dev/model` (animated Tlaloc) and `http://localhost:4300/dev/items`
-  (the four item models with a `display`-context switcher). Attempted a browser check through
-  BrowserOS neo's MCP tools; **they are not connected in this session** (only `engram`,
-  `context7`, `elevenlabs` and `opencode` are), so the visual step is still open. No silent
-  fallback to another browser surface was taken.
+- **Nobody has looked at the UI in a browser.** The dev-server matrix proves the routes serve and
+  the specs prove the DOM they render into jsdom, but jsdom has no layout engine and no WebGL. No
+  browser tool is connected in this session (only `engram`, `context7`, `elevenlabs` and
+  `opencode`), so the visual pass is still open — the same gap T3/T4 recorded, now covering the
+  storefront as well as the 3D previews.
+- **Product cards are not links.** `ProductCard` is presentational and the catalog grid does not
+  wrap it, because there is no product route until T6. The landing page says so in one line of
+  copy instead of shipping a card that looks clickable and is not.
 
-Next up is T5 (catalog UI). T5–T7 are unblocked:
+Next is **T6 (product detail + 3D preview)**. What it can build on:
 
-- **T4** — Minecraft item model renderer (model JSON + texture → 3D preview).
-- **T5** — catalog UI. T6 consumes both: the product detail view renders `tlaloc.bbmodel`
-  through `createBbModelScene`, which is now a stable contract.
-
-The viewer component at `src/app/three/bbmodel-viewer.ts` is deliberately generic: a
-`modelUrl` input plus clip buttons, so T6 can reuse it instead of writing a second renderer.
-Its `/dev/model` route is the visual harness for T4 and T9.
+- `src/app/three/bbmodel-viewer.ts` takes a `modelUrl` input and renders any `.bbmodel` through
+  `createBbModelScene`; it needs no change to be reused by a detail page.
+- `shared/ProductCard` is already presentational and router-free, so T6 wraps it in the link the
+  grid is missing today, and `CatalogStore` already exposes `categories`, `entries`, `prices`,
+  `findCategory` and `countInCategory`.
+- A product route must decide what to do while `modelPath` is `null` for all 48 products (see the
+  open product decision below) — image-first, model when one exists.
 
 **Open product decision carried from T2**: `modelPath` is `null` for all 48 products.
 The 4 item models in the repo (`tlaloc_hat`, `tlaloc_staff`, `netherite_sword`, `paper`) are
