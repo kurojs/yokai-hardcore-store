@@ -4,7 +4,9 @@
  * The product decision this page encodes: the repository's `.bbmodel` and item models are
  * landing decoration, never a SKU presentation, so `modelPath` is `null` for every product and
  * this page does not import anything from `three/`. The hero is the real store photography that
- * ships in `public/products/<slug>/imagen.png`.
+ * ships under `public/products/<slug>/`, whose extension is **not** uniform: of the 48 products,
+ * 35 are `.png`, 9 `.jpeg`, 3 `.jpg` and 1 `.gif`. So the page always renders `imagePath` from the
+ * catalog and never composes a filename — a `.png` convention would have broken 13 products.
  *
  * The page has four states and all four are real: loading, a load failure with a retry, an
  * unknown slug, and the product. The unknown slug case is the one worth naming: `/product/…` is
