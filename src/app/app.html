@@ -1,33 +1,55 @@
-<a class="skip-link" href="#main">Saltar al contenido</a>
+<a class="skip-link" href="#main">{{ text().skipToContent }}</a>
 
 <header class="shell__header">
   <div class="page-width shell__bar">
-    <a class="brand" routerLink="/" aria-label="Yokai Hardcore Store, ir al inicio">
+    <a class="brand" routerLink="/" [attr.aria-label]="text().brandHomeLabel">
       <span class="brand__mark" aria-hidden="true">Y</span>
       <span class="brand__text">Yokai Hardcore</span>
     </a>
 
     <div class="shell__actions">
-      <nav class="nav" aria-label="Navegación principal">
+      <nav class="nav" [attr.aria-label]="text().primaryNavLabel">
         <a
           routerLink="/"
           routerLinkActive="is-active"
           ariaCurrentWhenActive="page"
           [routerLinkActiveOptions]="{ exact: true }"
-          >Inicio</a
+          >{{ text().navHome }}</a
         >
-        <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page"
-          >Catálogo</a
-        >
+        <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page">{{
+          text().navCatalog
+        }}</a>
       </nav>
+
+      <!-- A native select is the most reliable keyboard- and screen-reader-operable language
+           control there is: it is one tab stop, the platform provides the list behaviour, and
+           the visible label is translated with everything else. The status region below
+           announces the change, because picking an option is not self-announcing. -->
+      <div class="language-switcher">
+        <label class="language-switcher__label" for="language-select">{{
+          text().languageLabel
+        }}</label>
+        <select
+          id="language-select"
+          class="language-switcher__select"
+          (change)="onLanguageChange($event)"
+        >
+          @for (option of languageOptions; track option.value) {
+            <option [value]="option.value" [selected]="option.value === language()">{{
+              option.label
+            }}</option>
+          }
+        </select>
+      </div>
 
       <!-- The count is the link's visible text and part of its accessible name, so the header
            says how much is in the cart and where to go. The hidden status repeats the text: a
            live region announces a changed count politely without taking focus from the page. -->
       <a class="cart-indicator" routerLink="/cart"
-        >{{ cartLabel() }}<span class="visually-hidden">. {{ cartLinkHint }}</span></a
+        >{{ cartLabel() }}<span class="visually-hidden">. {{ text().cartLinkHint }}</span></a
       >
       <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
+      <p class="visually-hidden" role="status" aria-live="polite">{{ announcement() }}</p>
     </div>
   </div>
 </header>
@@ -39,6 +61,6 @@
 <footer class="shell__footer">
   <div class="page-width shell__footer-inner">
     <p class="shell__footer-brand">Yokai Hardcore Store</p>
-    <p class="shell__footer-note">Tienda de demostración: ningún pago se procesa.</p>
+    <p class="shell__footer-note">{{ text().footerNote }}</p>
   </div>
 </footer>

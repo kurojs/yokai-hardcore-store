@@ -10,14 +10,19 @@
  * signals owned by this component, so navigating between two category URLs recreates the
  * component and clears them. Keeping them in the URL would mean a router navigation — and a
  * history entry — for every keystroke in the search box.
+ *
+ * The heading and lead are computed because they depend on state (category, load failure,
+ * unknown slug) and on the active language. A category's own name and description are catalog
+ * data and are rendered exactly as they arrived.
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 import { applyQuery, type CatalogSort } from '../../core/catalog/catalog-query';
 import { CatalogStore } from '../../core/catalog/catalog-store';
-import { productCountLabel } from '../../core/ui-text';
+import { LanguageStore } from '../../core/i18n/language-store';
 import { ProductCard } from '../../shared/product-card';
 import { CatalogFilterBar } from './catalog-filter-bar';
 
@@ -30,9 +35,13 @@ import { CatalogFilterBar } from './catalog-filter-bar';
 })
 export class CatalogPage {
   private readonly catalog = inject(CatalogStore);
+  private readonly i18n = inject(LanguageStore);
+  private readonly documentTitle = inject(Title);
 
   /** Category slug from the route; `undefined` on `/catalog`. */
   readonly slug = input<string | undefined>();
+
+  protected readonly text = this.i18n.text;
 
   protected readonly isReady = this.catalog.isReady;
   protected readonly errorMessage = this.catalog.errorMessage;
@@ -46,40 +55,48 @@ export class CatalogPage {
     () => this.isReady() && this.slug() !== undefined && this.category() === null,
   );
 
-  protected readonly text = signal('');
+  protected readonly searchText = signal('');
   protected readonly maxPriceUsd = signal<number | null>(null);
   protected readonly sort = signal<CatalogSort>('featured');
 
   protected readonly results = computed(() =>
     applyQuery(this.catalog.entries(), {
-      text: this.text(),
+      text: this.searchText(),
       categoryId: this.category()?.id ?? null,
       maxPriceUsd: this.maxPriceUsd(),
       sort: this.sort(),
     }),
   );
 
-  protected readonly countLabel = computed(() => productCountLabel(this.results().length));
+  protected readonly countLabel = computed(() =>
+    this.text().productCountLabel(this.results().length),
+  );
 
   protected readonly heading = computed(() => {
     const category = this.category();
     if (category !== null) return category.name;
-    if (!this.isReady()) return 'Catálogo';
-    return this.isUnknownCategory() ? 'Categoría no encontrada' : 'Todos los productos';
+    if (!this.isReady()) return this.text().catalogEyebrow;
+    return this.isUnknownCategory()
+      ? this.text().catalogUnknownCategoryHeading
+      : this.text().catalogAllProducts;
   });
 
   protected readonly lead = computed(() => {
     const category = this.category();
     if (category !== null) return category.description;
-    if (this.errorMessage() !== null) return 'No está disponible por ahora.';
-    if (!this.isReady()) return 'Cargando el catálogo…';
+    if (this.errorMessage() !== null) return this.text().catalogLeadUnavailable;
+    if (!this.isReady()) return this.text().catalogLeadLoading;
     return this.isUnknownCategory()
-      ? 'Puede que la categoría haya cambiado de nombre o ya no exista.'
-      : 'Busca, filtra y ordena todo lo que la tienda tiene para ofrecer.';
+      ? this.text().catalogLeadUnknownCategory
+      : this.text().catalogLeadAll;
   });
 
+  constructor() {
+    effect(() => this.documentTitle.setTitle(this.text().catalogDocumentTitle));
+  }
+
   protected clearFilters(): void {
-    this.text.set('');
+    this.searchText.set('');
     this.maxPriceUsd.set(null);
     this.sort.set('featured');
   }

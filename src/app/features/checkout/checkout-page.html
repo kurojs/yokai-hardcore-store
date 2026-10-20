@@ -1,59 +1,65 @@
 @if (errorMessage(); as message) {
   <section class="page-width state" role="alert">
-    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <h1 class="state__title">{{ text().catalogLoadErrorTitle }}</h1>
     <p class="state__message">{{ message }}</p>
-    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+    <button type="button" class="button button--primary" (click)="retry()">
+      {{ text().retryLabel }}
+    </button>
   </section>
 } @else if (!isReady()) {
-  <p class="page-width state state--loading" aria-live="polite">{{ loadingMessage }}</p>
+  <p class="page-width state state--loading" aria-live="polite">
+    {{ text().checkoutLoading }}
+  </p>
 } @else if (confirmation(); as order) {
   <section
     class="page-width state checkout-confirmation"
     aria-labelledby="checkout-confirmation-title"
   >
     <h1 #confirmationHeading id="checkout-confirmation-title" class="state__title" tabindex="-1">
-      {{ confirmationTitle }}
+      {{ text().checkoutConfirmationTitle }}
     </h1>
-    <p class="state__message">{{ confirmationMessage }}</p>
+    <p class="state__message">{{ text().checkoutConfirmationMessage }}</p>
 
     <section class="receipt" aria-labelledby="receipt-title">
-      <h2 id="receipt-title" class="receipt__title">{{ receiptTitle }}</h2>
+      <h2 id="receipt-title" class="receipt__title">{{ text().demoReceiptTitle }}</h2>
       <dl class="receipt__rows">
         <div class="receipt__row">
-          <dt>{{ referenceLabel }}</dt>
+          <dt>{{ text().orderReferenceLabel }}</dt>
           <dd class="receipt__reference">{{ order.reference }}</dd>
         </div>
         <div class="receipt__row">
-          <dt>{{ usernameLabel }}</dt>
+          <dt>{{ text().minecraftUsernameLabel }}</dt>
           <dd>{{ order.username }}</dd>
         </div>
         <div class="receipt__row">
-          <dt>{{ itemsLabel }}</dt>
+          <dt>{{ text().orderSummaryItemsLabel }}</dt>
           <dd>{{ itemCountText(order.itemCount) }}</dd>
         </div>
         <div class="receipt__row receipt__row--total">
-          <dt>{{ totalLabel }}</dt>
+          <dt>{{ text().orderSummaryTotalLabel }}</dt>
           <dd class="receipt__money">{{ order.totalUsd | price }}</dd>
         </div>
       </dl>
     </section>
 
-    <a class="button button--primary" routerLink="/catalog">{{ backLabel }}</a>
+    <a class="button button--primary" routerLink="/catalog">{{ text().checkoutBackLabel }}</a>
   </section>
 } @else if (isRedirecting()) {
-  <p class="page-width state state--loading" aria-live="polite">{{ redirectMessage }}</p>
+  <p class="page-width state state--loading" aria-live="polite">
+    {{ text().checkoutRedirect }}
+  </p>
 } @else {
   <div class="page-width checkout">
     <header class="checkout__head">
-      <h1 class="checkout__title">{{ title }}</h1>
-      <p class="checkout__lead">{{ lead }}</p>
+      <h1 class="checkout__title">{{ text().checkoutTitle }}</h1>
+      <p class="checkout__lead">{{ text().checkoutLead }}</p>
     </header>
 
     <div class="checkout__layout">
       <section class="checkout__review" aria-labelledby="checkout-review-title">
         <div class="checkout__review-head">
-          <h2 id="checkout-review-title">{{ reviewTitle }}</h2>
-          <a class="checkout__edit" routerLink="/cart">{{ editCartLabel }}</a>
+          <h2 id="checkout-review-title">{{ text().checkoutReviewTitle }}</h2>
+          <a class="checkout__edit" routerLink="/cart">{{ text().checkoutEditCartLabel }}</a>
         </div>
 
         <ul class="review">
@@ -67,6 +73,7 @@
         </ul>
 
         <app-order-summary
+          [text]="text()"
           [itemCount]="totals().itemCount"
           [subtotalUsd]="totals().subtotalUsd"
           [totalUsd]="totals().totalUsd"
@@ -74,10 +81,10 @@
       </section>
 
       <form class="checkout__form" (submit)="submit($event)" novalidate>
-        <h2 class="checkout__form-title">{{ deliveryTitle }}</h2>
+        <h2 class="checkout__form-title">{{ text().checkoutDeliveryTitle }}</h2>
 
         <div class="field">
-          <label class="field__label" for="mc-username">{{ usernameLabel }}</label>
+          <label class="field__label" for="mc-username">{{ text().minecraftUsernameLabel }}</label>
           <input
             #usernameInput
             id="mc-username"
@@ -96,16 +103,16 @@
             spellcheck="false"
             required
           />
-          <p id="mc-username-help" class="field__help">{{ usernameHelp }}</p>
+          <p id="mc-username-help" class="field__help">{{ text().minecraftUsernameHelp }}</p>
           @if (showError()) {
             <p id="mc-username-error" class="field__error" role="alert">{{ errorText() }}</p>
           }
         </div>
 
-        <p class="checkout__demo" role="note">{{ demoDisclosure }}</p>
+        <p class="checkout__demo" role="note">{{ text().checkoutDemoDisclosure }}</p>
 
         <button type="submit" class="button button--primary checkout__submit">
-          {{ submitLabel }}
+          {{ text().checkoutSubmitLabel }}
         </button>
       </form>
     </div>

@@ -1,20 +1,22 @@
 @if (errorMessage(); as message) {
   <section class="page-width state" role="alert">
-    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <h1 class="state__title">{{ text().catalogLoadErrorTitle }}</h1>
     <p class="state__message">{{ message }}</p>
-    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+    <button type="button" class="button button--primary" (click)="retry()">
+      {{ text().retryLabel }}
+    </button>
   </section>
 } @else if (!isReady()) {
-  <p class="page-width state state--loading" aria-live="polite">{{ loadingMessage }}</p>
+  <p class="page-width state state--loading" aria-live="polite">{{ text().cartLoading }}</p>
 } @else if (isEmpty()) {
   <section class="page-width state cart-empty">
-    <h1 class="state__title">{{ emptyTitle }}</h1>
-    <p class="state__message">{{ emptyMessage }}</p>
-    <a class="button button--primary" routerLink="/catalog">{{ emptyAction }}</a>
+    <h1 class="state__title">{{ text().cartEmptyTitle }}</h1>
+    <p class="state__message">{{ text().cartEmptyMessage }}</p>
+    <a class="button button--primary" routerLink="/catalog">{{ text().cartEmptyAction }}</a>
   </section>
 } @else {
   <div class="page-width cart">
-    <h1 class="cart__title">{{ title }}</h1>
+    <h1 class="cart__title">{{ text().cartTitle }}</h1>
 
     <div class="cart__layout">
       <ul class="lines">
@@ -34,51 +36,53 @@
               }}</a>
               <p class="line__category">{{ line.category.name }}</p>
               <p class="line__unit">
-                <span class="line__caption">{{ unitPriceLabel }}</span>
+                <span class="line__caption">{{ text().unitPriceLabel }}</span>
                 <span class="line__money">{{ line.unitPriceUsd | price }}</span>
               </p>
             </div>
 
             <div class="line__quantity">
-              <span class="line__caption">{{ quantityCaption }}</span>
+              <span class="line__caption">{{ text().quantityLabel }}</span>
               <app-quantity-stepper
+                [text]="text()"
                 [value]="line.quantity"
                 [max]="maxQuantity"
-                [label]="quantityLabel(line.product.name)"
-                [increaseLabel]="increaseLabel(line.product.name)"
-                [decreaseLabel]="decreaseLabel(line.product.name)"
+                [label]="text().cartLineQuantityLabel(line.product.name)"
+                [increaseLabel]="text().cartLineIncreaseLabel(line.product.name)"
+                [decreaseLabel]="text().cartLineDecreaseLabel(line.product.name)"
                 (valueChange)="setQuantity(line.product.slug, $event)"
               />
             </div>
 
             <p class="line__total">
-              <span class="line__caption">{{ totalLabel }}</span>
+              <span class="line__caption">{{ text().orderSummaryTotalLabel }}</span>
               <span class="line__money">{{ line.lineTotalUsd | price }}</span>
             </p>
 
             <button
               type="button"
               class="line__remove"
-              [attr.aria-label]="removeLabelFor(line.product.name)"
+              [attr.aria-label]="text().cartRemoveLabel(line.product.name)"
               (click)="remove(line.product.slug)"
             >
-              {{ removeLabel }}
+              {{ text().cartRemoveAction }}
             </button>
           </li>
         }
       </ul>
 
-      <aside class="cart__aside" [attr.aria-label]="summaryTitle">
+      <aside class="cart__aside" [attr.aria-label]="text().cartSummaryTitle">
         <app-order-summary
+          [text]="text()"
           [itemCount]="totals().itemCount"
           [subtotalUsd]="totals().subtotalUsd"
           [totalUsd]="totals().totalUsd"
-          [heading]="summaryTitle"
+          [heading]="text().cartSummaryTitle"
         />
         <a class="cart__checkout button button--primary" routerLink="/checkout">{{
-          checkoutLabel
+          text().cartCheckoutLabel
         }}</a>
-        <a class="cart__continue" routerLink="/catalog">{{ continueLabel }}</a>
+        <a class="cart__continue" routerLink="/catalog">{{ text().cartContinueLabel }}</a>
       </aside>
     </div>
   </div>

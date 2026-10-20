@@ -34,6 +34,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 import { CartStore } from '../../core/cart/cart-store';
 import { buildCartLineViews } from '../../core/cart/cart-summary';
@@ -41,28 +42,7 @@ import { CatalogStore } from '../../core/catalog/catalog-store';
 import { createDemoOrder, type DemoOrder } from '../../core/checkout/demo-order';
 import { ORDER_REFERENCE_NONCE_SPACE } from '../../core/checkout/order-reference';
 import { validateMinecraftUsername } from '../../core/checkout/username';
-import {
-  CHECKOUT_BACK_LABEL,
-  CHECKOUT_CONFIRMATION_MESSAGE,
-  CHECKOUT_CONFIRMATION_TITLE,
-  CHECKOUT_DELIVERY_TITLE,
-  CHECKOUT_DEMO_DISCLOSURE,
-  CHECKOUT_EDIT_CART_LABEL,
-  CHECKOUT_LEAD,
-  CHECKOUT_LOADING_MESSAGE,
-  CHECKOUT_REDIRECT_MESSAGE,
-  CHECKOUT_REVIEW_TITLE,
-  CHECKOUT_SUBMIT_LABEL,
-  CHECKOUT_TITLE,
-  DEMO_RECEIPT_TITLE,
-  MINECRAFT_USERNAME_HELP,
-  MINECRAFT_USERNAME_LABEL,
-  ORDER_REFERENCE_LABEL,
-  ORDER_SUMMARY_ITEMS_LABEL,
-  ORDER_SUMMARY_TOTAL_LABEL,
-  itemCountLabel,
-  minecraftUsernameProblemMessage,
-} from '../../core/ui-text';
+import { LanguageStore } from '../../core/i18n/language-store';
 import { OrderSummary } from '../../shared/order-summary';
 import { PricePipe } from '../../shared/price.pipe';
 
@@ -77,6 +57,10 @@ export class CheckoutPage {
   private readonly catalog = inject(CatalogStore);
   private readonly cart = inject(CartStore);
   private readonly router = inject(Router);
+  private readonly i18n = inject(LanguageStore);
+  private readonly documentTitle = inject(Title);
+
+  protected readonly text = this.i18n.text;
 
   protected readonly isLoading = this.catalog.isLoading;
   protected readonly errorMessage = this.catalog.errorMessage;
@@ -106,7 +90,7 @@ export class CheckoutPage {
 
   protected readonly errorText = computed(() => {
     const result = this.validation();
-    return result.ok ? '' : minecraftUsernameProblemMessage(result.problem);
+    return result.ok ? '' : this.text().usernameProblemMessage(result.problem);
   });
 
   /**
@@ -122,25 +106,6 @@ export class CheckoutPage {
   private readonly usernameInput = viewChild<ElementRef<HTMLInputElement>>('usernameInput');
   private readonly confirmationHeading = viewChild<ElementRef<HTMLElement>>('confirmationHeading');
 
-  protected readonly title = CHECKOUT_TITLE;
-  protected readonly lead = CHECKOUT_LEAD;
-  protected readonly loadingMessage = CHECKOUT_LOADING_MESSAGE;
-  protected readonly redirectMessage = CHECKOUT_REDIRECT_MESSAGE;
-  protected readonly reviewTitle = CHECKOUT_REVIEW_TITLE;
-  protected readonly editCartLabel = CHECKOUT_EDIT_CART_LABEL;
-  protected readonly deliveryTitle = CHECKOUT_DELIVERY_TITLE;
-  protected readonly usernameLabel = MINECRAFT_USERNAME_LABEL;
-  protected readonly usernameHelp = MINECRAFT_USERNAME_HELP;
-  protected readonly submitLabel = CHECKOUT_SUBMIT_LABEL;
-  protected readonly demoDisclosure = CHECKOUT_DEMO_DISCLOSURE;
-  protected readonly confirmationTitle = CHECKOUT_CONFIRMATION_TITLE;
-  protected readonly confirmationMessage = CHECKOUT_CONFIRMATION_MESSAGE;
-  protected readonly receiptTitle = DEMO_RECEIPT_TITLE;
-  protected readonly referenceLabel = ORDER_REFERENCE_LABEL;
-  protected readonly itemsLabel = ORDER_SUMMARY_ITEMS_LABEL;
-  protected readonly totalLabel = ORDER_SUMMARY_TOTAL_LABEL;
-  protected readonly backLabel = CHECKOUT_BACK_LABEL;
-
   constructor() {
     // Navigating is the redirect. The template shows a short message while it happens so the
     // page never flashes the form it is about to abandon.
@@ -154,10 +119,12 @@ export class CheckoutPage {
       const heading = this.confirmationHeading()?.nativeElement;
       if (heading !== undefined) heading.focus();
     });
+
+    effect(() => this.documentTitle.setTitle(this.text().checkoutDocumentTitle));
   }
 
   protected itemCountText(count: number): string {
-    return itemCountLabel(count);
+    return this.text().itemCountLabel(count);
   }
 
   protected onInput(event: Event): void {

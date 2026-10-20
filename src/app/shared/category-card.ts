@@ -17,7 +17,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 
 import type { Category } from '../core/catalog/catalog-model';
 import { categoryMonogram, categoryPlaceholderVariant } from '../core/catalog/category-visual';
-import { productCountLabel } from '../core/ui-text';
+import type { UiText } from '../core/i18n/ui-text';
 
 @Component({
   selector: 'app-category-card',
@@ -131,10 +131,15 @@ import { productCountLabel } from '../core/ui-text';
   `,
 })
 export class CategoryCard {
+  /** The active dictionary, supplied by the page that renders the card. */
+  readonly text = input.required<UiText>();
+
   readonly category = input.required<Category>();
   readonly productCount = input.required<number>();
 
   protected readonly monogram = computed(() => categoryMonogram(this.category().name));
   protected readonly variant = computed(() => categoryPlaceholderVariant(this.category().slug));
-  protected readonly countLabel = computed(() => productCountLabel(this.productCount()));
+  protected readonly countLabel = computed(() =>
+    this.text().productCountLabel(this.productCount()),
+  );
 }

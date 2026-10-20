@@ -1,31 +1,28 @@
 <section class="hero">
   <div class="page-width">
     <div class="hero__inner">
-      <p class="hero__eyebrow">Comunidad de Minecraft</p>
-      <h1 class="hero__title">Equípate para el inframundo</h1>
-      <p class="hero__lead">
-        Alimentos, artefactos y tesoros de Yokai Hardcore, listos para tu próxima partida. Explora
-        las categorías y arma tu inventario.
-      </p>
+      <p class="hero__eyebrow">{{ text().homeEyebrow }}</p>
+      <h1 class="hero__title">{{ text().homeTitle }}</h1>
+      <p class="hero__lead">{{ text().homeLead }}</p>
 
       <div class="hero__actions">
-        <a class="button button--primary" routerLink="/catalog">Ver catálogo</a>
-        <a class="button" href="#categorias">Explorar categorías</a>
+        <a class="button button--primary" routerLink="/catalog">{{ text().homeCatalogAction }}</a>
+        <a class="button" href="#categorias">{{ text().homeCategoriesAction }}</a>
       </div>
 
       @if (isReady()) {
         <dl class="hero__stats">
           <div class="hero__stat">
-            <dt>Productos</dt>
+            <dt>{{ text().homeStatProducts }}</dt>
             <dd>{{ countLabel() }}</dd>
           </div>
           <div class="hero__stat">
-            <dt>Categorías</dt>
+            <dt>{{ text().homeStatCategories }}</dt>
             <dd>{{ categoryCount() }}</dd>
           </div>
           @if (fromPrice(); as price) {
             <div class="hero__stat">
-              <dt>Desde</dt>
+              <dt>{{ text().homeStatFrom }}</dt>
               <dd>{{ price }}</dd>
             </div>
           }
@@ -37,26 +34,30 @@
 
 @if (errorMessage(); as message) {
   <section class="page-width state" role="alert">
-    <h2 class="state__title">No pudimos cargar el catálogo</h2>
+    <h2 class="state__title">{{ text().catalogLoadErrorTitle }}</h2>
     <p class="state__message">{{ message }}</p>
-    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+    <button type="button" class="button button--primary" (click)="retry()">
+      {{ text().retryLabel }}
+    </button>
   </section>
 } @else if (!isReady()) {
-  <p class="page-width state state--loading" aria-live="polite">Cargando catálogo…</p>
+  <p class="page-width state state--loading" aria-live="polite">{{ text().homeLoading }}</p>
 } @else {
   <section class="section page-width" id="categorias" aria-labelledby="categorias-title">
     <div class="section__head">
-      <h2 id="categorias-title">Categorías</h2>
-      <p class="section__note">
-        {{ countLabel() }} repartidos en {{ categoryCount() }} categorías.
-      </p>
+      <h2 id="categorias-title">{{ text().categoriesTitle }}</h2>
+      <p class="section__note">{{ categoriesSummary() }}</p>
     </div>
 
     <ul class="card-grid">
       @for (category of categories(); track category.id) {
         <li>
           <a class="card-link" [routerLink]="['/catalog', category.slug]">
-            <app-category-card [category]="category" [productCount]="countIn(category.id)" />
+            <app-category-card
+              [category]="category"
+              [productCount]="countIn(category.id)"
+              [text]="text()"
+            />
           </a>
         </li>
       }
@@ -65,10 +66,8 @@
 
   <section class="section page-width" aria-labelledby="destacados-title">
     <div class="section__head">
-      <h2 id="destacados-title">Destacados</h2>
-      <p class="section__note">
-        Una muestra de la colección. Cada producto tiene su ficha completa.
-      </p>
+      <h2 id="destacados-title">{{ text().featuredTitle }}</h2>
+      <p class="section__note">{{ text().featuredNote }}</p>
     </div>
 
     <ul class="card-grid">

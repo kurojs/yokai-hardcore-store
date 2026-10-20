@@ -20,33 +20,21 @@
  * The totals shown here are `CartStore.totals`, which is `cartTotals(lines, catalogPrices)`. The
  * checkout page binds the same signal into the same `OrderSummary` component; there is no second
  * arithmetic implementation to disagree with this one.
+ *
+ * Every accessible name in a row is built from the active dictionary plus the product name, so a
+ * screen reader hears "Quitar 10 ALGODONES DE AZUCAR del carrito" and a Japanese visitor hears
+ * the same sentence in Japanese with the Spanish product name inside it.
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 import { CatalogStore } from '../../core/catalog/catalog-store';
 import { CartStore } from '../../core/cart/cart-store';
 import { MAX_LINE_QUANTITY } from '../../core/cart/cart-model';
 import { buildCartLineViews } from '../../core/cart/cart-summary';
-import {
-  CART_CHECKOUT_LABEL,
-  CART_CONTINUE_LABEL,
-  CART_EMPTY_ACTION,
-  CART_EMPTY_MESSAGE,
-  CART_EMPTY_TITLE,
-  CART_LOADING_MESSAGE,
-  CART_REMOVE_LABEL,
-  CART_SUMMARY_TITLE,
-  CART_TITLE,
-  ORDER_SUMMARY_TOTAL_LABEL,
-  QUANTITY_LABEL,
-  UNIT_PRICE_LABEL,
-  cartLineDecreaseLabel,
-  cartLineIncreaseLabel,
-  cartLineQuantityLabel,
-  cartRemoveLabel,
-} from '../../core/ui-text';
+import { LanguageStore } from '../../core/i18n/language-store';
 import { OrderSummary } from '../../shared/order-summary';
 import { PricePipe } from '../../shared/price.pipe';
 import { QuantityStepper } from '../../shared/quantity-stepper';
@@ -61,6 +49,10 @@ import { QuantityStepper } from '../../shared/quantity-stepper';
 export class CartPage {
   private readonly catalog = inject(CatalogStore);
   private readonly cart = inject(CartStore);
+  private readonly i18n = inject(LanguageStore);
+  private readonly documentTitle = inject(Title);
+
+  protected readonly text = this.i18n.text;
 
   protected readonly isLoading = this.catalog.isLoading;
   protected readonly errorMessage = this.catalog.errorMessage;
@@ -85,23 +77,9 @@ export class CartPage {
 
   protected readonly maxQuantity = MAX_LINE_QUANTITY;
 
-  protected readonly title = CART_TITLE;
-  protected readonly loadingMessage = CART_LOADING_MESSAGE;
-  protected readonly emptyTitle = CART_EMPTY_TITLE;
-  protected readonly emptyMessage = CART_EMPTY_MESSAGE;
-  protected readonly emptyAction = CART_EMPTY_ACTION;
-  protected readonly summaryTitle = CART_SUMMARY_TITLE;
-  protected readonly continueLabel = CART_CONTINUE_LABEL;
-  protected readonly checkoutLabel = CART_CHECKOUT_LABEL;
-  protected readonly removeLabel = CART_REMOVE_LABEL;
-  protected readonly unitPriceLabel = UNIT_PRICE_LABEL;
-  protected readonly quantityCaption = QUANTITY_LABEL;
-  protected readonly totalLabel = ORDER_SUMMARY_TOTAL_LABEL;
-
-  protected readonly quantityLabel = cartLineQuantityLabel;
-  protected readonly increaseLabel = cartLineIncreaseLabel;
-  protected readonly decreaseLabel = cartLineDecreaseLabel;
-  protected readonly removeLabelFor = cartRemoveLabel;
+  constructor() {
+    effect(() => this.documentTitle.setTitle(this.text().cartDocumentTitle));
+  }
 
   /** Writes the new quantity through the store; clamping and removal stay in `core/`. */
   protected setQuantity(slug: string, quantity: number): void {

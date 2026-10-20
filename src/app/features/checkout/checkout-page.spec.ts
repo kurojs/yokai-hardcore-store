@@ -19,7 +19,7 @@ import { CartStore } from '../../core/cart/cart-store';
 import { CART_STORAGE_KEY } from '../../core/cart/cart-persistence';
 import { readCommittedCatalogDocument } from '../../core/catalog/testing/committed-catalog';
 import { jsonResponse } from '../../core/catalog/testing/http';
-import { CHECKOUT_CONFIRMATION_MESSAGE, CHECKOUT_DEMO_DISCLOSURE } from '../../core/ui-text';
+import { ES_UI_TEXT } from '../../core/i18n/dictionaries/es';
 import { CheckoutPage } from './checkout-page';
 
 @Component({ selector: 'app-spec-cart', template: '' })
@@ -140,7 +140,7 @@ describe('CheckoutPage', () => {
     await waitForForm(fixture, host);
 
     const disclosure = host.querySelector('.checkout__demo');
-    expect(disclosure?.textContent?.trim()).toBe(CHECKOUT_DEMO_DISCLOSURE);
+    expect(disclosure?.textContent?.trim()).toBe(ES_UI_TEXT.checkoutDemoDisclosure);
     expect(disclosure?.closest('form')).not.toBeNull();
     expect(disclosure?.getAttribute('role')).toBe('note');
     expect(host.querySelector('button[type="submit"]')?.textContent).toContain(
@@ -219,7 +219,7 @@ describe('CheckoutPage', () => {
     expect(host.textContent).toContain('3 artículos');
     expect(host.textContent).toContain('$4.00');
     expect(text(host, '.checkout-confirmation .state__message')).toBe(
-      CHECKOUT_CONFIRMATION_MESSAGE,
+      ES_UI_TEXT.checkoutConfirmationMessage,
     );
     expect(host.textContent).toContain('No se realizó ningún cargo');
     expect(host.textContent).toContain('no se creó ningún pedido');

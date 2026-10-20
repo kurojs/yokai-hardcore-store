@@ -8,6 +8,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { MAX_LINE_QUANTITY } from '../core/cart/cart-model';
+import { ES_UI_TEXT } from '../core/i18n/dictionaries/es';
 import { QuantityStepper } from './quantity-stepper';
 
 interface Rendered {
@@ -19,6 +20,7 @@ interface Rendered {
 function render(value: number, inputs: { min?: number; max?: number } = {}): Rendered {
   const fixture = TestBed.createComponent(QuantityStepper);
   const emitted: number[] = [];
+  fixture.componentRef.setInput('text', ES_UI_TEXT);
   fixture.componentRef.setInput('value', value);
   if (inputs.min !== undefined) fixture.componentRef.setInput('min', inputs.min);
   if (inputs.max !== undefined) fixture.componentRef.setInput('max', inputs.max);

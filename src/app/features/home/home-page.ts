@@ -2,7 +2,7 @@
  * The landing page: a hero, then the catalog's categories and a featured spread.
  *
  * It is the slice's only container, and its whole job is to read the shared catalog store and
- * hand plain values to `shared/` cards. The two pieces of behaviour worth naming:
+ * hand plain values to `shared/` cards. The pieces of behaviour worth naming:
  *
  * - The featured selection is not "the first four products". `selectFeatured` spreads it across
  *   categories, and it is a pure function in its own module so the rule is tested without a
@@ -11,14 +11,17 @@
  *   flight, an error with a retry action when the fetch or the validation fails, and the content
  *   itself. A catalog page that renders an empty grid on failure would look like a store with
  *   nothing to sell.
+ * - Copy comes from `LanguageStore.text`, and the document title follows it. The category names
+ *   and product names it renders are catalog data and are never translated.
  */
 
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 import { CatalogStore } from '../../core/catalog/catalog-store';
 import { formatUsdPrice } from '../../core/format/price';
-import { productCountLabel } from '../../core/ui-text';
+import { LanguageStore } from '../../core/i18n/language-store';
 import { CategoryCard } from '../../shared/category-card';
 import { ProductCard } from '../../shared/product-card';
 import { FEATURED_COUNT, selectFeatured } from './featured';
@@ -32,6 +35,10 @@ import { FEATURED_COUNT, selectFeatured } from './featured';
 })
 export class HomePage {
   private readonly catalog = inject(CatalogStore);
+  private readonly i18n = inject(LanguageStore);
+  private readonly documentTitle = inject(Title);
+
+  protected readonly text = this.i18n.text;
 
   protected readonly isLoading = this.catalog.isLoading;
   protected readonly isReady = this.catalog.isReady;
@@ -41,14 +48,25 @@ export class HomePage {
   protected readonly featured = computed(() =>
     selectFeatured(this.catalog.entries(), FEATURED_COUNT),
   );
-  protected readonly countLabel = computed(() => productCountLabel(this.catalog.entries().length));
+
+  private readonly productCount = computed(() => this.catalog.entries().length);
+  protected readonly countLabel = computed(() =>
+    this.text().productCountLabel(this.productCount()),
+  );
   protected readonly categoryCount = computed(() => this.catalog.categories().length);
+  protected readonly categoriesSummary = computed(() =>
+    this.text().categoriesSummary(this.productCount(), this.categoryCount()),
+  );
 
   /** The cheapest price in the catalog, formatted, or `null` before it has loaded. */
   protected readonly fromPrice = computed(() => {
     const cheapest = this.catalog.prices()[0];
     return cheapest === undefined ? null : formatUsdPrice(cheapest);
   });
+
+  constructor() {
+    effect(() => this.documentTitle.setTitle(this.text().homeDocumentTitle));
+  }
 
   protected retry(): void {
     this.catalog.reload();

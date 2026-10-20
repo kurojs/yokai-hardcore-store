@@ -4,11 +4,15 @@
  * It owns no state, so every test is "given these inputs, this user gesture reports this value".
  * That is also why the tests drive real DOM events instead of calling the handlers: the wiring
  * between an `<input>`/`<select>` and its output is the component's whole reason to exist.
+ *
+ * The labels come from the Spanish dictionary because that is the default language; the
+ * cross-language shape is specified once in `core/i18n/ui-text.spec.ts`.
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import type { CatalogSort } from '../../core/catalog/catalog-query';
+import { ES_UI_TEXT } from '../../core/i18n/dictionaries/es';
 import { CatalogFilterBar } from './catalog-filter-bar';
 
 const PRICES = [1, 2, 3, 4, 5, 10] as const;
@@ -18,7 +22,8 @@ async function render(): Promise<{
   host: HTMLElement;
 }> {
   const fixture = TestBed.createComponent(CatalogFilterBar);
-  fixture.componentRef.setInput('text', '');
+  fixture.componentRef.setInput('text', ES_UI_TEXT);
+  fixture.componentRef.setInput('searchText', '');
   fixture.componentRef.setInput('maxPriceUsd', null);
   fixture.componentRef.setInput('sort', 'featured');
   fixture.componentRef.setInput('prices', PRICES);
@@ -44,7 +49,7 @@ describe('CatalogFilterBar', () => {
   it('reports typed text as it arrives', async () => {
     const { fixture, host } = await render();
     const emitted: string[] = [];
-    fixture.componentInstance.textChange.subscribe((value) => emitted.push(value));
+    fixture.componentInstance.searchTextChange.subscribe((value) => emitted.push(value));
 
     const input = host.querySelector<HTMLInputElement>('#catalog-search');
     input!.value = 'calamar';

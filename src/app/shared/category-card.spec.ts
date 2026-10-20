@@ -12,6 +12,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import type { Category } from '../core/catalog/catalog-model';
 import { categoryPlaceholderVariant } from '../core/catalog/category-visual';
+import { ES_UI_TEXT } from '../core/i18n/dictionaries/es';
 import { category } from '../core/catalog/testing/entities';
 import { CategoryCard } from './category-card';
 
@@ -20,6 +21,7 @@ async function render(
   productCount = 13,
 ): Promise<{ fixture: ComponentFixture<CategoryCard>; host: HTMLElement }> {
   const fixture = TestBed.createComponent(CategoryCard);
+  fixture.componentRef.setInput('text', ES_UI_TEXT);
   fixture.componentRef.setInput('category', category('resucitacion', overrides));
   fixture.componentRef.setInput('productCount', productCount);
   await fixture.whenStable();

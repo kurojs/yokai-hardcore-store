@@ -8,6 +8,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
+import { ES_UI_TEXT } from '../core/i18n/dictionaries/es';
 import { AddToCartButton } from './add-to-cart-button';
 
 function render(productName: string, label?: string): {
@@ -16,6 +17,7 @@ function render(productName: string, label?: string): {
 } {
   const fixture = TestBed.createComponent(AddToCartButton);
   const clicks: number[] = [];
+  fixture.componentRef.setInput('text', ES_UI_TEXT);
   fixture.componentRef.setInput('productName', productName);
   if (label !== undefined) fixture.componentRef.setInput('label', label);
   fixture.componentInstance.add.subscribe(() => clicks.push(1));

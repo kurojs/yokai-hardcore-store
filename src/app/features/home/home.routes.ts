@@ -10,7 +10,6 @@ import type { Routes } from '@angular/router';
 export const homeRoutes: Routes = [
   {
     path: '',
-    title: 'Yokai Hardcore Store',
     loadComponent: () => import('./home-page').then((module) => module.HomePage),
   },
 ];

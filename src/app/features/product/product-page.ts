@@ -19,6 +19,9 @@
  * selected quantity and the add confirmation) are stored with the slug they belong to, so
  * navigating from one product to a related one resets them without an effect that has to
  * remember to run.
+ *
+ * The chrome is translated; the product name, category name and description are catalog data
+ * and are interpolated verbatim.
  */
 
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
@@ -27,12 +30,8 @@ import { RouterLink } from '@angular/router';
 
 import { CatalogStore } from '../../core/catalog/catalog-store';
 import { CartStore } from '../../core/cart/cart-store';
-import {
-  DESCRIPTION_TITLE,
-  OTHER_PRODUCTS_TITLE,
-  addedToCartMessage,
-  relatedProductsTitle,
-} from '../../core/ui-text';
+import { pageTitle, STORE_NAME } from '../../core/i18n/document-title';
+import { LanguageStore } from '../../core/i18n/language-store';
 import { AddToCartButton } from '../../shared/add-to-cart-button';
 import { PricePipe } from '../../shared/price.pipe';
 import { ProductCard } from '../../shared/product-card';
@@ -57,10 +56,13 @@ import { RELATED_COUNT, selectRelated } from './related';
 export class ProductPage {
   private readonly catalog = inject(CatalogStore);
   private readonly cart = inject(CartStore);
-  private readonly title = inject(Title);
+  private readonly i18n = inject(LanguageStore);
+  private readonly documentTitle = inject(Title);
 
   /** The product slug from the route; `undefined` only if the route is misconfigured. */
   readonly slug = input<string | undefined>();
+
+  protected readonly text = this.i18n.text;
 
   protected readonly isLoading = this.catalog.isLoading;
   protected readonly errorMessage = this.catalog.errorMessage;
@@ -82,14 +84,12 @@ export class ProductPage {
     () => this.isReady() && this.view() === null,
   );
 
-  protected readonly descriptionTitle = DESCRIPTION_TITLE;
-
   protected readonly relatedTitle = computed(() => {
     const view = this.view();
     if (view?.related == null) return '';
     return view.related.kind === 'same-category'
-      ? relatedProductsTitle(view.category.name)
-      : OTHER_PRODUCTS_TITLE;
+      ? this.text().relatedProductsTitle(view.category.name)
+      : this.text().otherProductsTitle;
   });
 
   /** The quantity selected on this product, reset to one when the product changes. */
@@ -126,23 +126,24 @@ export class ProductPage {
    * The document title for the current state, or `null` to leave it alone.
    *
    * `null` while the catalog is loading: a deep link straight to a product should not flash a
-   * not-found title before the catalog arrives.
+   * not-found title before the catalog arrives. A product title is the one title composed from
+   * catalog data, so it goes through `pageTitle`; the brand itself is never translated.
    */
-  private readonly documentTitle = computed(() => {
+  private readonly titleText = computed(() => {
     const view = this.view();
-    if (view !== null) return `${view.product.name} — Yokai Hardcore Store`;
-    if (this.errorMessage() !== null) return 'Yokai Hardcore Store';
+    if (view !== null) return pageTitle(view.product.name);
+    if (this.errorMessage() !== null) return STORE_NAME;
     if (!this.isReady()) return null;
-    return 'Producto no encontrado — Yokai Hardcore Store';
+    return this.text().productNotFoundDocumentTitle;
   });
 
   constructor() {
     // The route's `title` cannot name the product: it is resolved before the catalog loads, so
-    // every product page would be called "Producto". The service is told the name once the
+    // every product page would be called "Product". The service is told the name once the
     // product is known, and the previous title is left alone while the catalog is in flight.
     effect(() => {
-      const title = this.documentTitle();
-      if (title !== null) this.title.setTitle(title);
+      const title = this.titleText();
+      if (title !== null) this.documentTitle.setTitle(title);
     });
   }
 
@@ -159,7 +160,7 @@ export class ProductPage {
     this.cart.add(view.product.slug, this.quantity());
     this.confirmation.set({
       slug: view.product.slug,
-      message: addedToCartMessage(view.product.name, this.cart.itemCount()),
+      message: this.text().addedToCartMessage(view.product.name, this.cart.itemCount()),
     });
   }
 

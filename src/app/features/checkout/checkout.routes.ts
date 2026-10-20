@@ -8,13 +8,12 @@ import type { Routes } from '@angular/router';
  * because that decision needs the loaded cart, which a route guard cannot wait for without
  * duplicating the store's readiness rules.
  *
- * "Revisar y confirmar" rather than "checkout" in the page title: the page is a review, and the
- * title should not imply a purchase that will not happen.
+ * There is no static route title: it would be a literal frozen in one language. The page names
+ * itself in the active language.
  */
 export const checkoutRoutes: Routes = [
   {
     path: '',
-    title: 'Revisar y confirmar — Yokai Hardcore Store',
     loadComponent: () => import('./checkout-page').then((module) => module.CheckoutPage),
   },
 ];

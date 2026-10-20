@@ -29,7 +29,7 @@ export const MINECRAFT_USERNAME_MAX_LENGTH = 16;
 /** The legal character set: ASCII letters, digits and underscore. No accents, no spaces. */
 export const MINECRAFT_USERNAME_PATTERN = /^[A-Za-z0-9_]+$/;
 
-/** Why a username was rejected. `ui-text.ts` turns each one into the sentence shown. */
+/** Why a username was rejected. `i18n/ui-text.ts` turns each one into the sentence shown. */
 export type MinecraftUsernameProblem = 'empty' | 'too-short' | 'too-long' | 'illegal-characters';
 
 /** A username that passed, or the first rule it failed. */

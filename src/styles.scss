@@ -198,7 +198,7 @@ a {
  * Content that is for assistive technology only.
  *
  * Used where a control's visible label would otherwise be ambiguous out of context (which
- * product an "Añadir al carrito" button adds). It stays in the accessibility tree and keeps its
+ * product an "add to cart" button adds). It stays in the accessibility tree and keeps its
  * text selectable by a screen reader, which `display: none` would not.
  */
 .visually-hidden {

@@ -14,21 +14,17 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { MAX_LINE_QUANTITY } from '../core/cart/cart-model';
-import {
-  DECREASE_QUANTITY_LABEL,
-  INCREASE_QUANTITY_LABEL,
-  QUANTITY_LABEL,
-} from '../core/ui-text';
+import type { UiText } from '../core/i18n/ui-text';
 
 @Component({
   selector: 'app-quantity-stepper',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="stepper" role="group" [attr.aria-label]="label()">
+    <div class="stepper" role="group" [attr.aria-label]="resolvedLabel()">
       <button
         type="button"
         class="stepper__button"
-        [attr.aria-label]="decreaseLabel()"
+        [attr.aria-label]="resolvedDecreaseLabel()"
         [disabled]="current() <= floor()"
         (click)="step(-1)"
       >
@@ -38,7 +34,7 @@ import {
       <button
         type="button"
         class="stepper__button"
-        [attr.aria-label]="increaseLabel()"
+        [attr.aria-label]="resolvedIncreaseLabel()"
         [disabled]="current() >= ceiling()"
         (click)="step(1)"
       >
@@ -86,6 +82,9 @@ import {
   `,
 })
 export class QuantityStepper {
+  /** The active dictionary, supplied by the page that renders the control. */
+  readonly text = input.required<UiText>();
+
   /** The current quantity. */
   readonly value = input.required<number>();
 
@@ -95,9 +94,20 @@ export class QuantityStepper {
   /** Highest selectable quantity. Shared with the cart so the two cannot disagree. */
   readonly max = input<number>(MAX_LINE_QUANTITY);
 
-  readonly label = input<string>(QUANTITY_LABEL);
-  readonly decreaseLabel = input<string>(DECREASE_QUANTITY_LABEL);
-  readonly increaseLabel = input<string>(INCREASE_QUANTITY_LABEL);
+  /** Accessible names, overridable per product by a caller that renders several steppers. */
+  readonly label = input<string>();
+  readonly decreaseLabel = input<string>();
+  readonly increaseLabel = input<string>();
+
+  protected readonly resolvedLabel = computed(
+    () => this.label() ?? this.text().quantityLabel,
+  );
+  protected readonly resolvedDecreaseLabel = computed(
+    () => this.decreaseLabel() ?? this.text().decreaseQuantityLabel,
+  );
+  protected readonly resolvedIncreaseLabel = computed(
+    () => this.increaseLabel() ?? this.text().increaseQuantityLabel,
+  );
 
   /** The new quantity, emitted only when it actually changed. */
   readonly valueChange = output<number>();

@@ -8,6 +8,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
+import { ES_UI_TEXT } from '../core/i18n/dictionaries/es';
 import { OrderSummary } from './order-summary';
 
 function render(inputs: {
@@ -17,6 +18,7 @@ function render(inputs: {
   heading?: string;
 }): HTMLElement {
   const fixture = TestBed.createComponent(OrderSummary);
+  fixture.componentRef.setInput('text', ES_UI_TEXT);
   fixture.componentRef.setInput('itemCount', inputs.itemCount);
   fixture.componentRef.setInput('subtotalUsd', inputs.subtotalUsd);
   fixture.componentRef.setInput('totalUsd', inputs.totalUsd);

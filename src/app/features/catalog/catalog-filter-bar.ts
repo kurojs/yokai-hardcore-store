@@ -1,10 +1,10 @@
 /**
  * The catalog's filter bar: free text, price ceiling and sort order.
  *
- * Presentational, like the cards: it receives values as inputs and reports the user's intent as
- * outputs. It deliberately does not own a category control, because the category is part of the
- * URL (`/catalog/:slug`) and choosing one is a navigation, not a filter — that keeps a filtered
- * catalog view shareable and bookmarkable.
+ * Presentational, like the cards: it receives values and the active dictionary as inputs and
+ * reports the user's intent as outputs. It deliberately does not own a category control,
+ * because the category is part of the URL (`/catalog/:slug`) and choosing one is a navigation,
+ * not a filter — that keeps a filtered catalog view shareable and bookmarkable.
  *
  * The controls are plain DOM events rather than `ngModel`: `@angular/forms` is not otherwise used
  * by the storefront, and three bindings do not justify pulling a forms module into the bundle.
@@ -15,59 +15,52 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
 import { CATALOG_SORTS, type CatalogSort } from '../../core/catalog/catalog-query';
+import type { UiText } from '../../core/i18n/ui-text';
 import { PricePipe } from '../../shared/price.pipe';
-
-/** The sort orders, with the Spanish label each one shows. */
-const SORT_OPTIONS: readonly { readonly value: CatalogSort; readonly label: string }[] = [
-  { value: 'featured', label: 'Destacados' },
-  { value: 'price-asc', label: 'Precio: de menor a mayor' },
-  { value: 'price-desc', label: 'Precio: de mayor a menor' },
-  { value: 'name-asc', label: 'Nombre: A-Z' },
-];
 
 @Component({
   selector: 'app-catalog-filter-bar',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PricePipe],
   template: `
-    <div class="filters" role="search" aria-label="Filtros del catálogo">
+    <div class="filters" role="search" [attr.aria-label]="text().filtersLabel">
       <div class="filters__field filters__field--grow">
-        <label class="filters__label" for="catalog-search">Buscar</label>
+        <label class="filters__label" for="catalog-search">{{ text().searchLabel }}</label>
         <input
           id="catalog-search"
           class="filters__control"
           type="search"
           autocomplete="off"
-          placeholder="Nombre, descripción o categoría"
-          [value]="text()"
+          [attr.placeholder]="text().searchPlaceholder"
+          [value]="searchText()"
           (input)="onText($event)"
         />
       </div>
 
       <div class="filters__field">
-        <label class="filters__label" for="catalog-price">Precio</label>
+        <label class="filters__label" for="catalog-price">{{ text().priceFilterLabel }}</label>
         <select
           id="catalog-price"
           class="filters__control"
           [value]="priceValue()"
           (change)="onPrice($event)"
         >
-          <option value="">Todos</option>
+          <option value="">{{ text().allPricesLabel }}</option>
           @for (price of prices(); track price) {
-            <option [value]="price">Hasta {{ price | price }}</option>
+            <option [value]="price">{{ text().upToPrice(price | price) }}</option>
           }
         </select>
       </div>
 
       <div class="filters__field">
-        <label class="filters__label" for="catalog-sort">Ordenar por</label>
+        <label class="filters__label" for="catalog-sort">{{ text().sortLabel }}</label>
         <select
           id="catalog-sort"
           class="filters__control"
           [value]="sort()"
           (change)="onSort($event)"
         >
-          @for (option of sortOptions; track option.value) {
+          @for (option of sortOptions(); track option.value) {
             <option [value]="option.value">{{ option.label }}</option>
           }
         </select>
@@ -115,17 +108,34 @@ const SORT_OPTIONS: readonly { readonly value: CatalogSort; readonly label: stri
   `,
 })
 export class CatalogFilterBar {
-  readonly text = input.required<string>();
+  /** The active dictionary, supplied by the catalog page. */
+  readonly text = input.required<UiText>();
+
+  readonly searchText = input.required<string>();
   readonly maxPriceUsd = input.required<number | null>();
   readonly sort = input.required<CatalogSort>();
   /** The distinct prices present in the catalog, ascending. */
   readonly prices = input.required<readonly number[]>();
 
-  readonly textChange = output<string>();
+  readonly searchTextChange = output<string>();
   readonly maxPriceChange = output<number | null>();
   readonly sortChange = output<CatalogSort>();
 
-  protected readonly sortOptions = SORT_OPTIONS;
+  /**
+   * The sort options, labelled in the active language.
+   *
+   * Built from the dictionary rather than from a module constant, because the labels are copy:
+   * a constant would freeze them in whatever language was current at module load.
+   */
+  protected readonly sortOptions = computed(() => {
+    const text = this.text();
+    return [
+      { value: 'featured' as const, label: text.sortFeatured },
+      { value: 'price-asc' as const, label: text.sortPriceAsc },
+      { value: 'price-desc' as const, label: text.sortPriceDesc },
+      { value: 'name-asc' as const, label: text.sortNameAsc },
+    ];
+  });
 
   /** The `<select>` value is a string, so "no ceiling" has to be spelled as the empty option. */
   protected readonly priceValue = computed(() => {
@@ -134,7 +144,7 @@ export class CatalogFilterBar {
   });
 
   protected onText(event: Event): void {
-    this.textChange.emit((event.target as HTMLInputElement).value);
+    this.searchTextChange.emit((event.target as HTMLInputElement).value);
   }
 
   protected onPrice(event: Event): void {

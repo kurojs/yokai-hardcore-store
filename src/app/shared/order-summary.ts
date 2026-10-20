@@ -2,9 +2,9 @@
  * The order summary: unit count, subtotal and total.
  *
  * Two slices render this — the cart page and the demo checkout — so it lives in `shared/`
- * exactly as the container/presentational rule asks. It takes the three numbers as inputs and
- * injects nothing: it does not know the cart, the catalog or the route, which is what lets both
- * pages feed it the same computed totals without either of them owning the other.
+ * exactly as the container/presentational rule asks. It takes the numbers and the dictionary as
+ * inputs and injects nothing: it does not know the cart, the catalog or the route, which is what
+ * lets both pages feed it the same computed totals without either of them owning the other.
  *
  * This component is also the practical answer to "the cart and the checkout must not disagree".
  * They already share one calculation (`cartTotals` behind `CartStore.totals`); rendering it
@@ -12,16 +12,9 @@
  * no second implementation left to drift.
  */
 
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
-import {
-  ORDER_SUMMARY_ITEMS_LABEL,
-  ORDER_SUMMARY_NOTE,
-  ORDER_SUMMARY_SUBTOTAL_LABEL,
-  ORDER_SUMMARY_TITLE,
-  ORDER_SUMMARY_TOTAL_LABEL,
-  itemCountLabel,
-} from '../core/ui-text';
+import type { UiText } from '../core/i18n/ui-text';
 import { PricePipe } from './price.pipe';
 
 @Component({
@@ -30,24 +23,24 @@ import { PricePipe } from './price.pipe';
   imports: [PricePipe],
   template: `
     <section class="summary">
-      <h2 class="summary__title">{{ heading() }}</h2>
+      <h2 class="summary__title">{{ resolvedHeading() }}</h2>
 
       <dl class="summary__rows">
         <div class="summary__row">
-          <dt>{{ itemsLabel() }}</dt>
+          <dt>{{ text().orderSummaryItemsLabel }}</dt>
           <dd>{{ itemCountText() }}</dd>
         </div>
         <div class="summary__row">
-          <dt>{{ subtotalLabel() }}</dt>
+          <dt>{{ text().orderSummarySubtotalLabel }}</dt>
           <dd class="summary__money">{{ subtotalUsd() | price }}</dd>
         </div>
         <div class="summary__row summary__row--total">
-          <dt>{{ totalLabel() }}</dt>
+          <dt>{{ text().orderSummaryTotalLabel }}</dt>
           <dd class="summary__money">{{ totalUsd() | price }}</dd>
         </div>
       </dl>
 
-      <p class="summary__note">{{ note() }}</p>
+      <p class="summary__note">{{ text().orderSummaryNote }}</p>
     </section>
   `,
   styles: `
@@ -110,6 +103,9 @@ import { PricePipe } from './price.pipe';
   `,
 })
 export class OrderSummary {
+  /** The active dictionary, supplied by the page that owns the cart. */
+  readonly text = input.required<UiText>();
+
   /** The cart's unit count, as `CartTotals.itemCount` reports it. */
   readonly itemCount = input.required<number>();
 
@@ -119,14 +115,14 @@ export class OrderSummary {
   /** What the visitor pays in this demo: the subtotal, because there is nothing to add. */
   readonly totalUsd = input.required<number>();
 
-  readonly heading = input<string>(ORDER_SUMMARY_TITLE);
-  readonly itemsLabel = input<string>(ORDER_SUMMARY_ITEMS_LABEL);
-  readonly subtotalLabel = input<string>(ORDER_SUMMARY_SUBTOTAL_LABEL);
-  readonly totalLabel = input<string>(ORDER_SUMMARY_TOTAL_LABEL);
-  readonly note = input<string>(ORDER_SUMMARY_NOTE);
+  /** Overridable, because the cart page and the checkout name the same numbers differently. */
+  readonly heading = input<string>();
 
-  /** `1 artículo` / `3 artículos`, so the count reads as a sentence rather than a bare number. */
-  protected itemCountText(): string {
-    return itemCountLabel(this.itemCount());
-  }
+  protected readonly itemCountText = computed(() =>
+    this.text().itemCountLabel(this.itemCount()),
+  );
+
+  protected readonly resolvedHeading = computed(
+    () => this.heading() ?? this.text().orderSummaryTitle,
+  );
 }

@@ -1,23 +1,23 @@
 @if (errorMessage(); as message) {
   <section class="page-width state" role="alert">
-    <h1 class="state__title">No pudimos cargar el catálogo</h1>
+    <h1 class="state__title">{{ text().catalogLoadErrorTitle }}</h1>
     <p class="state__message">{{ message }}</p>
-    <button type="button" class="button button--primary" (click)="retry()">Reintentar</button>
+    <button type="button" class="button button--primary" (click)="retry()">
+      {{ text().retryLabel }}
+    </button>
   </section>
 } @else if (!isReady()) {
-  <p class="page-width state state--loading" aria-live="polite">Cargando producto…</p>
+  <p class="page-width state state--loading" aria-live="polite">{{ text().productLoading }}</p>
 } @else if (isUnknownProduct()) {
   <section class="page-width state">
-    <h1 class="state__title">No encontramos ese producto</h1>
-    <p class="state__message">
-      Puede que el producto haya cambiado de nombre o ya no exista en la tienda.
-    </p>
-    <a class="button button--primary" routerLink="/catalog">Ver todo el catálogo</a>
+    <h1 class="state__title">{{ text().productNotFoundTitle }}</h1>
+    <p class="state__message">{{ text().productNotFoundMessage }}</p>
+    <a class="button button--primary" routerLink="/catalog">{{ text().catalogViewAll }}</a>
   </section>
 } @else if (view(); as view) {
   <article class="product page-width">
-    <nav class="breadcrumb" aria-label="Ruta de navegación">
-      <a class="breadcrumb__link" routerLink="/catalog">Catálogo</a>
+    <nav class="breadcrumb" [attr.aria-label]="text().breadcrumbLabel">
+      <a class="breadcrumb__link" routerLink="/catalog">{{ text().breadcrumbCatalog }}</a>
       <span class="breadcrumb__separator" aria-hidden="true">/</span>
       <a class="breadcrumb__link" [routerLink]="['/catalog', view.category.slug]">{{
         view.category.name
@@ -50,8 +50,16 @@
         <p class="product__price">{{ view.product.priceUsd | price }}</p>
 
         <div class="product__buy">
-          <app-quantity-stepper [value]="quantity()" (valueChange)="setQuantity($event)" />
-          <app-add-to-cart-button [productName]="view.product.name" (add)="addToCart()" />
+          <app-quantity-stepper
+            [text]="text()"
+            [value]="quantity()"
+            (valueChange)="setQuantity($event)"
+          />
+          <app-add-to-cart-button
+            [text]="text()"
+            [productName]="view.product.name"
+            (add)="addToCart()"
+          />
         </div>
 
         <p class="product__confirmation" role="status" aria-live="polite">{{ addedMessage() }}</p>
@@ -59,7 +67,7 @@
     </div>
 
     <section class="product__description" aria-labelledby="descripcion-title">
-      <h2 id="descripcion-title" class="product__section-title">{{ descriptionTitle }}</h2>
+      <h2 id="descripcion-title" class="product__section-title">{{ text().descriptionTitle }}</h2>
       <app-product-description [description]="view.product.description" />
     </section>
   </article>
