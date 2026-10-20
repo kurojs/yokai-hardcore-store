@@ -72,8 +72,8 @@ export class LandingScene implements OnDestroy {
         createIsland(DEFAULT_ISLAND_SEED),
       );
     } catch (cause) {
-      // No WebGL is a normal outcome. The reserved panel keeps its gradient, the page keeps
-      // its content, and the visitor sees nothing but a quieter hero.
+      // No WebGL is a normal outcome. The hero keeps its wash and copy, and the visitor sees
+      // nothing but a quieter background.
       this.handle = null;
       reportLandingSceneFailure(cause);
     }

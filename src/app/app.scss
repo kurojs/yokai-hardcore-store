@@ -1,5 +1,8 @@
 /* Shell chrome. Only layout and the header/footer surfaces live here; colours and spacing come
-   from the tokens in `styles.scss`, so a theme change is one file. */
+   from the tokens in `styles.scss`, so a theme change is one file.
+
+   The header is flat: a hairline, a compact bar and small type. No shadow, no blur, no pill
+   navigation — the browse surface underneath should be the loudest thing on screen. */
 
 :host {
   display: flex;
@@ -16,7 +19,8 @@
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-sm);
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
+  font-size: var(--text-ui);
   font-weight: 600;
   /* Hidden until focused: a permanently visible skip link is noise for mouse users, and a
      `display: none` one is unreachable for keyboard users. */
@@ -33,124 +37,112 @@
   top: 0;
   z-index: 10;
   border-bottom: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  backdrop-filter: blur(12px);
+  background: var(--color-bg);
 }
 
 .shell__bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-4);
-  min-height: 4rem;
+  gap: var(--space-5);
+  min-height: var(--header-height);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--space-2);
+  font-size: 0.9375rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 .brand__mark {
-  display: grid;
-  place-items: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: var(--radius-sm);
-  background: var(--color-accent);
-  color: var(--color-bg);
-  font-family: var(--font-mono);
+  color: var(--color-accent);
 }
 
 .nav {
   display: flex;
-  gap: var(--space-1);
-  font-size: 0.9375rem;
+  gap: var(--space-4);
+  font-size: var(--text-small);
 }
 
-/* The navigation and the cart count share the right-hand side of the bar; three loose children
-   would spread across the header and leave the count floating in the middle. */
+/* The navigation, the cart count and the language control share the right-hand side of the
+   bar; four loose children would spread across the header. */
 .shell__actions {
   display: flex;
   align-items: center;
   gap: var(--space-4);
 }
 
-/* The language control is chrome, not content: it stays as small as the cart pill and uses the
-   same muted border, so a switcher does not compete with navigation for attention. */
+/* The language control is chrome, not content: it stays as small as the cart link and uses a
+   hairline only on hover, so a switcher does not compete with navigation for attention. */
 .language-switcher {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 0.8125rem;
+  font-size: var(--text-micro);
   color: var(--color-text-muted);
 }
 
 .language-switcher__label {
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
 .language-switcher__select {
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--color-border);
+  padding: 0.125rem var(--space-1);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  color: var(--color-text);
+  background: transparent;
+  color: var(--color-text-muted);
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: var(--text-micro);
   cursor: pointer;
 }
 
 .language-switcher__select:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-surface-raised);
+  border-color: var(--color-text-muted);
+  color: var(--color-text);
 }
 
 .nav a {
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
+  position: relative;
+  padding-block: 0.35rem;
   color: var(--color-text-muted);
-  transition:
-    color var(--transition),
-    background var(--transition);
+  transition: color var(--transition);
 }
 
 .nav a:hover {
   color: var(--color-text);
-  background: var(--color-surface-raised);
 }
 
+/* The active state is a colour change plus a 2px rule, not a filled pill. */
 .nav a.is-active {
   color: var(--color-text);
-  background: var(--color-surface);
-  box-shadow: inset 0 -2px 0 var(--color-accent);
 }
 
-/* Mono, because the count is a number to glance at; muted, because it is secondary to the
-   navigation next to it. `nowrap` keeps the indicator on one line on a phone. It is a
-   link now, so it keeps the pill shape on hover and shows the accent on focus, which `styles.scss`
-   already outlines. */
+.nav a.is-active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--color-accent);
+}
+
 .cart-indicator {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-1) var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  padding-block: 0.25rem;
+  font-size: var(--text-small);
   color: var(--color-text-muted);
   white-space: nowrap;
-  transition:
-    border-color var(--transition),
-    color var(--transition),
-    background var(--transition);
+  transition: color var(--transition);
 }
 
 .cart-indicator:hover {
-  border-color: var(--color-border-strong);
-  background: var(--color-surface-raised);
   color: var(--color-text);
 }
 
@@ -166,31 +158,51 @@
 .shell__footer-inner {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-4);
   padding-block: var(--space-5);
-  font-size: 0.8125rem;
+  font-size: var(--text-micro);
   color: var(--color-text-muted);
 }
 
+.shell__footer-identity {
+  display: grid;
+  gap: var(--space-1);
+}
+
 .shell__footer-brand {
-  font-weight: 600;
+  font-size: var(--text-small);
+  font-weight: 700;
   color: var(--color-text);
+}
+
+.shell__footer-tagline {
+  max-width: 30rem;
+}
+
+.shell__footer-note {
+  max-width: 34rem;
+  text-align: right;
 }
 
 /* Four header children (brand, navigation, language, cart) no longer fit on one line on a
    phone. Wrapping the bar keeps every control visible instead of clipping or scrolling the
    cart link off-screen; the reduced gap keeps the second row from looking like a separate
    section. */
-@media (max-width: 44rem) {
+@media (max-width: 46rem) {
   .shell__bar {
     flex-wrap: wrap;
-    row-gap: var(--space-2);
+    row-gap: var(--space-1);
     padding-block: var(--space-2);
   }
 
   .shell__actions {
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: var(--space-3);
+  }
+
+  .shell__footer-note {
+    text-align: left;
   }
 }

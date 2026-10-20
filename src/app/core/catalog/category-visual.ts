@@ -1,56 +1,30 @@
 /**
- * Deterministic visual identity for a category that has no banner image.
+ * The visual fallback for a category that has no banner image.
  *
- * 3 of the 10 categories have `bannerImage: null`, so the fallback is a normal state that
- * gets rendered by every category card and every category header. Two properties matter and
- * both are pure functions here rather than template logic:
+ * Three of the ten categories ship without a banner. The previous treatment drew a monogram
+ * on a gradient, which read as a placeholder rather than as part of the store. The replacement
+ * borrows a real photograph from the category itself: the first product in catalog order that
+ * has a local image. That is stable — catalog order is curated data, not iteration order — and
+ * it keeps the category strip made of actual merchandise.
  *
- * - The result must be **stable**: the same category must look the same on every render and
- *   across reloads, otherwise the grid shimmers and reordering the data changes the design.
- * - The result must be **varied**: ten identical grey placeholders look like a bug, so the
- *   variant is hashed from the slug.
- *
- * The variant is an index into a small set of CSS classes rather than a generated colour
- * string. Angular sanitises style bindings, and a class index keeps the actual colours in
- * `styles.scss` where T8's theming work lives.
+ * The function is pure and total: an unknown category, an empty category or one whose products
+ * all lack a local image answers `null`, and the card then falls back to a token-based surface
+ * with the category name. It never reaches for a remote image.
  */
 
-/** How many placeholder treatments `styles.scss` defines. */
-export const CATEGORY_PLACEHOLDER_VARIANTS = 6;
-
-/** Fallback monogram for a name that contains no letters at all. */
-const MONOGRAM_FALLBACK = '?';
+import type { CatalogEntry } from './catalog-index';
 
 /**
- * The single letter shown on a bannered-less category card.
- *
- * The first letter *anywhere* in the name is used, so a leading space or a leading quantity
- * does not produce an empty monogram. Case is upper-cased for display, and the letter keeps
- * its accent: `Armería De Héroe` yields `A`, `RESUCITACIÓN` yields `R`.
+ * @returns the root-relative image path of the first product in `categoryId` that has one, or
+ *   `null` when the category has no such product.
  */
-export function categoryMonogram(name: string): string {
-  const match = /[\p{L}]/u.exec(name);
-  return match === null ? MONOGRAM_FALLBACK : match[0].toUpperCase();
-}
-
-/**
- * A stable index in `[0, variants)` for `slug`.
- *
- * FNV-1a over UTF-16 code units. Any deterministic hash would do; this one is short, has no
- * dependencies and spreads short slugs well enough for ten categories.
- */
-export function categoryPlaceholderVariant(
-  slug: string,
-  variants: number = CATEGORY_PLACEHOLDER_VARIANTS,
-): number {
-  if (!Number.isInteger(variants) || variants < 2) return 0;
-
-  let hash = 0x811c9dc5;
-  for (let index = 0; index < slug.length; index += 1) {
-    hash ^= slug.charCodeAt(index);
-    // `Math.imul` keeps the multiply in 32-bit range; `>>> 0` reinterprets as unsigned so
-    // the modulo below is never negative.
-    hash = Math.imul(hash, 0x01000193) >>> 0;
+export function categoryFallbackImage(
+  entries: readonly CatalogEntry[],
+  categoryId: string,
+): string | null {
+  for (const entry of entries) {
+    if (entry.category.id !== categoryId) continue;
+    if (entry.product.imagePath !== null) return entry.product.imagePath;
   }
-  return hash % variants;
+  return null;
 }

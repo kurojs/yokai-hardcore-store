@@ -10,11 +10,12 @@
  * - A circular terrain disc of grass (sand on the outer rim) over dirt over stone, with the
  *   underside stepping in so the slab reads as a floating island rather than a cookie cut out
  *   of the ground.
- * - A 3x3 mossy-stone pad at the centre for the Tlaloc model, with two wood-and-lantern posts
- *   flanking it.
+ * - A 3x3 mossy-stone pad at the centre, with two wood-and-lantern posts flanking it. The
+ *   renderer omits those posts (see `island-scene.ts`); the description keeps them so the
+ *   generator's placement rules stay tested and a future scene can use them again.
  * - Three small trees on the outer ring, placed away from the pad.
- * - Four or five detached blocks hovering around the rim, at different heights, so the scene
- *   has depth even in a still frame.
+ * - Four or five detached blocks hovering around the rim, at different heights. They are part
+ *   of the description but are not rendered: the hero is a still diorama now.
  *
  * Everything is generated from one uint32 seed through {@link createRandom}; a coordinate
  * hash adds per-block colour variation later, but it is a pure function of the coordinate, not
@@ -69,7 +70,7 @@ export interface IslandOptions {
   readonly radius?: number;
 }
 
-/** Kinds used for the detached blocks; the lantern is included so the glow has range. */
+/** Kinds used for the detached blocks. Not rendered today; kept for scene variety. */
 const FLOATING_KINDS: readonly BlockKind[] = ['grass', 'stone', 'mossy_stone', 'sand', 'lantern'];
 
 function clampRadius(radius: number | undefined): number {
@@ -156,7 +157,7 @@ export function createIsland(seed: number, options: IslandOptions = {}): VoxelIs
     }
   }
 
-  // --- Tlaloc pad ---------------------------------------------------------------------
+  // --- central pad --------------------------------------------------------------------
   for (let x = -1; x <= 1; x += 1) {
     for (let z = -1; z <= 1; z += 1) {
       override(x, 0, z, 'mossy_stone');
@@ -208,7 +209,7 @@ export function createIsland(seed: number, options: IslandOptions = {}): VoxelIs
       const x = Math.round(Math.cos(angle) * distance);
       const z = Math.round(Math.sin(angle) * distance);
       if (x * x + z * z > (radius - 1) * (radius - 1)) continue;
-      // Keep the pad, the posts and the boss footprint clear.
+      // Keep the pad and the posts clear.
       if (Math.abs(x) <= 2 && Math.abs(z) <= 2) continue;
       if (Math.abs(x) < 2.2 && Math.abs(z) < 4.6) continue;
       growTree(x, z);

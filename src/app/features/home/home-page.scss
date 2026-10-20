@@ -2,25 +2,70 @@
    hero's own wash and the section rhythm are local. */
 
 .hero {
-  padding-block: var(--space-7) var(--space-6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: clamp(28rem, 52vh, 36rem);
+  padding-block: var(--space-7);
   border-bottom: 1px solid var(--color-border);
   /* A single accent wash behind the headline, fading into the page. It is the only decoration
      on the page, so the product photography stays the loudest thing on screen. */
-  background:
-    radial-gradient(60rem 24rem at 15% -20%, rgb(94 234 212 / 14%), transparent 70%),
-    linear-gradient(180deg, var(--color-surface), var(--color-bg));
+  background: radial-gradient(
+    56rem 22rem at 12% -10%,
+    color-mix(in srgb, var(--color-accent) 11%, transparent),
+    transparent 70%
+  );
 }
 
 .hero__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-  align-items: center;
-  gap: var(--space-6);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* The island is full-bleed: it runs to the viewport edge and dissolves into the page with a
+   mask instead of sitting in a bordered panel. The box is reserved before three.js is fetched,
+   so the copy never moves when the canvas arrives, and it is also the whole fallback: without
+   WebGL the hero is simply the wash above, not a hole. */
+.hero__scene {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(58rem, 62%);
+  pointer-events: none;
+  mask-image:
+    linear-gradient(90deg, transparent 0%, rgb(0 0 0) 38%),
+    linear-gradient(180deg, rgb(0 0 0) 60%, transparent 100%);
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent 0%, rgb(0 0 0) 38%),
+    linear-gradient(180deg, rgb(0 0 0) 60%, transparent 100%);
+  -webkit-mask-composite: source-in;
 }
 
 @media (max-width: 60rem) {
+  .hero {
+    display: block;
+    min-height: 0;
+    padding-block: 0 var(--space-6);
+  }
+
+  /* On narrow screens the scene becomes a band above the copy rather than a backdrop: at this
+     width an overlay would sit directly behind the headline and cost contrast. */
+  .hero__scene {
+    position: relative;
+    width: 100%;
+    height: clamp(11rem, 34vh, 16rem);
+    mask-image: linear-gradient(180deg, rgb(0 0 0) 55%, transparent 100%);
+    mask-composite: add;
+    -webkit-mask-image: linear-gradient(180deg, rgb(0 0 0) 55%, transparent 100%);
+    -webkit-mask-composite: source-over;
+  }
+
   .hero__grid {
-    grid-template-columns: minmax(0, 1fr);
+    padding-top: var(--space-5);
   }
 }
 
@@ -28,23 +73,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
-  max-width: 46rem;
-}
-
-/* The panel reserves the scene's exact box before three.js is fetched, so the canvas cannot
-   move the copy when it arrives. It is also the whole fallback: without WebGL it stays as a
-   quiet gradient instead of an empty hole or a broken canvas. */
-.hero__scene {
-  position: relative;
-  overflow: hidden;
-  aspect-ratio: 16 / 11;
-  min-height: 18rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(26rem 18rem at 30% 0%, rgb(94 234 212 / 16%), transparent 70%),
-    linear-gradient(160deg, var(--color-surface-raised), var(--color-bg));
-  box-shadow: var(--shadow-card);
+  max-width: 36rem;
 }
 
 .hero__eyebrow {

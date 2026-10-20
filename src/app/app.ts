@@ -4,6 +4,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CartStore } from './core/cart/cart-store';
 import { LanguageStore } from './core/i18n/language-store';
 import { LANGUAGE_LABELS, normalizeLanguage, type Language } from './core/i18n/language';
+import { BrandMark } from './shared/brand-mark';
 
 /**
  * The application shell: header, routed content, footer.
@@ -22,7 +23,7 @@ import { LANGUAGE_LABELS, normalizeLanguage, type Language } from './core/i18n/l
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, BrandMark],
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })

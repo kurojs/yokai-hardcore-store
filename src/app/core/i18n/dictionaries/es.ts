@@ -116,7 +116,10 @@ export const ES_UI_TEXT: UiText = {
   navHome: 'Inicio',
   navCatalog: 'Catálogo',
   cartLinkHint: 'Ir a la página del carrito',
-  footerNote: 'Tienda de demostración: ningún pago se procesa.',
+  footerBrand: 'Yokai Hardcore Store',
+  footerTagline: 'Tienda de la comunidad del servidor Yokai Hardcore.',
+  footerNote:
+    'No está afiliada a Mojang Studios ni a Microsoft. Minecraft es una marca de Mojang Studios.',
   languageLabel: 'Idioma',
   languageChanged,
 
@@ -160,6 +163,7 @@ export const ES_UI_TEXT: UiText = {
   clearFiltersLabel: 'Limpiar filtros',
 
   filtersLabel: 'Filtros del catálogo',
+  catalogFiltersSummary: 'Filtros',
   searchLabel: 'Buscar',
   searchPlaceholder: 'Nombre, descripción o categoría',
   priceFilterLabel: 'Precio',
@@ -170,6 +174,7 @@ export const ES_UI_TEXT: UiText = {
   sortPriceAsc: 'Precio: de menor a mayor',
   sortPriceDesc: 'Precio: de mayor a menor',
   sortNameAsc: 'Nombre: A-Z',
+  productTagDigital: 'Entrega digital',
 
   productLoading: 'Cargando producto…',
   productNotFoundTitle: 'No encontramos ese producto',
@@ -208,7 +213,7 @@ export const ES_UI_TEXT: UiText = {
   cartCheckoutLabel: 'Ir al checkout',
 
   checkoutTitle: 'Revisar y confirmar',
-  checkoutLead: 'Revisa tu pedido y completa la demostración. No se procesa ningún pago.',
+  checkoutLead: 'Revisa tu pedido y confirma los datos de entrega.',
   checkoutLoading: 'Cargando checkout…',
   checkoutRedirect: 'Tu carrito está vacío. Volviendo al carrito…',
   checkoutReviewTitle: 'Tu pedido',
@@ -217,8 +222,7 @@ export const ES_UI_TEXT: UiText = {
   minecraftUsernameLabel: 'Nombre de usuario de Minecraft',
   minecraftUsernameHelp: 'Entre 3 y 16 caracteres: letras sin acentos, números y guion bajo (_).',
   checkoutSubmitLabel: 'Completar demostración',
-  checkoutDemoDisclosure:
-    'Demostración: este checkout no procesa pagos ni crea pedidos. No se te cobrará nada y no se guarda ningún dato en un servidor.',
+  checkoutDemoDisclosure: 'Checkout de demostración: no se procesa ningún pago.',
   checkoutConfirmationTitle: 'Demostración completada',
   checkoutConfirmationMessage:
     'No se realizó ningún cargo y no se creó ningún pedido. Este comprobante existe solo en esta pestaña y desaparece si recargas la página.',

@@ -1,21 +1,15 @@
 /**
- * Specs for the filter bar.
+ * Specs for the catalog's search toolbar.
  *
- * It owns no state, so every test is "given these inputs, this user gesture reports this value".
- * That is also why the tests drive real DOM events instead of calling the handlers: the wiring
- * between an `<input>`/`<select>` and its output is the component's whole reason to exist.
- *
- * The labels come from the Spanish dictionary because that is the default language; the
+ * It owns no state, so the test is "given this input, this gesture reports this value". The
+ * labels come from the Spanish dictionary because that is the default language; the
  * cross-language shape is specified once in `core/i18n/ui-text.spec.ts`.
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import type { CatalogSort } from '../../core/catalog/catalog-query';
 import { ES_UI_TEXT } from '../../core/i18n/dictionaries/es';
 import { CatalogFilterBar } from './catalog-filter-bar';
-
-const PRICES = [1, 2, 3, 4, 5, 10] as const;
 
 async function render(): Promise<{
   fixture: ComponentFixture<CatalogFilterBar>;
@@ -24,9 +18,6 @@ async function render(): Promise<{
   const fixture = TestBed.createComponent(CatalogFilterBar);
   fixture.componentRef.setInput('text', ES_UI_TEXT);
   fixture.componentRef.setInput('searchText', '');
-  fixture.componentRef.setInput('maxPriceUsd', null);
-  fixture.componentRef.setInput('sort', 'featured');
-  fixture.componentRef.setInput('prices', PRICES);
   await fixture.whenStable();
   return { fixture, host: fixture.nativeElement as HTMLElement };
 }
@@ -36,14 +27,13 @@ describe('CatalogFilterBar', () => {
     await TestBed.configureTestingModule({ imports: [CatalogFilterBar] }).compileComponents();
   });
 
-  it('offers one option per distinct price, formatted as a price', async () => {
+  it('labels the search field and exposes it as a search landmark', async () => {
     const { host } = await render();
-    const options = [...host.querySelectorAll<HTMLOptionElement>('#catalog-price option')];
 
-    expect(options).toHaveLength(PRICES.length + 1);
-    expect(options[0]?.textContent?.trim()).toBe('Todos');
-    expect(options.map((option) => option.textContent?.trim())).toContain('Hasta $5.00');
-    expect(options.map((option) => option.textContent?.trim())).toContain('Hasta $10.00');
+    expect(host.querySelector('[role="search"]')?.getAttribute('aria-label')).toBe(
+      'Filtros del catálogo',
+    );
+    expect(host.querySelector('label[for="catalog-search"]')?.textContent?.trim()).toBe('Buscar');
   });
 
   it('reports typed text as it arrives', async () => {
@@ -58,43 +48,13 @@ describe('CatalogFilterBar', () => {
     expect(emitted).toEqual(['calamar']);
   });
 
-  it('reports a price ceiling as a number and the empty option as no ceiling', async () => {
+  it('reflects the text the parent holds, so clearing filters resets the control', async () => {
     const { fixture, host } = await render();
-    const emitted: (number | null)[] = [];
-    fixture.componentInstance.maxPriceChange.subscribe((value) => emitted.push(value));
+    const input = host.querySelector<HTMLInputElement>('#catalog-search')!;
 
-    const select = host.querySelector<HTMLSelectElement>('#catalog-price')!;
-    select.value = '5';
-    select.dispatchEvent(new Event('change'));
-    select.value = '';
-    select.dispatchEvent(new Event('change'));
-
-    expect(emitted).toEqual([5, null]);
-  });
-
-  it('reflects the ceiling the parent holds, so clearing filters resets the control', async () => {
-    const { fixture, host } = await render();
-    const select = host.querySelector<HTMLSelectElement>('#catalog-price')!;
-
-    fixture.componentRef.setInput('maxPriceUsd', 2);
+    fixture.componentRef.setInput('searchText', 'mascotas');
     await fixture.whenStable();
 
-    expect(select.value).toBe('2');
-    expect(select.selectedOptions[0]?.textContent?.trim()).toBe('Hasta $2.00');
-  });
-
-  it('reports only a sort order it recognises', async () => {
-    const { fixture, host } = await render();
-    const emitted: CatalogSort[] = [];
-    fixture.componentInstance.sortChange.subscribe((value) => emitted.push(value));
-
-    const select = host.querySelector<HTMLSelectElement>('#catalog-sort')!;
-    select.value = 'price-desc';
-    select.dispatchEvent(new Event('change'));
-    // A value that is not in the list is discarded rather than passed on as a sort order.
-    select.value = '';
-    select.dispatchEvent(new Event('change'));
-
-    expect(emitted).toEqual(['price-desc']);
+    expect(input.value).toBe('mascotas');
   });
 });

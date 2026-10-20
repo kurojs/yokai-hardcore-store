@@ -24,7 +24,7 @@ async function render(slug?: string): Promise<{
   return { fixture, host: fixture.nativeElement as HTMLElement };
 }
 
-/** Waits until the catalog has loaded and the grid is on screen. */
+/** Waits until the catalog has loaded and the rows are on screen. */
 async function waitForProducts(
   fixture: ComponentFixture<CatalogPage>,
   host: HTMLElement,
@@ -32,12 +32,12 @@ async function waitForProducts(
 ): Promise<void> {
   await vi.waitFor(async () => {
     await fixture.whenStable();
-    expect(host.querySelectorAll('app-product-card')).toHaveLength(count);
+    expect(host.querySelectorAll('app-product-row')).toHaveLength(count);
   });
 }
 
 function products(host: HTMLElement): HTMLElement[] {
-  return [...host.querySelectorAll<HTMLElement>('app-product-card')];
+  return [...host.querySelectorAll<HTMLElement>('app-product-row')];
 }
 
 describe('CatalogPage', () => {
@@ -87,7 +87,7 @@ describe('CatalogPage', () => {
     expect(host.querySelector('h1')?.textContent?.trim()).toBe('Mascotas');
     expect(host.querySelector('.results-line')?.textContent?.trim()).toBe('1 producto');
     expect(products(host)[0]?.textContent).toContain('CUPÓN CANJEABLE PARA FAMILIAR');
-    expect(host.querySelector('a.card-link')?.getAttribute('href')).toBe(
+    expect(host.querySelector('a.row-link')?.getAttribute('href')).toBe(
       '/product/cupon-canjeable-para-familiar',
     );
     // The category chip for the current category is the active one.
@@ -98,7 +98,7 @@ describe('CatalogPage', () => {
     const { fixture, host } = await render();
     await waitForProducts(fixture, host, 48);
 
-    const hrefs = [...host.querySelectorAll('.card-grid a.card-link')].map((link) =>
+    const hrefs = [...host.querySelectorAll('.result-list a.row-link')].map((link) =>
       link.getAttribute('href'),
     );
     expect(hrefs).toHaveLength(48);
@@ -118,7 +118,7 @@ describe('CatalogPage', () => {
 
     expect(host.querySelector('h1')?.textContent?.trim()).toBe('Categoría no encontrada');
     expect(host.querySelector('a.button')?.getAttribute('href')).toBe('/catalog');
-    expect(host.querySelectorAll('app-product-card')).toHaveLength(0);
+    expect(host.querySelectorAll('app-product-row')).toHaveLength(0);
   });
 
   it('narrows the grid as the visitor types, accent-insensitively', async () => {
@@ -157,7 +157,7 @@ describe('CatalogPage', () => {
 
     await vi.waitFor(async () => {
       await fixture.whenStable();
-      const prices = [...host.querySelectorAll('.product-card__price')].map((node) =>
+      const prices = [...host.querySelectorAll('.product-row__price')].map((node) =>
         node.textContent?.trim(),
       );
       expect(prices[0]).toBe('$1.00');

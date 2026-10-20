@@ -46,7 +46,7 @@ import type { UiText } from '../core/i18n/ui-text';
     .stepper {
       display: inline-flex;
       align-items: stretch;
-      border: 1px solid var(--color-border-strong);
+      border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
       background: var(--color-surface);
     }

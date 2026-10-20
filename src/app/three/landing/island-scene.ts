@@ -2,12 +2,17 @@
  * Voxel description -> three.js meshes.
  *
  * The terrain is one `InstancedMesh` per block kind: ~400 visible blocks become six or seven
- * draw primitives, and every instance shares one 1x1x1 box geometry and one material. The
- * handful of floating blocks stay individual meshes because they bob and spin independently;
- * instancing them would mean rewriting their matrices every frame for no gain.
+ * draw primitives, and every instance shares one 1x1x1 box geometry and one material.
  *
  * Per-instance tint is a grey multiplier derived from the seed and the block coordinate, which
  * gives a large surface some tonal variation without adding a texture per block.
+ *
+ * Two decorations in the voxel description are deliberately not rendered. The lantern posts
+ * (a lantern plus the wood block under it) were a warm point of light in the old framed panel;
+ * over a full-bleed background their glow reads as a lamp floating in the page. The detached
+ * rim blocks bobbed and spun independently and made the still hero restless. Both are filtered
+ * here rather than deleted from `voxels.ts`, so the generator keeps its layout tests and the
+ * rendering decision stays in the rendering module.
  */
 
 import * as THREE from 'three';
@@ -19,17 +24,34 @@ import { blockTint, type VoxelBlock, type VoxelIsland } from './voxels';
 /** What the renderer drives, and the one method it must call on destroy. */
 export interface IslandScene {
   readonly root: THREE.Group;
-  /** Bobs and turns the detached blocks. Called only while the scene is animating. */
+  /** Kept so the renderer's frame loop has one stable call shape; the island is static. */
   update(elapsed: number): void;
   /** Releases every geometry, material, texture and instance buffer exactly once. */
   dispose(): void;
 }
 
-interface FloatingBlock {
-  readonly mesh: THREE.Mesh;
-  readonly baseY: number;
-  readonly phase: number;
-  readonly spin: number;
+function positionKey(x: number, y: number, z: number): string {
+  return `${x},${y},${z}`;
+}
+
+/**
+ * The blocks that are actually drawn.
+ *
+ * A lantern and the wood block directly beneath it are one post, so both disappear together.
+ * A wood block left standing alone would read as a fence post with nothing on it.
+ */
+function renderedBlocks(island: VoxelIsland): readonly VoxelBlock[] {
+  const lanterns = new Set<string>();
+  for (const block of island.blocks) {
+    if (block.kind === 'lantern') lanterns.add(positionKey(block.x, block.y, block.z));
+  }
+  return island.blocks.filter((block) => {
+    if (block.kind === 'lantern') return false;
+    if (block.kind === 'wood' && lanterns.has(positionKey(block.x, block.y + 1, block.z))) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
@@ -77,9 +99,10 @@ export function createIslandScene(island: VoxelIsland): IslandScene {
   const box = new THREE.BoxGeometry(1, 1, 1);
   box.name = 'landing-block';
 
+  const blocks = renderedBlocks(island);
+
   const populatedKinds = new Set<BlockKind>();
-  for (const block of island.blocks) populatedKinds.add(block.kind);
-  for (const block of island.floating) populatedKinds.add(block.kind);
+  for (const block of blocks) populatedKinds.add(block.kind);
 
   const materials = new Map<BlockKind, THREE.MeshStandardMaterial>();
   for (const kind of BLOCK_KINDS) {
@@ -87,7 +110,7 @@ export function createIslandScene(island: VoxelIsland): IslandScene {
   }
 
   const grounded = new Map<BlockKind, VoxelBlock[]>();
-  for (const block of island.blocks) {
+  for (const block of blocks) {
     const group = grounded.get(block.kind);
     if (group === undefined) grounded.set(block.kind, [block]);
     else group.push(block);
@@ -111,36 +134,11 @@ export function createIslandScene(island: VoxelIsland): IslandScene {
     root.add(mesh);
   }
 
-  const floatingGroup = new THREE.Group();
-  floatingGroup.name = 'landing-floating';
-  const floating: FloatingBlock[] = [];
-  island.floating.forEach((block, index) => {
-    const material = materials.get(block.kind);
-    if (material === undefined) return;
-    const mesh = new THREE.Mesh(box, material);
-    mesh.name = `landing-floating-${index}`;
-    mesh.position.set(block.x, block.y, block.z);
-    const variation = blockTint(island.seed, block);
-    mesh.scale.setScalar(0.82 + variation * 0.22);
-    floatingGroup.add(mesh);
-    floating.push({
-      mesh,
-      baseY: block.y,
-      phase: index * 1.7 + variation * 2,
-      spin: 0.12 + (1 - variation) * 0.3,
-    });
-  });
-  root.add(floatingGroup);
-
   let disposed = false;
   return {
     root,
-    update(elapsed: number): void {
-      if (disposed) return;
-      for (const block of floating) {
-        block.mesh.position.y = block.baseY + Math.sin(elapsed * 0.8 + block.phase) * 0.16;
-        block.mesh.rotation.y = block.spin * elapsed;
-      }
+    update(): void {
+      // The island is a still diorama; the camera supplies all of the motion.
     },
     dispose(): void {
       if (disposed) return;

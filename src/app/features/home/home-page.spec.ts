@@ -82,6 +82,26 @@ describe('HomePage', () => {
     expect(host.querySelectorAll('.card-grid')).toHaveLength(2);
   });
 
+  it('fills the bannerless categories with a real product photograph', async () => {
+    stubFetch(readCommittedCatalogDocument());
+
+    const { fixture, host } = await render();
+    await vi.waitFor(async () => {
+      await fixture.whenStable();
+      expect(host.querySelectorAll('app-category-card')).toHaveLength(10);
+    });
+
+    // Three of the ten categories ship without a banner; each should borrow a product image
+    // from its own catalog instead of falling back to a monogram.
+    const fallbacks = [...host.querySelectorAll('.category-card__fallback')];
+    expect(fallbacks).toHaveLength(3);
+    for (const fallback of fallbacks) {
+      const src = fallback.querySelector('img')?.getAttribute('src');
+      expect(src?.startsWith('/products/')).toBe(true);
+      expect(fallback.querySelector('.category-card__overlay')?.textContent?.trim()).not.toBe('');
+    }
+  });
+
   it('links each category card to its filtered catalog route', async () => {
     stubFetch(readCommittedCatalogDocument());
 
@@ -114,7 +134,7 @@ describe('HomePage', () => {
     expect(hrefs.every((href) => href?.startsWith('/product/'))).toBe(true);
   });
 
-  it('reserves a decorative scene panel without taking any copy out of the page', async () => {
+  it('reserves a decorative full-bleed scene without taking any copy out of the page', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(() => new Promise<Response>(() => undefined)),

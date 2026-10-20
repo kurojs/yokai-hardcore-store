@@ -1,37 +1,60 @@
 /**
- * Global styles: the design tokens every slice draws from, plus the base document.
+ * Global styles: the design tokens every slice draws from, the base document and the small
+ * set of utilities shared by more than one page.
  *
- * The palette is anchored to `#0b0d12`, which is `PREVIEW_BACKGROUND` in
- * `app/three/preview-host.ts`. The developer model routes are full-screen WebGL stages on
- * that exact colour, so the storefront uses it too: navigating from a product grid to a model
- * preview must not look like leaving the application.
+ * The palette is a near-black, warm-neutral surface with a single jade accent. It is
+ * deliberately *not* the blue-teal developer-tool palette the first pass shipped: a storefront
+ * that sells Minecraft goods should read as a dark world surface with one confident brand
+ * colour, not as a dashboard.
  *
- * Components never hard-code a colour. They read these custom properties, which is what keeps
- * a card in `shared/`, a page in `features/` and the shell visually consistent, and what gives
- * T8 a single place to swap a theme.
+ * Two rules keep the storefront coherent:
+ *
+ * - Components never hard-code a colour. They read these custom properties, so the shell, the
+ *   catalog rows and the checkout cannot drift apart.
+ * - Radii and spacing are small. The browse surface is dense and information-first; large
+ *   rounded cards and drop shadows were the part the design review rejected.
+ *
+ * The page background is a procedurally authored 4x4 voxel tile (see `--texture-voxel` below)
+ * so the surface reads as a blocky world without shipping a texture download.
  */
 
 :root {
   color-scheme: dark;
 
   /* Surfaces, from the page upwards. */
-  --color-bg: #0b0d12;
-  --color-surface: #12161f;
-  --color-surface-raised: #191f2b;
-  --color-border: #232b39;
-  --color-border-strong: #35415a;
+  --color-bg: #0d0f0e;
+  --color-surface: #121514;
+  --color-surface-raised: #171b19;
 
-  /* Text and accents. The accent is a lantern teal: readable on the near-black background
-     without the neon glare that would fight the product photography. */
-  --color-text: #e7ecf5;
-  --color-text-muted: #9aa7bb;
-  --color-accent: #5eead4;
-  --color-accent-hover: #7ff3e0;
-  --color-danger: #fca5a5;
+  /* Hairlines: borders are low-contrast separators, never frames. */
+  --color-border: #242a28;
+  --color-border-strong: #343c39;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1.25rem;
+  /* Control boundaries are a different job from separators: an input or a button has to be
+     identifiable as a control, so this token clears 3:1 against every surface it sits on. */
+  --color-border-control: #5f6a64;
+
+  /* Text. `muted` still clears 4.5:1 on both the page and the raised surface. */
+  --color-text: #e9eeeb;
+  --color-text-muted: #9aa69f;
+
+  /* The brand accent: jade/emerald, tuned for a near-black page. */
+  --color-accent: #35d07f;
+  --color-accent-hover: #57dc95;
+  --color-on-accent: #06130b;
+
+  /* Interaction surfaces that are not quite a card. */
+  --color-row-hover: #141817;
+  --color-pill: #1a1f1d;
+  --color-pill-text: #a9b4ae;
+
+  /* Errors only. Never used for decoration. */
+  --color-danger: #f08a8a;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -42,19 +65,39 @@
   --space-7: 3rem;
 
   /* Reading width for page-level containers. */
-  --measure: 72rem;
+  --measure: 74rem;
+
+  /* The sticky header's height, so sticky columns can offset themselves by it. */
+  --header-height: 3.25rem;
 
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 45%), 0 12px 32px rgb(0 0 0 / 25%);
+  --text-ui: 0.875rem;
+  --text-small: 0.8125rem;
+  --text-micro: 0.75rem;
+
   --transition: 140ms ease;
+
+  /**
+   * A seamless 4x4 voxel tile.
+   *
+   * Each cell is a slightly different dark value and the internal edges are one hairline of a
+   * lighter grey; the whole group is drawn at low opacity so it reads as a blocky world only
+   * when the eye leaves the copy. The fills are authored here rather than downloaded: there is
+   * no network request and no non-deterministic randomness.
+   */
+  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.075'%3E%3Crect%20width='32'%20height='32'%20fill='%23333b38'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%232c332f'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%2339413d'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%232f3733'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%23363e3a'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%232a312e'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%233a423e'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%23303834'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%23313935'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%232b322f'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%2338403c'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%232e3532'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%23353d39'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%2329302d'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%233b433f'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%23323a36'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%237d8a83'%20stroke-opacity='.5'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
 }
 
 html,
@@ -64,7 +107,14 @@ body {
 }
 
 body {
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  /* The vignette darkens the edges of the viewport; the tile repeats underneath it. */
+  background-image:
+    radial-gradient(120% 90% at 50% 0%, transparent 30%, rgb(0 0 0 / 55%) 100%),
+    var(--texture-voxel);
+  background-repeat: no-repeat, repeat;
+  background-size: 100% 100%, 128px 128px;
+  background-attachment: fixed, scroll;
   color: var(--color-text);
   font-family: var(--font-sans);
   font-size: 1rem;
@@ -101,11 +151,11 @@ a {
 
 ::selection {
   background: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
 }
 
-/* The only motion in the storefront is the card lift, and it is decoration. One media query
-   is a cheap way to respect the OS preference instead of ignoring it. */
+/* The only motion in the storefront is a hover tint, and it is decoration. One media query is
+   a cheap way to respect the OS preference instead of ignoring it. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -130,17 +180,17 @@ a {
 }
 
 /**
- * A responsive card grid, used by both the landing page and the catalog.
+ * The secondary card grid, used by the landing page's category and featured strips and by the
+ * product page's related products. The catalog's browse surface is a list of rows instead.
  *
  * `auto-fill` with a minimum column width keeps the cards readable from a phone to a wide
  * screen without a single breakpoint. The list markers are reset here because the grid is a
- * `<ul>`: a list is the honest semantic for a collection of cards, and the browser default
- * would put a bullet where a card should be.
+ * `<ul>`: a list is the honest semantic for a collection of cards.
  */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
-  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--space-3);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -158,19 +208,20 @@ a {
   border-radius: var(--radius-md);
 }
 
-/* Buttons are part of the design system too: the landing page call to action and the catalog's
-   retry action must not disagree about height, radius or focus treatment. */
+/* Buttons are part of the design system too: the landing page call to action, the catalog's
+   retry action and the checkout submit must not disagree about height, radius or focus. */
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-3) var(--space-5);
-  border: 1px solid var(--color-border-strong);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
+  font-size: var(--text-ui);
   font-weight: 600;
   cursor: pointer;
   transition:
@@ -186,7 +237,7 @@ a {
 .button--primary {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  color: var(--color-bg);
+  color: var(--color-on-accent);
 }
 
 .button--primary:hover {
@@ -233,12 +284,12 @@ a {
 }
 
 .section__head h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 .section__note {
   max-width: 32rem;
-  font-size: 0.875rem;
+  font-size: var(--text-small);
   color: var(--color-text-muted);
 }
 
@@ -264,43 +315,4 @@ a {
 .state__message {
   margin-bottom: var(--space-4);
   color: var(--color-text-muted);
-}
-
-/**
- * Placeholder treatments for categories without a banner image.
- *
- * `categoryPlaceholderVariant` in `app/core/catalog/category-visual.ts` hashes a category slug
- * into the index of one of these classes, so the choice is stable across renders. Each rule
- * sets both the gradient and the monogram colour, which is why the monogram inherits `color`
- * instead of declaring one. Keep this list in sync with `CATEGORY_PLACEHOLDER_VARIANTS`: the
- * classes are a styling contract, not something a spec can check.
- */
-.category-visual--v0 {
-  background: linear-gradient(135deg, #0f2f2e, #0b0d12);
-  color: #7ff3e0;
-}
-
-.category-visual--v1 {
-  background: linear-gradient(135deg, #2a1b3d, #0b0d12);
-  color: #d3b4ff;
-}
-
-.category-visual--v2 {
-  background: linear-gradient(135deg, #33230f, #0b0d12);
-  color: #ffd29b;
-}
-
-.category-visual--v3 {
-  background: linear-gradient(135deg, #3a1522, #0b0d12);
-  color: #ffb3c6;
-}
-
-.category-visual--v4 {
-  background: linear-gradient(135deg, #12294a, #0b0d12);
-  color: #a9c9ff;
-}
-
-.category-visual--v5 {
-  background: linear-gradient(135deg, #1f3312, #0b0d12);
-  color: #c6f09b;
 }

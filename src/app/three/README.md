@@ -8,10 +8,9 @@ All three.js integration and 3D asset parsing, isolated from the Angular applica
 `/dev/model` renders the Tlaloc boss with its idle clip playing, and `/dev/items` renders the
 Tlaloc hat and staff plus the two parent-driven sprites.
 
-`landing/` is the home page's procedural hero diorama: a seeded voxel island built in code,
-procedurally drawn block textures, and the same Tlaloc model standing on it. It is the only
-3D on the storefront, it loads after the hero has rendered, and it can disappear without
-taking any copy with it.
+`landing/` is the home page's procedural hero diorama: a seeded voxel island built in code and
+procedurally drawn block textures. It is the only 3D on the storefront, it loads after the hero
+has rendered, and it can disappear without taking any copy with it.
 
 `preview-host.ts` owns the WebGL plumbing both routes need — renderer, canvas, lights, orbit
 controls, resize, render loop, teardown, camera framing — so `three` is in one shared lazy
@@ -86,13 +85,12 @@ three.js only where it is unavoidable.
 |---|---|
 | `palette.ts` | The eight block kinds and their colour ramps. Three.js-free. |
 | `random.ts` | `mulberry32` plus coordinate hashes. Three.js-free. |
-| `voxels.ts` | Seeded island generator: terrain disc, Tlaloc pad, trees, floating blocks, bounds, counts. Three.js-free and total. |
+| `voxels.ts` | Seeded island generator: terrain disc, pad, trees, floating blocks, bounds, counts. Three.js-free and total. |
 | `pixels.ts` | 16×16 RGBA tiles generated from the palette. Three.js-free. |
-| `placement.ts` | Centres the boss on the pad and puts its lowest vertex on the ground. Three.js-free. |
 | `motion.ts` | The gating policy: `animate` / `still` / `paused`. Three.js-free. |
 | `textures.ts` | `DataTexture` + lit material per block kind. |
-| `island-scene.ts` | Instanced terrain, individual floating meshes, de-duplicated disposal. |
-| `landing-renderer.ts` | Renderer, camera, lights, loop, model load, observers, teardown. |
+| `island-scene.ts` | Instanced terrain, lantern-post and floating-block filtering, de-duplicated disposal. |
+| `landing-renderer.ts` | Transparent renderer, token-driven lights, camera, loop, observers, teardown. |
 
 The rules that make it safe on a commercial storefront:
 
@@ -104,12 +102,15 @@ The rules that make it safe on a commercial storefront:
   loader, and no copied Minecraft texture.
 - **No work off-screen.** `IntersectionObserver` and `visibilitychange` feed `motion.ts`;
   `requestAnimationFrame` only exists while the policy says `animate`. Reduced motion renders
-  exactly one still frame at `STILL_POSE_SECONDS` into the idle clip.
+  exactly one still frame at the canonical camera position.
 - **WebGL absence is not an error page.** `createLandingScene` throws once if the browser
-  cannot create a context; the component catches it, logs one line and leaves the reserved
-  panel as a gradient. A model 404 or parse failure keeps the procedural island and logs once.
+  cannot create a context; the component catches it, logs one line and leaves the hero's own
+  wash and copy untouched. A frame failure hides the canvas instead of showing a broken scene.
 - **Disposal is one path.** `disposeObjectTree` de-duplicates geometries, materials, textures
   and `InstancedMesh` instance buffers, because the unit box and the materials are shared.
+- **Full-bleed, not a panel.** The canvas clears to alpha zero and the scene has no background
+  or fog of its own; the hero's CSS mask fades it into the page. Lighting colours are read from
+  the CSS tokens, so the diorama stays in the storefront palette.
 
 ## Traps that cost real time
 

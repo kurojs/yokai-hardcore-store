@@ -108,11 +108,13 @@ describe('App', () => {
     );
   });
 
-  it('keeps the demo disclaimer in the footer, where a buyer can find it', async () => {
+  it('keeps the non-affiliation note in the footer, where a buyer can find it', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelector('footer')?.textContent).toContain('ningún pago se procesa');
+    expect(host.querySelector('footer')?.textContent).toContain(
+      'No está afiliada a Mojang Studios',
+    );
   });
 });

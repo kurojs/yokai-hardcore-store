@@ -1,9 +1,9 @@
 /**
  * The landing hero's WebGL scene.
  *
- * This is the only file that couples the procedural island, the Blockbench pipeline and a
- * renderer. It is deliberately framework-free: the Angular component owns a stage element and
- * a destroy call, and everything else lives here.
+ * This is the only file that couples the procedural island to a renderer. It is deliberately
+ * framework-free: the Angular component owns a stage element and a destroy call, and
+ * everything else lives here.
  *
  * Rules this file is built around:
  *
@@ -11,19 +11,20 @@
  *   dynamic `import()` started after the landing page's first render, so importing this module
  *   pulls three.js into its own lazy chunk.
  * - **Progressive enhancement.** If WebGL is missing, the renderer constructor throws and the
- *   caller catches it; a model that 404s or fails to parse leaves the procedural island
- *   running and logs one line. A throw inside a frame stops the loop instead of spamming the
- *   console sixty times a second.
+ *   caller catches it. A throw inside a frame stops the loop instead of spamming the console
+ *   sixty times a second.
  * - **No work off-screen.** The motion policy decides between animate, one still frame and
  *   paused; `requestAnimationFrame` runs only while animating.
- * - **One teardown path.** `dispose()` releases the animation mixer, the model scene, the
- *   island, the renderer and the canvas exactly once.
+ * - **One teardown path.** `dispose()` releases the island, the renderer and the canvas exactly
+ *   once.
+ * - **Full-bleed, not a panel.** The canvas is transparent and the scene carries no background
+ *   of its own; the hero's page background and its CSS mask do the blending. All lighting
+ *   colours are read from the CSS tokens, so the scene cannot drift from the storefront palette.
  */
 
 import * as THREE from 'three';
 
-import { createBbModelScene, type BbModelScene } from '../bbmodel';
-import { describeError, PREVIEW_BACKGROUND } from '../preview-host';
+import { describeError } from '../preview-host';
 import { createIslandScene, type IslandScene } from './island-scene';
 import {
   sceneMotion,
@@ -31,17 +32,7 @@ import {
   REDUCED_MOTION_QUERY,
   type SceneMotion,
 } from './motion';
-import {
-  groundCenteredPlacement,
-  TLALOC_CLIP,
-  TLALOC_MODEL_URL,
-  TLALOC_SCALE,
-  TLALOC_YAW,
-} from './placement';
-import { GROUND_SURFACE_Y, type VoxelIsland } from './voxels';
-
-/** Seconds into the idle clip that reads as a settled pose for a reduced-motion visitor. */
-const STILL_POSE_SECONDS = 0.45;
+import type { VoxelIsland } from './voxels';
 
 /** One log line per page load, no matter how many things fail. */
 let reported = false;
@@ -59,16 +50,30 @@ export interface LandingSceneHandle {
 }
 
 /**
+ * Reads a design token as a three.js colour.
+ *
+ * The scene has no palette of its own: lighting comes from the same tokens as the rest of the
+ * storefront. A missing token degrades to white rather than throwing, because a decorative
+ * scene must never break the page.
+ */
+function tokenColor(name: string): THREE.Color {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return new THREE.Color().setStyle(value === '' ? 'white' : value);
+}
+
+/**
  * Builds the scene around `stage` and starts the lifecycle.
  *
  * @throws Error when the browser cannot create a WebGL context. That is the only failure the
  *   caller has to handle, and it is expected on machines without WebGL.
  */
 export function createLandingScene(stage: HTMLElement, island: VoxelIsland): LandingSceneHandle {
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.setClearColor(PREVIEW_BACKGROUND, 1);
+  // A transparent clear is what lets the hero's background and mask show through; the scene
+  // itself paints no rectangle.
+  renderer.setClearAlpha(0);
 
   const canvas = renderer.domElement;
   canvas.setAttribute('aria-hidden', 'true');
@@ -78,25 +83,21 @@ export function createLandingScene(stage: HTMLElement, island: VoxelIsland): Lan
   stage.append(canvas);
 
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(PREVIEW_BACKGROUND);
-  // Fog hides the far edge of the slab and keeps the diorama from looking like a floating
-  // polygon against a flat page.
-  scene.fog = new THREE.Fog(PREVIEW_BACKGROUND, 22, 38);
 
   const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 120);
 
-  // Flat, readable lighting: a cool hemisphere fill, a warm key, a teal rim that echoes the
-  // storefront accent, and one point light where the lanterns are.
-  scene.add(new THREE.HemisphereLight(0xeaf4ff, 0x1a2231, 1.6));
-  const key = new THREE.DirectionalLight(0xfff2dc, 2);
+  // Flat, readable lighting: a neutral hemisphere fill, a bright key from above, and a jade
+  // rim that echoes the storefront accent. Every colour is a CSS token, so the scene stays in
+  // the same palette as the page around it.
+  scene.add(
+    new THREE.HemisphereLight(tokenColor('--color-text'), tokenColor('--color-bg'), 1.6),
+  );
+  const key = new THREE.DirectionalLight(tokenColor('--color-text'), 2);
   key.position.set(6, 10, 5);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x5eead4, 0.7);
+  const rim = new THREE.DirectionalLight(tokenColor('--color-accent'), 0.7);
   rim.position.set(-7, 4, -6);
   scene.add(rim);
-  const lanternGlow = new THREE.PointLight(0xffc46b, 10, 12, 2);
-  lanternGlow.position.set(3, 3, 3);
-  scene.add(lanternGlow);
 
   const islandScene: IslandScene = createIslandScene(island);
   scene.add(islandScene.root);
@@ -132,29 +133,20 @@ export function createLandingScene(stage: HTMLElement, island: VoxelIsland): Lan
   let elapsed = 0;
   let last = 0;
 
-  let modelScene: BbModelScene | null = null;
-  let mixer: THREE.AnimationMixer | null = null;
-
   const fail = (cause: unknown): void => {
     if (failed) return;
     failed = true;
     cancelLoop();
     reportLandingSceneFailure(cause);
-    // The reserved panel keeps its gradient; the broken canvas is hidden rather than shown.
+    // The hero keeps its wash and copy; the broken canvas is hidden rather than shown.
     canvas.style.display = 'none';
   };
 
   const renderFrame = (delta: number, still: boolean): void => {
     if (failed || disposed) return;
     try {
-      if (still) {
-        islandScene.update(0);
-        mixer?.setTime(STILL_POSE_SECONDS);
-      } else {
-        elapsed += delta;
-        islandScene.update(elapsed);
-        mixer?.update(delta);
-      }
+      if (!still) elapsed += delta;
+      islandScene.update(still ? 0 : elapsed);
       placeCamera(still ? 0 : elapsed);
       renderer.render(scene, camera);
     } catch (cause) {
@@ -236,50 +228,7 @@ export function createLandingScene(stage: HTMLElement, island: VoxelIsland): Lan
   }
   resize();
 
-  const loadModel = async (): Promise<void> => {
-    try {
-      const response = await fetch(TLALOC_MODEL_URL);
-      if (!response.ok) {
-        throw new Error(`GET ${TLALOC_MODEL_URL} responded ${response.status}`);
-      }
-      const raw: unknown = await response.json();
-      const built = createBbModelScene(raw, { loadTexture: new THREE.TextureLoader() });
-      if (disposed || failed) {
-        built.dispose();
-        return;
-      }
-
-      const placement = groundCenteredPlacement(
-        built.stats.boundingBox,
-        TLALOC_SCALE,
-        GROUND_SURFACE_Y,
-      );
-      built.root.position.set(placement.position[0], placement.position[1], placement.position[2]);
-      built.root.scale.setScalar(placement.scale);
-      built.root.rotation.y = TLALOC_YAW;
-      scene.add(built.root);
-      modelScene = built;
-
-      const clip =
-        built.clips.find((candidate) => candidate.name === TLALOC_CLIP) ?? built.clips[0];
-      if (clip !== undefined) {
-        mixer = new THREE.AnimationMixer(built.root);
-        const action = mixer.clipAction(clip);
-        action.setLoop(THREE.LoopRepeat, Number.POSITIVE_INFINITY);
-        action.play();
-      }
-      // The state may have changed while the model was in flight (a still frame was already
-      // drawn without it), so re-apply rather than assuming the loop will pick it up.
-      if (mode === 'still') renderFrame(0, true);
-    } catch (cause) {
-      // The island is procedural and already on screen; a missing boss degrades the
-      // composition but does not break the page. A failure after unmount is not worth a log.
-      if (!disposed) reportLandingSceneFailure(cause);
-    }
-  };
-
   applyMode();
-  void loadModel();
 
   return {
     dispose(): void {
@@ -291,12 +240,6 @@ export function createLandingScene(stage: HTMLElement, island: VoxelIsland): Lan
       window.removeEventListener('resize', onWindowResize);
       document.removeEventListener('visibilitychange', onVisibilityChange);
       media?.removeEventListener('change', onMotionPreferenceChange);
-
-      mixer?.stopAllAction();
-      if (mixer !== null && modelScene !== null) mixer.uncacheRoot(modelScene.root);
-      mixer = null;
-      modelScene?.dispose();
-      modelScene = null;
 
       islandScene.dispose();
       scene.clear();

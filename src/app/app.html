@@ -3,7 +3,7 @@
 <header class="shell__header">
   <div class="page-width shell__bar">
     <a class="brand" routerLink="/" [attr.aria-label]="text().brandHomeLabel">
-      <span class="brand__mark" aria-hidden="true">Y</span>
+      <app-brand-mark class="brand__mark" [size]="26" />
       <span class="brand__text">Yokai Hardcore</span>
     </a>
 
@@ -60,7 +60,10 @@
 
 <footer class="shell__footer">
   <div class="page-width shell__footer-inner">
-    <p class="shell__footer-brand">Yokai Hardcore Store</p>
+    <div class="shell__footer-identity">
+      <p class="shell__footer-brand">{{ text().footerBrand }}</p>
+      <p class="shell__footer-tagline">{{ text().footerTagline }}</p>
+    </div>
     <p class="shell__footer-note">{{ text().footerNote }}</p>
   </div>
 </footer>

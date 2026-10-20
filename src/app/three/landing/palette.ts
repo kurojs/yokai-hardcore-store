@@ -2,11 +2,12 @@
  * The block palette for the landing diorama.
  *
  * Every colour is a deliberate departure from Minecraft's own texture files: these are our
- * own RGB triples, chosen to sit inside the storefront's dark palette rather than to reproduce
- * any shipped asset. The stone family mirrors the shell's blue-grey borders
- * (`--color-border` / `--color-surface-raised`), the greens are desaturated so they never
- * outshout product photography, and the lantern is the one place where the accent teal
- * (`--color-accent`, `#5eead4`) meets a warm amber so the glow reads on a near-black page.
+ * own RGB triples, chosen to sit inside the storefront's dark, warm-neutral shell rather than
+ * to reproduce any shipped asset. The stone family stays blue-grey so it separates from the
+ * warm page background, the greens are desaturated so they never outshout product photography,
+ * and the lantern keeps a teal accent even though the renderer no longer draws the lantern
+ * posts (the texture table stays complete so the generator and its tests keep one source of
+ * truth).
  *
  * The palette lives in a three.js-free module because it is content, not rendering: the pixel
  * generator reads the same triples the material builder does, so a test can prove that every
@@ -123,7 +124,7 @@ export const BLOCK_PALETTE: Readonly<Record<BlockKind, BlockStyle>> = {
   },
 };
 
-/** The dominant colour of a block, used for the warm point light near the lanterns. */
+/** The dominant colour of a block, for callers that need one representative tone. */
 export function dominantColor(kind: BlockKind): PaletteColor {
   return BLOCK_PALETTE[kind].colors[1];
 }

@@ -60,19 +60,14 @@ import { PricePipe } from './price.pipe';
       background: var(--color-surface);
       border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
-      transition:
-        border-color var(--transition),
-        box-shadow var(--transition),
-        transform var(--transition);
+      transition: border-color var(--transition);
     }
 
-    /* Guarded by the hover media feature: on a touch screen a tap would otherwise leave the
-       card raised until something else is tapped. */
+    /* Guarded by the hover media feature: a hairline is the only response. Cards do not lift,
+       glow or animate their shadow — the photography is the loudest thing on the page. */
     @media (hover: hover) {
       :host(:hover) .product-card {
         border-color: var(--color-border-strong);
-        box-shadow: var(--shadow-card);
-        transform: translateY(-2px);
       }
     }
 

@@ -107,7 +107,7 @@
 .field__input {
   width: 100%;
   padding: var(--space-3);
-  border: 1px solid var(--color-border-strong);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
   color: var(--color-text);
@@ -130,15 +130,13 @@
   color: var(--color-danger);
 }
 
-/* Next to the submit button, where the visitor is about to act — not in the footer. */
+/* Next to the submit button, where the visitor is about to act — not in the footer. It is a
+   quiet line of small print, not a warning banner: the checkout is a demo, but it is not an
+   error state. */
 .checkout__demo {
-  padding: var(--space-3);
-  border: 1px solid var(--color-border-strong);
-  border-left: 3px solid var(--color-accent);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-raised);
-  font-size: 0.875rem;
-  color: var(--color-text);
+  font-size: var(--text-micro);
+  line-height: 1.5;
+  color: var(--color-text-muted);
 }
 
 .checkout__submit {

@@ -38,7 +38,13 @@ export interface UiText {
   /** The hidden half of the cart link's accessible name. */
   readonly cartLinkHint: string;
 
-  /** The demo disclaimer that stays in the footer, where a buyer can find it. */
+  /** The language-independent brand line in the footer. */
+  readonly footerBrand: string;
+
+  /** What the store is, in one line. */
+  readonly footerTagline: string;
+
+  /** The legal note every unofficial Minecraft store carries. */
   readonly footerNote: string;
 
   /** Visible label of the language switcher. */
@@ -109,6 +115,7 @@ export interface UiText {
   readonly clearFiltersLabel: string;
 
   readonly filtersLabel: string;
+  readonly catalogFiltersSummary: string;
   readonly searchLabel: string;
   readonly searchPlaceholder: string;
   readonly priceFilterLabel: string;
@@ -119,6 +126,9 @@ export interface UiText {
   readonly sortPriceAsc: string;
   readonly sortPriceDesc: string;
   readonly sortNameAsc: string;
+
+  /** A real attribute of every product: the store delivers digitally. */
+  readonly productTagDigital: string;
 
   // ---------------------------------------------------------------------------------------
   // Product

@@ -32,6 +32,7 @@ import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 
 import { CatalogStore } from '../../core/catalog/catalog-store';
+import { categoryFallbackImage } from '../../core/catalog/category-visual';
 import { formatUsdPrice } from '../../core/format/price';
 import { LanguageStore } from '../../core/i18n/language-store';
 import { CategoryCard } from '../../shared/category-card';
@@ -85,6 +86,20 @@ export class HomePage implements OnDestroy {
     this.text().categoriesSummary(this.productCount(), this.categoryCount()),
   );
 
+  /**
+   * A product photograph per category, used only by cards whose category ships no banner.
+   * Computed once per catalog change so the fallback scan does not run on every keystroke
+   * elsewhere in the page.
+   */
+  private readonly fallbackImages = computed(() => {
+    const images = new Map<string, string | null>();
+    const entries = this.catalog.entries();
+    for (const category of this.catalog.categories()) {
+      images.set(category.id, categoryFallbackImage(entries, category.id));
+    }
+    return images;
+  });
+
   /** The cheapest price in the catalog, formatted, or `null` before it has loaded. */
   protected readonly fromPrice = computed(() => {
     const cheapest = this.catalog.prices()[0];
@@ -124,5 +139,9 @@ export class HomePage implements OnDestroy {
 
   protected countIn(categoryId: string): number {
     return this.catalog.countInCategory(categoryId);
+  }
+
+  protected fallbackImageFor(categoryId: string): string | null {
+    return this.fallbackImages().get(categoryId) ?? null;
   }
 }

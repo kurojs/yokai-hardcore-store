@@ -86,7 +86,10 @@ export const EN_UI_TEXT: UiText = {
   navHome: 'Home',
   navCatalog: 'Catalog',
   cartLinkHint: 'Go to the cart page',
-  footerNote: 'Demo store: no payment is processed.',
+  footerBrand: 'Yokai Hardcore Store',
+  footerTagline: 'Community store for the Yokai Hardcore server.',
+  footerNote:
+    'Not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.',
   languageLabel: 'Language',
   languageChanged,
 
@@ -130,6 +133,7 @@ export const EN_UI_TEXT: UiText = {
   clearFiltersLabel: 'Clear filters',
 
   filtersLabel: 'Catalog filters',
+  catalogFiltersSummary: 'Filters',
   searchLabel: 'Search',
   searchPlaceholder: 'Name, description or category',
   priceFilterLabel: 'Price',
@@ -140,6 +144,7 @@ export const EN_UI_TEXT: UiText = {
   sortPriceAsc: 'Price: low to high',
   sortPriceDesc: 'Price: high to low',
   sortNameAsc: 'Name: A-Z',
+  productTagDigital: 'Digital delivery',
 
   productLoading: 'Loading product…',
   productNotFoundTitle: 'We could not find that product',
@@ -178,7 +183,7 @@ export const EN_UI_TEXT: UiText = {
   cartCheckoutLabel: 'Go to checkout',
 
   checkoutTitle: 'Review and confirm',
-  checkoutLead: 'Review your order and complete the demo. No payment is processed.',
+  checkoutLead: 'Review your order and confirm the delivery details.',
   checkoutLoading: 'Loading checkout…',
   checkoutRedirect: 'Your cart is empty. Returning to the cart…',
   checkoutReviewTitle: 'Your order',
@@ -188,8 +193,7 @@ export const EN_UI_TEXT: UiText = {
   minecraftUsernameHelp:
     'Between 3 and 16 characters: letters without accents, numbers and underscore (_).',
   checkoutSubmitLabel: 'Complete the demo',
-  checkoutDemoDisclosure:
-    'Demo: this checkout does not process payments or create orders. You will not be charged, and no data is stored on a server.',
+  checkoutDemoDisclosure: 'Demo checkout: no payment is processed.',
   checkoutConfirmationTitle: 'Demo complete',
   checkoutConfirmationMessage:
     'No charge was made and no order was created. This receipt exists only in this tab and disappears if you reload the page.',

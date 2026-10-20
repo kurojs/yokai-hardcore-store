@@ -24,56 +24,114 @@
   </section>
 } @else {
   <div class="page-width catalog-body">
-    <nav class="chips" [attr.aria-label]="text().categoriesNavLabel">
-      <a
-        class="chip"
-        routerLink="/catalog"
-        [class.is-active]="category() === null"
-        [attr.aria-current]="category() === null ? 'page' : null"
-        >{{ text().allCategoriesLabel }}</a
-      >
-      @for (item of categories(); track item.id) {
-        <a
-          class="chip"
-          [routerLink]="['/catalog', item.slug]"
-          [class.is-active]="item.id === category()?.id"
-          [attr.aria-current]="item.id === category()?.id ? 'page' : null"
-          >{{ item.name }}</a
-        >
+    <div class="catalog-toolbar">
+      <app-catalog-filter-bar
+        [text]="text()"
+        [searchText]="searchText()"
+        (searchTextChange)="searchText.set($event)"
+      />
+
+      @if (results().length > 0) {
+        <p class="results-line" aria-live="polite">{{ countLabel() }}</p>
       }
-    </nav>
+    </div>
 
-    <app-catalog-filter-bar
-      [text]="text()"
-      [searchText]="searchText()"
-      [maxPriceUsd]="maxPriceUsd()"
-      [sort]="sort()"
-      [prices]="prices()"
-      (searchTextChange)="searchText.set($event)"
-      (maxPriceChange)="maxPriceUsd.set($event)"
-      (sortChange)="sort.set($event)"
-    />
+    <div class="catalog-layout">
+      <!-- A native `<details>` is the collapsible panel: no JavaScript, keyboard-operable by
+           default, and `open` means the filters are visible before anyone interacts. On a wide
+           screen it is a sticky column; on a narrow one it is a panel above the list. -->
+      <details class="catalog-sidebar" open>
+        <summary class="catalog-sidebar__summary">{{ text().catalogFiltersSummary }}</summary>
 
-    @if (results().length > 0) {
-      <p class="results-line" aria-live="polite">{{ countLabel() }}</p>
+        <div class="catalog-sidebar__panel">
+          <section class="filter-group">
+            <h2 class="filter-group__title">{{ text().categoriesNavLabel }}</h2>
+            <nav class="filter-rows" [attr.aria-label]="text().categoriesNavLabel">
+              <a
+                class="chip"
+                routerLink="/catalog"
+                [class.is-active]="category() === null"
+                [attr.aria-current]="category() === null ? 'page' : null"
+              >
+                <span class="chip__mark" aria-hidden="true"></span>
+                <span class="chip__label">{{ text().allCategoriesLabel }}</span>
+                <span class="chip__count">{{ totalCount() }}</span>
+              </a>
+              @for (item of categories(); track item.id) {
+                <a
+                  class="chip"
+                  [routerLink]="['/catalog', item.slug]"
+                  [class.is-active]="item.id === category()?.id"
+                  [attr.aria-current]="item.id === category()?.id ? 'page' : null"
+                >
+                  <span class="chip__mark" aria-hidden="true"></span>
+                  <span class="chip__label">{{ item.name }}</span>
+                  <span class="chip__count">{{ countIn(item.id) }}</span>
+                </a>
+              }
+            </nav>
+          </section>
 
-      <ul class="card-grid">
-        @for (entry of results(); track entry.product.id) {
-          <li>
-            <a class="card-link" [routerLink]="['/product', entry.product.slug]">
-              <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
-            </a>
-          </li>
+          <section class="filter-group">
+            <h2 class="filter-group__title">{{ text().priceFilterLabel }}</h2>
+            <label class="visually-hidden" for="catalog-price">{{
+              text().priceFilterLabel
+            }}</label>
+            <select
+              id="catalog-price"
+              class="filter-control"
+              [value]="priceValue()"
+              (change)="onPrice($event)"
+            >
+              <option value="">{{ text().allPricesLabel }}</option>
+              @for (price of prices(); track price) {
+                <option [value]="price">{{ text().upToPrice(price | price) }}</option>
+              }
+            </select>
+          </section>
+
+          <section class="filter-group">
+            <h2 class="filter-group__title">{{ text().sortLabel }}</h2>
+            <label class="visually-hidden" for="catalog-sort">{{ text().sortLabel }}</label>
+            <select
+              id="catalog-sort"
+              class="filter-control"
+              [value]="sort()"
+              (change)="onSort($event)"
+            >
+              @for (option of sortOptions(); track option.value) {
+                <option [value]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          </section>
+        </div>
+      </details>
+
+      <section class="catalog-results">
+        @if (results().length > 0) {
+          <ul class="result-list">
+            @for (entry of results(); track entry.product.id) {
+              <li class="result-list__item">
+                <a class="row-link" [routerLink]="['/product', entry.product.slug]">
+                  <app-product-row
+                    [product]="entry.product"
+                    [categoryName]="entry.category.name"
+                    [text]="text()"
+                  />
+                </a>
+              </li>
+            }
+          </ul>
+        } @else {
+          <div class="state">
+            <h2 class="state__title">{{ text().noResultsTitle }}</h2>
+            <p class="state__message">{{ text().noResultsMessage }}</p>
+            <button type="button" class="button" (click)="clearFilters()">
+              {{ text().clearFiltersLabel }}
+            </button>
+          </div>
         }
-      </ul>
-    } @else {
-      <div class="state">
-        <h2 class="state__title">{{ text().noResultsTitle }}</h2>
-        <p class="state__message">{{ text().noResultsMessage }}</p>
-        <button type="button" class="button" (click)="clearFilters()">
-          {{ text().clearFiltersLabel }}
-        </button>
-      </div>
-    }
+      </section>
+    </div>
   </div>
 }

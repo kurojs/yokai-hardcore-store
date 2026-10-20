@@ -57,6 +57,7 @@ const PROBE_ARGS: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
 const IDENTICAL_BY_DESIGN: ReadonlySet<keyof UiText> = new Set<keyof UiText>([
   'orderSummarySubtotalLabel',
   'orderSummaryTotalLabel',
+  'footerBrand',
 ]);
 
 /**

@@ -97,7 +97,10 @@ export const JA_UI_TEXT: UiText = {
   navHome: 'ホーム',
   navCatalog: 'カタログ',
   cartLinkHint: 'カートページへ移動',
-  footerNote: 'デモストアです。決済は一切処理されません。',
+  footerBrand: 'Yokai Hardcore Store',
+  footerTagline: 'Yokai Hardcore サーバーのコミュニティストア。',
+  footerNote:
+    'Mojang Studios および Microsoft とは提携していません。Minecraft は Mojang Studios の商標です。',
   languageLabel: '言語',
   languageChanged,
 
@@ -141,6 +144,7 @@ export const JA_UI_TEXT: UiText = {
   clearFiltersLabel: 'フィルターをクリア',
 
   filtersLabel: 'カタログのフィルター',
+  catalogFiltersSummary: 'フィルター',
   searchLabel: '検索',
   searchPlaceholder: '商品名、説明、カテゴリ',
   priceFilterLabel: '価格',
@@ -151,6 +155,7 @@ export const JA_UI_TEXT: UiText = {
   sortPriceAsc: '価格の安い順',
   sortPriceDesc: '価格の高い順',
   sortNameAsc: '名前順（A-Z）',
+  productTagDigital: 'デジタル配信',
 
   productLoading: '商品を読み込んでいます…',
   productNotFoundTitle: '商品が見つかりません',
@@ -189,7 +194,7 @@ export const JA_UI_TEXT: UiText = {
   cartCheckoutLabel: 'チェックアウトへ進む',
 
   checkoutTitle: 'ご注文の確認',
-  checkoutLead: '注文内容を確認して、デモを完了してください。決済は処理されません。',
+  checkoutLead: 'ご注文内容を確認し、受け取り情報を入力してください。',
   checkoutLoading: 'チェックアウトを読み込んでいます…',
   checkoutRedirect: 'カートは空です。カートに戻ります…',
   checkoutReviewTitle: 'ご注文内容',
@@ -199,8 +204,7 @@ export const JA_UI_TEXT: UiText = {
   minecraftUsernameHelp:
     '3〜16文字。使用できるのはアクセント記号のない英字、数字、アンダースコア（_）です。',
   checkoutSubmitLabel: 'デモを完了する',
-  checkoutDemoDisclosure:
-    'デモです：このチェックアウトは決済を行わず、注文も作成しません。料金は発生せず、データがサーバーに保存されることもありません。',
+  checkoutDemoDisclosure: 'デモ用チェックアウトです。決済は処理されません。',
   checkoutConfirmationTitle: 'デモが完了しました',
   checkoutConfirmationMessage:
     '料金は発生しておらず、注文も作成されていません。この控えはこのタブにのみ存在し、ページを再読み込みすると消えます。',
