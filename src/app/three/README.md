@@ -8,6 +8,11 @@ All three.js integration and 3D asset parsing, isolated from the Angular applica
 `/dev/model` renders the Tlaloc boss with its idle clip playing, and `/dev/items` renders the
 Tlaloc hat and staff plus the two parent-driven sprites.
 
+`landing/` is the home page's procedural hero diorama: a seeded voxel island built in code,
+procedurally drawn block textures, and the same Tlaloc model standing on it. It is the only
+3D on the storefront, it loads after the hero has rendered, and it can disappear without
+taking any copy with it.
+
 `preview-host.ts` owns the WebGL plumbing both routes need — renderer, canvas, lights, orbit
 controls, resize, render loop, teardown, camera framing — so `three` is in one shared lazy
 chunk and the "this browser has no WebGL" path exists once.
@@ -71,6 +76,40 @@ Measured on `public/models/items/tlaloc/`: `tlaloc_hat.json` 29 elements / 174 f
 triangles, `tlaloc_staff.json` 37 / 222 / 444 with 12 rotated UVs and an emissive companion,
 64×64 textures, all 8 `display` contexts on both, and `netherite_sword.json` +
 `paper.json` as parent-driven sprites whose textures live in the game's jar.
+
+## Landing scene
+
+`landing/` is split the way the rest of this folder is: pure description below the renderer,
+three.js only where it is unavoidable.
+
+| Module | Responsibility |
+|---|---|
+| `palette.ts` | The eight block kinds and their colour ramps. Three.js-free. |
+| `random.ts` | `mulberry32` plus coordinate hashes. Three.js-free. |
+| `voxels.ts` | Seeded island generator: terrain disc, Tlaloc pad, trees, floating blocks, bounds, counts. Three.js-free and total. |
+| `pixels.ts` | 16×16 RGBA tiles generated from the palette. Three.js-free. |
+| `placement.ts` | Centres the boss on the pad and puts its lowest vertex on the ground. Three.js-free. |
+| `motion.ts` | The gating policy: `animate` / `still` / `paused`. Three.js-free. |
+| `textures.ts` | `DataTexture` + lit material per block kind. |
+| `island-scene.ts` | Instanced terrain, individual floating meshes, de-duplicated disposal. |
+| `landing-renderer.ts` | Renderer, camera, lights, loop, model load, observers, teardown. |
+
+The rules that make it safe on a commercial storefront:
+
+- **The scene is never in the initial bundle.** `features/home/home-page.ts` starts a dynamic
+  `import()` from `afterNextRender`; the home page keeps its copy and links before three.js is
+  requested. `@defer` was measured and rejected: its runtime added ~8 kB to the initial shared
+  chunk, while the scene chunk is lazy either way. The dynamic import costs ~0.4 kB.
+- **No image files.** Every block texture is arithmetic over the palette. There is no CDN, no
+  loader, and no copied Minecraft texture.
+- **No work off-screen.** `IntersectionObserver` and `visibilitychange` feed `motion.ts`;
+  `requestAnimationFrame` only exists while the policy says `animate`. Reduced motion renders
+  exactly one still frame at `STILL_POSE_SECONDS` into the idle clip.
+- **WebGL absence is not an error page.** `createLandingScene` throws once if the browser
+  cannot create a context; the component catches it, logs one line and leaves the reserved
+  panel as a gradient. A model 404 or parse failure keeps the procedural island and logs once.
+- **Disposal is one path.** `disposeObjectTree` de-duplicates geometries, materials, textures
+  and `InstancedMesh` instance buffers, because the unit box and the materials are shared.
 
 ## Traps that cost real time
 

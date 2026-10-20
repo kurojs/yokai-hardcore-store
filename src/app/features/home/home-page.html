@@ -1,5 +1,5 @@
 <section class="hero">
-  <div class="page-width">
+  <div class="page-width hero__grid">
     <div class="hero__inner">
       <p class="hero__eyebrow">{{ text().homeEyebrow }}</p>
       <h1 class="hero__title">{{ text().homeTitle }}</h1>
@@ -28,6 +28,17 @@
           }
         </dl>
       }
+    </div>
+
+    <!--
+      The panel is part of the static layout: it reserves the scene's space before any
+      JavaScript for three.js is fetched, so nothing moves when the canvas arrives. It is
+      marked decorative for assistive technology because it carries no information — every
+      claim in the hero is already in the copy beside it. The anchor is where the lazily
+      imported scene component is mounted after the page has rendered.
+    -->
+    <div class="hero__scene" aria-hidden="true">
+      <ng-template #sceneAnchor></ng-template>
     </div>
   </div>
 </section>

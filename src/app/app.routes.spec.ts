@@ -32,6 +32,19 @@ import { productRoutes } from './features/product/product.routes';
 import { ProductPage } from './features/product/product-page';
 
 describe('routes', () => {
+  // Navigating to `/` mounts the landing page, which dynamically imports the decorative scene
+  // after its first render. jsdom has no WebGL, so state that explicitly and keep the console
+  // quiet; the scene's own fallback is specified in `landing-scene.spec.ts`.
+  beforeAll(() => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
+
   beforeEach(() => {
     localStorage.clear();
     vi.stubGlobal(

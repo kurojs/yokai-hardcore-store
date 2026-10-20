@@ -26,6 +26,19 @@ async function render(): Promise<{ fixture: ComponentFixture<HomePage>; host: HT
 }
 
 describe('HomePage', () => {
+  // The home page dynamically mounts the decorative scene after its first render, and that
+  // import can resolve after a test has already finished. Install these for the whole file so
+  // the late continuation cannot print jsdom's canvas warning after a restore.
+  beforeAll(() => {
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
+    vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks();
+  });
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomePage],
@@ -99,6 +112,25 @@ describe('HomePage', () => {
     ].map((link) => link.getAttribute('href'));
     expect(hrefs).toHaveLength(4);
     expect(hrefs.every((href) => href?.startsWith('/product/'))).toBe(true);
+  });
+
+  it('reserves a decorative scene panel without taking any copy out of the page', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise<Response>(() => undefined)),
+    );
+
+    const { fixture, host } = await render();
+    fixture.detectChanges();
+
+    const panel = host.querySelector('.hero__scene');
+    expect(panel).not.toBeNull();
+    // The canvas carries no information, so it is hidden from assistive technology rather
+    // than given a label that would announce a decoration.
+    expect(panel?.getAttribute('aria-hidden')).toBe('true');
+    // The hero copy is outside that panel and still readable without the scene.
+    expect(host.querySelector('.hero__title')?.textContent).toContain('inframundo');
+    expect(host.querySelector('.hero__lead')?.textContent).toContain('Yokai Hardcore');
   });
 
   it('shows the failure and recovers when the visitor retries', async () => {
