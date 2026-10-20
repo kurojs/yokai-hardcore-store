@@ -215,7 +215,7 @@ model.
 | T6 | Product detail view, image-first (no 3D on SKUs) + cart core + shell count | Delegated writer | Write rule | **done** (2026-10-19, `bddadc5` `f264421` `8d1553e` `22fa58c` `fe41acc` `63462bb`) |
 | T7 | Cart page, demo checkout and the header link | Delegated writer | Write rule | **done** (2026-10-19, `373002f` `bedf8fc` `dbe9180` `0004c22` `54ae53c`) |
 | T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
-| T9 | Landing decorative 3D: animated Tlaloc plus downloaded Minecraft-style decoration (voxel props, animated), anchored to the storefront palette | Delegated writer | Write rule | pending |
+| T9 | Landing decorative 3D: animated Tlaloc plus **procedurally generated** voxel decoration (downloads rejected, see T9 section) | Delegated writer | Write rule | **done** (2026-10-19, `95f90b3` `065eb55` `a6799a0`) |
 | T10 | Docs: README, ASSETS.md, LICENSES.md, architecture notes | Delegated writer | Write rule | pending |
 
 Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 → T10.
@@ -297,6 +297,10 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-19 | Parent verification of T6 | **Corrected my own brief**: it claimed descriptions carry line breaks and structural blocks separated by newlines. Measured: **0 of 48 descriptions contain CR or LF**. The structure is inline labels only (`Cantidad:` in 30 products, `Efectos Temporales:` in 17), and the writer was right to replace the line splitter with a lossless label heuristic. Also confirmed: `cofre-de-runas` genuinely has no colon label (504 chars, one block); the single-product `mascotas` slug is `cupon-canjeable-para-familiar`; `data/`, `public/`, `scripts/`, `src/tooling/`, `src/app/three/` untouched; **no `/cart` route**; **no `three/` import** in the cart or product code. The writer's self-reported "three accent-less strings in `catalog-page.ts`" does **not** exist — grep finds only the correctly accented `Cargando el catálogo…`, so that uncertainty was noise, not a defect. Re-ran the suite (661/661) and the build myself | read-only; the deleted temporary persistence spec was redundant — `cart-persistence.spec.ts` permanently covers 27 cases of the same matrix |
 | 2026-10-19 | T7 — cart page, demo checkout, header link | Commits `373002f` (cart line views + one shared `OrderSummary`), `bedf8fc` (cart page), `dbe9180` (demo checkout), `0004c22` (header link), `54ae53c` (Prettier normalization) | `npm test -- --watch=false` PASS **714/714** (54 files), `npm run build` PASS at 272.48 kB initial / 76.14 kB transfer with `cart-page` 7.92 kB and `checkout-page` 11.70 kB lazy, `catalog:verify` PASS, no budget warning |
 | 2026-10-19 | Parent verification of T7 | **Second brief correction, and a bigger one than T6.** The brief said every product image is `/products/<slug>/imagen.png`. Measured across the real catalog: **35 `.png`, 9 `.jpeg`, 3 `.jpg`, 1 `.gif`** — 13 of 48 products would have broken had any code composed the filename. Nothing does: every image comes from `imagePath`/`bannerImage` read out of the catalog, so only a stale comment in `product-page.ts` and a false claim in this document needed fixing (`53f2237` plus the T2 note above). Also verified: checkout has exactly **one** `<input>` and no card/CVV/expiry field anywhere (the only matches for those words are a spec asserting their absence and a comment), `data/`, `public/`, `scripts/`, `src/tooling/`, `src/app/three/` untouched, and re-ran the suite (714/714) and the build myself | read-only; port 4300 was already held by a foreign `ng serve` (PID 2132, not mine), so the writer correctly used 4301 instead of killing it |
+| 2026-10-19 | T8 — i18n ES/EN/JA for UI chrome | Commits `0adf6b5` (typed three-language dictionary + `LanguageStore`), `41ac9de` (migrate every consumer, add the switcher). `core/ui-text.ts` deleted; `core/i18n/` replaces it with one strict 95-key `UiText` interface and `Record<Language, UiText>` | `npm test -- --watch=false` PASS **756/756** (57 files), `npm run build` PASS at 290.91 kB initial / 80.59 kB transfer, `catalog:verify` PASS |
+| 2026-10-19 | Parent verification of T8 | Verified that the Japanese is authored Japanese, not translated Spanish: `です・ます` register, `点` counter, `パンくずリスト`, `価格の安い順`, full-width `｜` in document titles, no plural forms. Confirmed all 22 accent hits outside the dictionaries are **comments and Spanish-data heuristics** (`description.ts` label rules, `fold.ts` examples, `ui-text-model.ts` doc examples, `app.ts` endonym note), never UI copy. Old `core/ui-text.ts` is gone, so no consumer can bypass the dictionary. Re-ran the suite (756/756) and the build myself | read-only; Japanese copy still needs a native reviewer before release |
+| 2026-10-19 | T9 — decorative landing scene | Commits `95f90b3` (seeded voxel island + motion policy), `065eb55` (render the diorama with the Tlaloc boss), `a6799a0` (mount after the hero renders) | `npm test -- --watch=false` PASS **792/792** (63 files), `npm run build` PASS at 291.33 kB initial / 80.69 kB transfer, `landing-scene` lazy 11.03 kB, three.js still a separate lazy 588.55 kB chunk, no budget warning |
+| 2026-10-19 | Parent verification of T9 | Confirmed from `dist/index.html` that **three.js is not preloaded**: the only `modulepreload` is the 147 kB framework chunk, so the 588.55 kB three.js chunk really is reachable only from the landing scene and the two dev routes. Confirmed the hero carries real content (`h1`, lead, two actions, stats, all 10 category cards, featured grid) **outside** the `aria-hidden` scene panel, which reserves its space in CSS so the canvas cannot shift layout. Confirmed **zero new binaries under `public/`** — nothing was downloaded. Motion policy read and verified: `paused` if hidden or off-screen, `still` if reduced-motion, `animate` only when all three allow it, and reduced motion renders one still frame instead of deleting the art. Re-ran the suite (792/792) and the build myself | read-only; **no rendered frame has ever been seen** — jsdom has no WebGL, so framing, exposure, fog, scale and canopy/tail clearance are unverified judgement |
 
 ---
 
@@ -637,31 +641,30 @@ gap T3/T4 recorded.
 
 ## Next step
 
-**T7 is done: the store is complete end to end.** Browse, search, filter, product detail, cart,
-demo checkout. 714 tests, clean build, every route deep-linkable. Two gaps are recorded rather
-than hidden:
+**T9 is done: the store is feature-complete.** Browse, search, filter, product detail, cart, demo
+checkout, three languages of chrome, and a decorative 3D landing. 792 tests, clean build, every
+route deep-linkable, and three.js still out of the first paint. Three gaps are recorded rather than
+hidden:
 
-- **Nobody has looked at the UI in a browser.** The dev-server matrix proves the routes serve and
-  the specs prove the DOM they render into jsdom, but jsdom has no layout engine and no WebGL. No
-  browser tool is connected in this session (only `engram`, `context7`, `elevenlabs` and
-  `opencode`), so the visual pass is still open — the same gap T3/T4 recorded, now covering the
-  storefront, product pages, cart and checkout as well as the 3D previews.
-- **The store is Spanish-only and the polish pass has not happened.** No i18n, no reduced-motion
-  handling for the future hero, no deliberate a11y audit, and the landing page has no 3D scene yet.
+- **Nobody has looked at it.** jsdom has no layout engine and no WebGL; every visual claim in this
+  document is structural. No browser tool is connected in this session (only `engram`, `context7`,
+  `elevenlabs` and `opencode`), so framing, contrast, wrapping and the canvas itself are unverified.
+  This is now the single largest open risk in the project, and only a real browser closes it.
+- **The Japanese chrome has not been reviewed by a native speaker.** It is authored Japanese, not
+  translated Spanish, but it is still model-written.
+- **Catalog content is Spanish in all three languages.** A Japanese visitor reads Japanese chrome
+  around Spanish product copy. Translating 48 descriptions is a content decision, not engineering.
 
-Next is **T8 (i18n ES/EN/JA + a11y + responsive polish)**. What it can build on:
+What remains:
 
-- `core/ui-text.ts` is already the single string table, so the extraction surface exists even
-  though it is currently a flat Spanish object. Every page already reads its copy through it.
-- `kurojs/Portfolio` is the user's own Astro site with an ES/EN/JA i18n pattern worth reusing
-  rather than inventing.
-- `shared/` already holds the presentational primitives whose labels need translating, and the
-  header already uses a visually hidden live region, so the a11y audit starts from something sane.
-- `src/app/three/bbmodel-viewer.ts` takes a `modelUrl` input and renders any `.bbmodel` through
-  `createBbModelScene`; it needs no change to be reused by T9's landing scene.
-
-After T8 comes **T9**, and it is the one task with a download step: the landing gets an animated
-Tlaloc plus downloaded Minecraft-style decoration, with provenance recorded per asset for T10.
+- **T8b (a11y + responsive polish)** — the deliberate audit that T8 deliberately did not do. It now
+  has to cover the landing scene too, so running it after T9 was the right order.
+- **T10 (docs)** — `README.md`, `ASSETS.md`, `LICENSES.md`, architecture notes. `LICENSES.md` got
+  simpler and more honest in T9: the 3D content is the user's own Blockbench work plus textures
+  generated arithmetically in code, so there are no third-party asset licences to track at all.
+- **Delivery** — the branch is now ~20 commits and still unpushed, with no remote. The recorded slice
+  plan predates T6–T9 and needs re-measuring before any PR is cut. Commit, push and PR remain the
+  user's decisions.
 
 **RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
 The user's decision: the models are wanted only as **decoration on the landing**, animated, and
@@ -764,3 +767,74 @@ transfer**, `catalog:verify` exit 0, no budget warning. `data/`, `public/`, `scr
 **Still unverified**: live-region behaviour with a real screen reader, focus movement in a real
 browser, responsive wrapping of long ALL-CAPS names, and contrast. Browser tooling is still not
 connected in this session.
+
+### T8 — three-language UI chrome (2 work units)
+
+Commits: `0adf6b5` (typed dictionary + `LanguageStore`), `41ac9de` (migrate every consumer, add the
+switcher). `core/ui-text.ts` was **deleted**, not kept alongside: one dictionary with no bypass is
+the only shape that survives contact with a growing UI.
+
+**Why not URL-based language.** There is no SSR, so every URL already returns the same SPA shell;
+`/es/`, `/en/`, `/ja/` would add no present-day SEO value while forcing argument-path rewrites
+across 756 tests. Language lives in `LanguageStore`, persists under `yokai.language`, defaults to
+`es`, and writes `document.documentElement.lang` — the last part is not cosmetic, it is what makes
+screen readers and hyphenation behave. The resolution logic is a pure function behind one
+injectable, so a future URL strategy can replace the source without touching consumers.
+
+**The dictionary fails to compile before it fails in front of a customer.** One strict `UiText`
+interface (95 keys), and `UI_TEXT: Record<Language, UiText>`. A missing key in Japanese is a build
+error, not an `undefined` rendered into a page.
+
+Pluralisation is modelled per language rather than shared: `es`/`en` singular only at exactly 1,
+Japanese counts with `点` and has no plural form. Boundaries 0/1/2/5/11/99 are pinned in all three,
+plus negative, fractional and `NaN` clamping.
+
+**Catalog content is deliberately untranslated.** Product and category names and descriptions are
+server data and are interpolated byte-for-byte in all three languages. The consequence is real and
+worth stating plainly: a Japanese visitor reads Japanese chrome around Spanish product copy.
+Translating 48 descriptions is a content-authoring decision, not an engineering one.
+
+**The Japanese is authored Japanese, not literal translation**: `です・ます`, `点`, `パンくずリスト`,
+`価格の安い順`, full-width `｜` in titles. It has **not** been reviewed by a native speaker and should
+be before release.
+
+### T9 — decorative landing scene (3 work units)
+
+Commits: `95f90b3` (seeded voxel island + motion policy), `065eb55` (render the diorama with the
+Tlaloc boss), `a6799a0` (mount after the hero renders).
+
+**The download permission was deliberately not used.** The user authorised downloading decorative
+assets and asked for a landing that feels like Minecraft. Ripped Minecraft models and textures are
+Mojang IP and this is a commercial storefront, so the scene is **first-party plus procedural**
+instead: the user's own animated `tlaloc.bbmodel` as the centrepiece, on a voxel island whose
+blocks and 16×16 textures are **generated arithmetically in code** (FNV-1a seeded coordinate hash
+over a palette declared in `palette.ts`). No image files, no CDN, no loader, no sampled pixels —
+Minecraft-adjacent in visual language, not in assets. This is additive and reversible: if the user
+later wants licensed CC0 props, the scene host can take them.
+
+The scene is 635 blocks at the default seed: a 13-wide disc of grass over dirt over stone with a
+sand rim and tapered underside, a 3×3 mossy-stone pad under Tlaloc with two lantern posts, three
+oaks placed clear of the boss's tail, and four detached bobbing cubes.
+
+**Bundle discipline was measured, not assumed.** `@defer` was tried first and rejected: it added
+~7.95 kB to the initial chunk for its runtime, against **+0.42 kB** for an explicit dynamic import
+from `afterNextRender`. Final state: initial **291.33 kB / 80.69 kB transfer**, `landing-scene` a
+separate **11.03 kB** lazy chunk, and three.js still isolated in its **588.55 kB** lazy chunk.
+`dist/index.html` preloads only the 147 kB framework chunk, which is the proof that three.js did
+not leak into the first paint.
+
+**Motion is a pure, exhaustively tested policy**: `paused` when the panel is off-screen or the tab
+is hidden (no RAF at all — a GPU kept warm behind the cart page is a defect), `still` when the
+visitor asked for reduced motion, `animate` only when all three inputs allow it. Reduced motion
+renders **one still frame** of the composition rather than deleting the art.
+
+Fallbacks are silent by design: WebGL absent, chunk 404, model 404, or a throw mid-frame each leave
+the reserved gradient panel in place with a single `console.warn` and no visitor-facing error. The
+panel is `aria-hidden="true"` because it carries no information — every claim in the hero is in the
+copy beside it.
+
+**Still unverified, and this is the whole risk of the task**: no frame has ever been seen. jsdom has
+no WebGL, so camera framing (is the island cropped?), exposure, fog, lantern glow, Tlaloc scale and
+yaw, and canopy/tail clearance are reasoned, not observed. Pause/resume wiring is inspected and its
+policy tested, but a live RAF/IntersectionObserver/visibility cycle was never executed, and disposal
+is proven at the three.js resource level, not against a real GL context.
