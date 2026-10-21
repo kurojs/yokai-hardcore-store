@@ -76,13 +76,6 @@
   max-width: 36rem;
 }
 
-.hero__eyebrow {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.12em;
-  color: var(--color-accent);
-}
-
 .hero__title {
   font-size: clamp(2rem, 5vw, 3.5rem);
   letter-spacing: -0.01em;

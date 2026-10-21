@@ -2,10 +2,13 @@
  * Global styles: the design tokens every slice draws from, the base document and the small
  * set of utilities shared by more than one page.
  *
- * The palette is a near-black, warm-neutral surface with a single jade accent. It is
- * deliberately *not* the blue-teal developer-tool palette the first pass shipped: a storefront
- * that sells Minecraft goods should read as a dark world surface with one confident brand
- * colour, not as a dashboard.
+ * The palette is a violet-black world surface with two accents that never trade places:
+ *
+ * - **Amethyst is interaction.** Links, focus rings, primary buttons, active states and the
+ *   brand mark. If a thing can be clicked or is currently selected, it is amethyst.
+ * - **Gold is money.** Prices, and only prices. It never appears on a button, a heading, a
+ *   border or a hover state, so a gold number always means "this is what you pay".
+ * - Everything else is a violet-tinted grey: surfaces, hairlines and copy.
  *
  * Two rules keep the storefront coherent:
  *
@@ -21,32 +24,34 @@
 :root {
   color-scheme: dark;
 
-  /* Surfaces, from the page upwards. */
-  --color-bg: #0d0f0e;
-  --color-surface: #121514;
-  --color-surface-raised: #171b19;
+  /* Surfaces, from the page upwards. All three are the same violet hue at different values,
+     which is what makes the stack read as one material instead of three greys. */
+  --color-bg: #0d0a13;
+  --color-surface: #141020;
+  --color-surface-raised: #1b1528;
 
   /* Hairlines: borders are low-contrast separators, never frames. */
-  --color-border: #242a28;
-  --color-border-strong: #343c39;
+  --color-border: #2a2238;
+  --color-border-strong: #3b3049;
 
   /* Control boundaries are a different job from separators: an input or a button has to be
      identifiable as a control, so this token clears 3:1 against every surface it sits on. */
-  --color-border-control: #5f6a64;
+  --color-border-control: #6b5e85;
 
-  /* Text. `muted` still clears 4.5:1 on both the page and the raised surface. */
-  --color-text: #e9eeeb;
-  --color-text-muted: #9aa69f;
+  /* Text. `muted` clears 4.5:1 on the page, the surface and the raised surface. */
+  --color-text: #ece9f5;
+  --color-text-muted: #a49cba;
 
-  /* The brand accent: jade/emerald, tuned for a near-black page. */
-  --color-accent: #35d07f;
-  --color-accent-hover: #57dc95;
-  --color-on-accent: #06130b;
+  /* The interaction accent: amethyst, tuned for a violet-black page. */
+  --color-accent: #a78bfa;
+  --color-accent-hover: #bda6ff;
+  --color-on-accent: #120a1e;
+
+  /* The money accent. Reserved for prices; see the palette note above. */
+  --color-price: #f0c674;
 
   /* Interaction surfaces that are not quite a card. */
-  --color-row-hover: #141817;
-  --color-pill: #1a1f1d;
-  --color-pill-text: #a9b4ae;
+  --color-row-hover: #1a1424;
 
   /* Errors only. Never used for decoration. */
   --color-danger: #f08a8a;
@@ -82,12 +87,12 @@
   /**
    * A seamless 4x4 voxel tile.
    *
-   * Each cell is a slightly different dark value and the internal edges are one hairline of a
-   * lighter grey; the whole group is drawn at low opacity so it reads as a blocky world only
-   * when the eye leaves the copy. The fills are authored here rather than downloaded: there is
-   * no network request and no non-deterministic randomness.
+   * Each cell is a slightly different dark violet value and the internal edges are one hairline
+   * of a lighter violet; the whole group is drawn at 7.5% opacity so it reads as a blocky world
+   * only when the eye leaves the copy. The fills are authored here rather than downloaded: there
+   * is no network request and no non-deterministic randomness.
    */
-  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.075'%3E%3Crect%20width='32'%20height='32'%20fill='%23333b38'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%232c332f'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%2339413d'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%232f3733'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%23363e3a'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%232a312e'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%233a423e'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%23303834'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%23313935'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%232b322f'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%2338403c'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%232e3532'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%23353d39'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%2329302d'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%233b433f'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%23323a36'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%237d8a83'%20stroke-opacity='.5'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.075'%3E%3Crect%20width='32'%20height='32'%20fill='%232c2438'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%23241d2f'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%23332a42'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%23281f36'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%232f2740'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%23221b2d'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%23352c45'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%232a2238'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%232d2540'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%23231c30'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%23342b44'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%23271f35'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%2330283f'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%23251e32'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%23362d46'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%232b2339'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%237c6a9a'%20stroke-opacity='.5'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 *,
@@ -108,9 +113,10 @@ body {
 
 body {
   background-color: var(--color-bg);
-  /* The vignette darkens the edges of the viewport; the tile repeats underneath it. */
+  /* The vignette darkens the edges of the viewport; the tile repeats underneath it. It is the
+     page colour rather than black, so the wash belongs to the violet base. */
   background-image:
-    radial-gradient(120% 90% at 50% 0%, transparent 30%, rgb(0 0 0 / 55%) 100%),
+    radial-gradient(120% 90% at 50% 0%, transparent 30%, rgb(13 10 19 / 62%) 100%),
     var(--texture-voxel);
   background-repeat: no-repeat, repeat;
   background-size: 100% 100%, 128px 128px;
@@ -154,14 +160,16 @@ a {
   color: var(--color-on-accent);
 }
 
-/* The only motion in the storefront is a hover tint, and it is decoration. One media query is
-   a cheap way to respect the OS preference instead of ignoring it. */
+/* Motion is decoration. The reveal directive already skips itself when reduced motion is
+   requested; this query is the second guard, so an animation introduced elsewhere cannot ignore
+   the preference. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
   }
 }
@@ -194,6 +202,36 @@ a {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/**
+ * The entrance for a card grid, driven by `RevealOnScroll`.
+ *
+ * The directive adds `is-revealed` to the container when it first enters the viewport; each item
+ * reads its own `--reveal-index` (set in the template from `$index`) for the stagger. Without
+ * the class, a card is simply visible — there is no `opacity: 0` waiting to be cleared, so a
+ * missing observer or a no-JavaScript render cannot leave a blank section.
+ *
+ * The delay is 40ms per item. The longest grid in the store has ten items, so the last card
+ * starts at 360ms, under the 400ms ceiling; the animation itself is 440ms.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .card-grid.is-revealed > li {
+    animation: card-reveal 440ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--reveal-index, 0) * 40ms);
+  }
+}
+
+@keyframes card-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /**
@@ -285,12 +323,6 @@ a {
 
 .section__head h2 {
   font-size: 1.25rem;
-}
-
-.section__note {
-  max-width: 32rem;
-  font-size: var(--text-small);
-  color: var(--color-text-muted);
 }
 
 /**

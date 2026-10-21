@@ -10,7 +10,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import type { Product } from '../core/catalog/catalog-model';
 import { product } from '../core/catalog/testing/entities';
-import { ES_UI_TEXT } from '../core/i18n/dictionaries/es';
 import { ProductRow } from './product-row';
 
 async function render(
@@ -20,7 +19,6 @@ async function render(
   const fixture = TestBed.createComponent(ProductRow);
   fixture.componentRef.setInput('product', product('algodones', 'curacion', overrides));
   fixture.componentRef.setInput('categoryName', categoryName);
-  fixture.componentRef.setInput('text', ES_UI_TEXT);
   await fixture.whenStable();
   return { fixture, host: fixture.nativeElement as HTMLElement };
 }
@@ -44,13 +42,14 @@ describe('ProductRow', () => {
     expect(host.querySelector('.product-row__price')?.textContent?.trim()).toBe('$3.00');
   });
 
-  it('shows the category inline and as a tag, plus the digital-delivery attribute', async () => {
+  it('shows the category once, and has no tag row to repeat it', async () => {
     const { host } = await render({}, 'Mascotas');
 
     expect(host.querySelector('.product-row__category')?.textContent?.trim()).toBe('Mascotas');
-    expect(
-      [...host.querySelectorAll('.product-row__tag')].map((tag) => tag.textContent?.trim()),
-    ).toEqual(['Mascotas', 'Entrega digital']);
+    expect(host.querySelectorAll('.product-row__category')).toHaveLength(1);
+    // The row has no second attribute to show, so there is no pill list at all.
+    expect(host.querySelectorAll('.product-row__tag')).toHaveLength(0);
+    expect(host.querySelector('.product-row__tags')).toBeNull();
   });
 
   it('renders the local image, lazily, with an empty alt because the name is adjacent', async () => {

@@ -77,8 +77,8 @@ describe('App language switcher', () => {
     ]);
     expect(host.querySelector('.language-switcher__label')?.textContent?.trim()).toBe('言語');
     expect(host.querySelector('.cart-indicator')?.textContent).toContain('カートは空です');
-    expect(host.querySelector('footer')?.textContent).toContain(
-      'Mojang Studios および Microsoft とは提携していません。',
+    expect(host.querySelector('footer .shell__footer-tagline')?.textContent?.trim()).toBe(
+      'Yokai Hardcore サーバーのコミュニティストア。',
     );
     expect(document.documentElement.lang).toBe('ja');
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('ja');

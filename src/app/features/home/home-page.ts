@@ -33,10 +33,10 @@ import { RouterLink } from '@angular/router';
 
 import { CatalogStore } from '../../core/catalog/catalog-store';
 import { categoryFallbackImage } from '../../core/catalog/category-visual';
-import { formatUsdPrice } from '../../core/format/price';
 import { LanguageStore } from '../../core/i18n/language-store';
 import { CategoryCard } from '../../shared/category-card';
 import { ProductCard } from '../../shared/product-card';
+import { RevealOnScroll } from '../../shared/reveal-on-scroll';
 import { FEATURED_COUNT, selectFeatured } from './featured';
 
 /** One quiet line if the scene's chunk cannot be fetched; never an error box. */
@@ -53,7 +53,7 @@ function reportSceneLoadFailure(cause: unknown): void {
 @Component({
   selector: 'app-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CategoryCard, ProductCard],
+  imports: [RouterLink, CategoryCard, ProductCard, RevealOnScroll],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -72,7 +72,14 @@ export class HomePage implements OnDestroy {
   protected readonly isReady = this.catalog.isReady;
   protected readonly errorMessage = this.catalog.errorMessage;
 
-  protected readonly categories = this.catalog.categories;
+  /**
+   * The categories in browse order, biggest first.
+   *
+   * The landing strip is the first browse surface a visitor sees, so it uses the same order as
+   * the catalog instead of the JSON's authoring order: the categories that actually hold stock
+   * lead, and the four single-product ones stop interrupting the grid.
+   */
+  protected readonly categories = this.catalog.orderedCategories;
   protected readonly featured = computed(() =>
     selectFeatured(this.catalog.entries(), FEATURED_COUNT),
   );
@@ -82,9 +89,6 @@ export class HomePage implements OnDestroy {
     this.text().productCountLabel(this.productCount()),
   );
   protected readonly categoryCount = computed(() => this.catalog.categories().length);
-  protected readonly categoriesSummary = computed(() =>
-    this.text().categoriesSummary(this.productCount(), this.categoryCount()),
-  );
 
   /**
    * A product photograph per category, used only by cards whose category ships no banner.
@@ -98,12 +102,6 @@ export class HomePage implements OnDestroy {
       images.set(category.id, categoryFallbackImage(entries, category.id));
     }
     return images;
-  });
-
-  /** The cheapest price in the catalog, formatted, or `null` before it has loaded. */
-  protected readonly fromPrice = computed(() => {
-    const cheapest = this.catalog.prices()[0];
-    return cheapest === undefined ? null : formatUsdPrice(cheapest);
   });
 
   constructor() {

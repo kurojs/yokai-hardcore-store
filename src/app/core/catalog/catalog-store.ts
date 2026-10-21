@@ -1,5 +1,6 @@
 import { Injectable, computed, resource } from '@angular/core';
 
+import { groupEntriesByCategory, orderCategoriesBySize, type CatalogGroup } from './catalog-groups';
 import { loadCatalog } from './catalog-loader';
 import {
   buildCatalogIndex,
@@ -64,6 +65,18 @@ export class CatalogStore {
   /** All categories, in catalog order. Empty while loading. */
   readonly categories = computed<readonly Category[]>(() => this.index()?.categories ?? []);
 
+  /**
+   * All categories in browse order: product count descending, then name.
+   *
+   * Separate from `categories` because that one keeps the catalog's authoring order, which is
+   * what the maps and the featured selection are built from. Every surface that *presents* a
+   * category list reads this one instead.
+   */
+  readonly orderedCategories = computed<readonly Category[]>(() => {
+    const index = this.index();
+    return index === null ? [] : orderCategoriesBySize(index);
+  });
+
   /** All products paired with their category and search haystack. Empty while loading. */
   readonly entries = computed<readonly CatalogEntry[]>(() => this.index()?.entries ?? []);
 
@@ -95,6 +108,17 @@ export class CatalogStore {
   countInCategory(categoryId: string): number {
     const index = this.index();
     return index === null ? 0 : countInCategory(index, categoryId);
+  }
+
+  /**
+   * Groups `entries` by category in browse order.
+   *
+   * Empty while loading, and empty groups are dropped. The entries inside a group keep the order
+   * they arrived in, so the caller's active sort is preserved per group.
+   */
+  groupEntries(entries: readonly CatalogEntry[]): readonly CatalogGroup[] {
+    const index = this.index();
+    return index === null ? [] : groupEntriesByCategory(index, entries);
   }
 
   /** Retries the load. Wired to the retry action in the catalog's error state. */

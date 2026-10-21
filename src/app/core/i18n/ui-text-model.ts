@@ -44,9 +44,6 @@ export interface UiText {
   /** What the store is, in one line. */
   readonly footerTagline: string;
 
-  /** The legal note every unofficial Minecraft store carries. */
-  readonly footerNote: string;
-
   /** Visible label of the language switcher. */
   readonly languageLabel: string;
 
@@ -77,7 +74,6 @@ export interface UiText {
   // Home
   // ---------------------------------------------------------------------------------------
 
-  readonly homeEyebrow: string;
   readonly homeTitle: string;
   readonly homeLead: string;
   readonly homeCatalogAction: string;
@@ -85,27 +81,19 @@ export interface UiText {
 
   readonly homeStatProducts: string;
   readonly homeStatCategories: string;
-  readonly homeStatFrom: string;
 
   readonly homeLoading: string;
   readonly categoriesTitle: string;
-  readonly categoriesSummary: (productCount: number, categoryCount: number) => string;
   readonly featuredTitle: string;
-  readonly featuredNote: string;
 
   // ---------------------------------------------------------------------------------------
   // Catalog
   // ---------------------------------------------------------------------------------------
 
-  readonly catalogEyebrow: string;
   readonly catalogAllProducts: string;
   readonly catalogUnknownCategoryHeading: string;
   readonly catalogUnknownCategoryTitle: string;
   readonly catalogLoading: string;
-  readonly catalogLeadAll: string;
-  readonly catalogLeadLoading: string;
-  readonly catalogLeadUnavailable: string;
-  readonly catalogLeadUnknownCategory: string;
   readonly catalogUnknownCategoryMessage: string;
   readonly catalogViewAll: string;
   readonly categoriesNavLabel: string;
@@ -126,9 +114,6 @@ export interface UiText {
   readonly sortPriceAsc: string;
   readonly sortPriceDesc: string;
   readonly sortNameAsc: string;
-
-  /** A real attribute of every product: the store delivers digitally. */
-  readonly productTagDigital: string;
 
   // ---------------------------------------------------------------------------------------
   // Product

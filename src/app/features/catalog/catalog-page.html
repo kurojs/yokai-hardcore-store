@@ -1,8 +1,9 @@
 <section class="catalog-head">
   <div class="page-width">
-    <p class="catalog-head__eyebrow">{{ text().catalogEyebrow }}</p>
     <h1 class="catalog-head__title">{{ heading() }}</h1>
-    <p class="catalog-head__lead">{{ lead() }}</p>
+    @if (lead(); as description) {
+      <p class="catalog-head__lead">{{ description }}</p>
+    }
   </div>
 </section>
 
@@ -109,19 +110,48 @@
 
       <section class="catalog-results">
         @if (results().length > 0) {
-          <ul class="result-list">
-            @for (entry of results(); track entry.product.id) {
-              <li class="result-list__item">
-                <a class="row-link" [routerLink]="['/product', entry.product.slug]">
-                  <app-product-row
-                    [product]="entry.product"
-                    [categoryName]="entry.category.name"
-                    [text]="text()"
-                  />
-                </a>
-              </li>
+          @if (showGroups()) {
+            @for (group of groups(); track group.category.id) {
+              <section class="result-group" [attr.aria-labelledby]="'group-' + group.category.id">
+                <header class="result-group__head">
+                  <h2 class="result-group__title" [id]="'group-' + group.category.id">
+                    <a class="result-group__link" [routerLink]="['/catalog', group.category.slug]">{{
+                      group.category.name
+                    }}</a>
+                  </h2>
+                  <span class="result-group__count">{{
+                    text().productCountLabel(group.entries.length)
+                  }}</span>
+                </header>
+
+                <ul class="result-list">
+                  @for (entry of group.entries; track entry.product.id) {
+                    <li class="result-list__item">
+                      <a class="row-link" [routerLink]="['/product', entry.product.slug]">
+                        <app-product-row
+                          [product]="entry.product"
+                          [categoryName]="entry.category.name"
+                        />
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </section>
             }
-          </ul>
+          } @else {
+            <ul class="result-list">
+              @for (entry of results(); track entry.product.id) {
+                <li class="result-list__item">
+                  <a class="row-link" [routerLink]="['/product', entry.product.slug]">
+                    <app-product-row
+                      [product]="entry.product"
+                      [categoryName]="entry.category.name"
+                    />
+                  </a>
+                </li>
+              }
+            </ul>
+          }
         } @else {
           <div class="state">
             <h2 class="state__title">{{ text().noResultsTitle }}</h2>

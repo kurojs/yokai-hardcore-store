@@ -77,9 +77,24 @@ describe('HomePage', () => {
     const stats = [...host.querySelectorAll('.hero__stat dd')].map((node) =>
       node.textContent?.trim(),
     );
-    expect(stats).toEqual(['48 productos', '10', '$1.00']);
+    expect(stats).toEqual(['48 productos', '10']);
     expect(host.querySelectorAll('app-product-card')).toHaveLength(4);
     expect(host.querySelectorAll('.card-grid')).toHaveLength(2);
+
+    // The category strip follows the browse order, not the JSON's authoring order: the
+    // thirteen-product food category leads instead of whatever was written first.
+    expect(
+      host.querySelector('#categorias .category-card__name')?.textContent?.trim(),
+    ).toBe('Alimento Yokai para guerreros y pets');
+    expect(host.querySelector('#categorias a.card-link')?.getAttribute('href')).toBe(
+      '/catalog/alimento-yokai-para-guerreros-y-pets',
+    );
+
+    // Every card carries its own stagger index; the CSS multiplies it by 40ms.
+    const items = [...host.querySelectorAll<HTMLElement>('#categorias .card-grid > li')];
+    expect(items.map((item) => item.style.getPropertyValue('--reveal-index'))).toEqual([
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    ]);
   });
 
   it('fills the bannerless categories with a real product photograph', async () => {

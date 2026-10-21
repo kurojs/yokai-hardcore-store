@@ -33,15 +33,6 @@ function relatedProductsTitle(categoryName: string): string {
   return `More from ${categoryName}`;
 }
 
-function categoriesSummary(productCount: number, categoryCount: number): string {
-  const products = normaliseCount(productCount);
-  const categories = normaliseCount(categoryCount);
-  if (products === null || categories === null) return '';
-  const productPart = `${products} ${products === 1 ? 'product' : 'products'}`;
-  const categoryPart = `${categories} ${categories === 1 ? 'category' : 'categories'}`;
-  return `${productPart} across ${categoryPart}.`;
-}
-
 function cartLineQuantityLabel(productName: string): string {
   return `Quantity of ${productName}`;
 }
@@ -88,8 +79,6 @@ export const EN_UI_TEXT: UiText = {
   cartLinkHint: 'Go to the cart page',
   footerBrand: 'Yokai Hardcore Store',
   footerTagline: 'Community store for the Yokai Hardcore server.',
-  footerNote:
-    'Not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.',
   languageLabel: 'Language',
   languageChanged,
 
@@ -100,7 +89,6 @@ export const EN_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'We could not load the catalog',
   retryLabel: 'Try again',
 
-  homeEyebrow: 'Minecraft community',
   homeTitle: 'Gear up for the underworld',
   homeLead:
     'Food, artifacts and treasures from Yokai Hardcore, ready for your next session. Browse the categories and build your inventory.',
@@ -108,22 +96,14 @@ export const EN_UI_TEXT: UiText = {
   homeCategoriesAction: 'Explore categories',
   homeStatProducts: 'Products',
   homeStatCategories: 'Categories',
-  homeStatFrom: 'From',
   homeLoading: 'Loading the catalog…',
   categoriesTitle: 'Categories',
-  categoriesSummary,
   featuredTitle: 'Featured',
-  featuredNote: 'A sample of the collection. Every product has its own page.',
 
-  catalogEyebrow: 'Catalog',
   catalogAllProducts: 'All products',
   catalogUnknownCategoryHeading: 'Category not found',
   catalogUnknownCategoryTitle: 'We could not find that category',
   catalogLoading: 'Loading catalog…',
-  catalogLeadAll: 'Search, filter and sort everything the store has to offer.',
-  catalogLeadLoading: 'Loading the catalog…',
-  catalogLeadUnavailable: 'It is not available right now.',
-  catalogLeadUnknownCategory: 'The category may have been renamed or may no longer exist.',
   catalogUnknownCategoryMessage: 'Check the address or go back to the full catalog.',
   catalogViewAll: 'View the whole catalog',
   categoriesNavLabel: 'Categories',
@@ -144,7 +124,6 @@ export const EN_UI_TEXT: UiText = {
   sortPriceAsc: 'Price: low to high',
   sortPriceDesc: 'Price: high to low',
   sortNameAsc: 'Name: A-Z',
-  productTagDigital: 'Digital delivery',
 
   productLoading: 'Loading product…',
   productNotFoundTitle: 'We could not find that product',

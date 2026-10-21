@@ -109,6 +109,8 @@
 .line__money {
   font-family: var(--font-mono);
   font-size: 0.9375rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-price);
 }
 
 .line__quantity {

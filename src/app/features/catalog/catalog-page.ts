@@ -46,7 +46,7 @@ export class CatalogPage {
 
   protected readonly isReady = this.catalog.isReady;
   protected readonly errorMessage = this.catalog.errorMessage;
-  protected readonly categories = this.catalog.categories;
+  protected readonly categories = this.catalog.orderedCategories;
   protected readonly prices = this.catalog.prices;
 
   protected readonly category = computed(() => this.catalog.findCategory(this.slug()));
@@ -67,6 +67,27 @@ export class CatalogPage {
       maxPriceUsd: this.maxPriceUsd(),
       sort: this.sort(),
     }),
+  );
+
+  /**
+   * The results split under category headers, in browse order.
+   *
+   * The entries inside a group are the already-sorted ones, so a non-default sort reorders each
+   * group without touching the group sequence: a header that says "the biggest category" must
+   * not move because the visitor asked for cheapest first.
+   */
+  protected readonly groups = computed(() => this.catalog.groupEntries(this.results()));
+
+  /**
+   * Grouping applies only to a browse across the whole catalog.
+   *
+   * A category page already names itself in its heading, so repeating that name as a group
+   * header would be one label for one list. A search spans categories, and chopping the hits
+   * into sections makes a result set harder to scan, not easier. Both modes fall back to the
+   * flat list the visitor asked a query for.
+   */
+  protected readonly showGroups = computed(
+    () => this.category() === null && this.searchText().trim().length === 0,
   );
 
   protected readonly countLabel = computed(() =>
@@ -101,21 +122,19 @@ export class CatalogPage {
   protected readonly heading = computed(() => {
     const category = this.category();
     if (category !== null) return category.name;
-    if (!this.isReady()) return this.text().catalogEyebrow;
     return this.isUnknownCategory()
       ? this.text().catalogUnknownCategoryHeading
       : this.text().catalogAllProducts;
   });
 
-  protected readonly lead = computed(() => {
-    const category = this.category();
-    if (category !== null) return category.description;
-    if (this.errorMessage() !== null) return this.text().catalogLeadUnavailable;
-    if (!this.isReady()) return this.text().catalogLeadLoading;
-    return this.isUnknownCategory()
-      ? this.text().catalogLeadUnknownCategory
-      : this.text().catalogLeadAll;
-  });
+  /**
+   * The category's own description, when the page is showing one.
+   *
+   * There is no page-level lead any more: "search, filter and sort everything the store has to
+   * offer" described the controls the visitor was already looking at. A category's description
+   * is catalog data and says something the heading does not, so it stays.
+   */
+  protected readonly lead = computed(() => this.category()?.description ?? null);
 
   constructor() {
     effect(() => this.documentTitle.setTitle(this.text().catalogDocumentTitle));

@@ -69,7 +69,7 @@ describe('CatalogPage', () => {
     expect(host.querySelector('app-catalog-filter-bar')).toBeNull();
   });
 
-  it('shows every product and the count on /catalog', async () => {
+  it('shows every product under category headers on /catalog', async () => {
     const { fixture, host } = await render();
 
     await waitForProducts(fixture, host, 48);
@@ -77,6 +77,34 @@ describe('CatalogPage', () => {
     expect(host.querySelector('h1')?.textContent?.trim()).toBe('Todos los productos');
     expect(host.querySelector('.results-line')?.textContent?.trim()).toBe('48 productos');
     expect(host.querySelectorAll('.chip')).toHaveLength(11);
+
+    // Ten categories, biggest first. The header carries the name, the count and the link to
+    // that category; the rows inside it are the products of that category only.
+    const groups = [...host.querySelectorAll('.result-group')];
+    expect(groups).toHaveLength(10);
+
+    const food = groups[0]!;
+    expect(food.querySelector('.result-group__title')?.textContent?.trim()).toBe(
+      'Alimento Yokai para guerreros y pets',
+    );
+    expect(food.querySelector('.result-group__count')?.textContent?.trim()).toBe('13 productos');
+    expect(food.querySelector('.result-group__link')?.getAttribute('href')).toBe(
+      '/catalog/alimento-yokai-para-guerreros-y-pets',
+    );
+    expect(food.querySelectorAll('app-product-row')).toHaveLength(13);
+
+    // The four single-product categories are not interleaved with the big ones any more.
+    const lastFour = groups.slice(-4).map((group) => group.querySelectorAll('app-product-row').length);
+    expect(lastFour).toEqual([1, 1, 1, 1]);
+  });
+
+  it('lists a category page flat, because its heading already names the category', async () => {
+    const { fixture, host } = await render('mascotas');
+
+    await waitForProducts(fixture, host, 1);
+
+    expect(host.querySelector('.result-group')).toBeNull();
+    expect(host.querySelector('.result-list')).not.toBeNull();
   });
 
   it('turns the route slug into a category and shows only its products', async () => {
@@ -131,6 +159,8 @@ describe('CatalogPage', () => {
 
     await waitForProducts(fixture, host, 1);
     expect(products(host)[0]?.textContent).toContain('Calamar');
+    // A search spans the whole store, so its hits are not chopped into category sections.
+    expect(host.querySelector('.result-group')).toBeNull();
   });
 
   it('applies the price ceiling inclusively', async () => {
@@ -147,7 +177,7 @@ describe('CatalogPage', () => {
     });
   });
 
-  it('sorts by price from the cheapest to the most expensive', async () => {
+  it('sorts by price from the cheapest to the most expensive inside each group', async () => {
     const { fixture, host } = await render();
     await waitForProducts(fixture, host, 48);
 
@@ -157,12 +187,22 @@ describe('CatalogPage', () => {
 
     await vi.waitFor(async () => {
       await fixture.whenStable();
-      const prices = [...host.querySelectorAll('.product-row__price')].map((node) =>
-        node.textContent?.trim(),
+      const groups = [...host.querySelectorAll('.result-group')];
+      expect(groups).toHaveLength(10);
+
+      const grouped = groups.map((group) =>
+        [...group.querySelectorAll('.product-row__price')].map((node) =>
+          Number(node.textContent?.replace('$', '')),
+        ),
       );
-      expect(prices[0]).toBe('$1.00');
-      expect(prices.at(-1)).toBe('$10.00');
-      expect(prices).toHaveLength(48);
+
+      for (const prices of grouped) {
+        expect(prices).toEqual([...prices].sort((a, b) => a - b));
+      }
+      expect(grouped.flat()).toHaveLength(48);
+      expect(grouped[0]?.[0]).toBe(1);
+      // The group sequence is still "biggest category first", not "cheapest group first".
+      expect(groups[0]?.querySelectorAll('app-product-row')).toHaveLength(13);
     });
   });
 

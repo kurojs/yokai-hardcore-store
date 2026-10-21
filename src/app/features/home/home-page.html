@@ -12,7 +12,6 @@
 
   <div class="page-width hero__grid">
     <div class="hero__inner">
-      <p class="hero__eyebrow">{{ text().homeEyebrow }}</p>
       <h1 class="hero__title">{{ text().homeTitle }}</h1>
       <p class="hero__lead">{{ text().homeLead }}</p>
 
@@ -31,12 +30,6 @@
             <dt>{{ text().homeStatCategories }}</dt>
             <dd>{{ categoryCount() }}</dd>
           </div>
-          @if (fromPrice(); as price) {
-            <div class="hero__stat">
-              <dt>{{ text().homeStatFrom }}</dt>
-              <dd>{{ price }}</dd>
-            </div>
-          }
         </dl>
       }
     </div>
@@ -57,12 +50,11 @@
   <section class="section page-width" id="categorias" aria-labelledby="categorias-title">
     <div class="section__head">
       <h2 id="categorias-title">{{ text().categoriesTitle }}</h2>
-      <p class="section__note">{{ categoriesSummary() }}</p>
     </div>
 
-    <ul class="card-grid">
-      @for (category of categories(); track category.id) {
-        <li>
+    <ul class="card-grid" appRevealOnScroll>
+      @for (category of categories(); track category.id; let index = $index) {
+        <li [style.--reveal-index]="index">
           <a class="card-link" [routerLink]="['/catalog', category.slug]">
             <app-category-card
               [category]="category"
@@ -79,12 +71,11 @@
   <section class="section page-width" aria-labelledby="destacados-title">
     <div class="section__head">
       <h2 id="destacados-title">{{ text().featuredTitle }}</h2>
-      <p class="section__note">{{ text().featuredNote }}</p>
     </div>
 
-    <ul class="card-grid">
-      @for (entry of featured(); track entry.product.id) {
-        <li>
+    <ul class="card-grid" appRevealOnScroll>
+      @for (entry of featured(); track entry.product.id; let index = $index) {
+        <li [style.--reveal-index]="index">
           <a class="card-link" [routerLink]="['/product', entry.product.slug]">
             <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
           </a>

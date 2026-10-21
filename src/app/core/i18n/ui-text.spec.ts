@@ -32,7 +32,6 @@ const PROBE_ARGS: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
   itemCountLabel: COUNT_BOUNDARIES.map((count) => [count]),
   cartCountLabel: COUNT_BOUNDARIES.map((count) => [count]),
   languageChanged: [['日本語']],
-  categoriesSummary: COUNT_BOUNDARIES.map((count) => [count, 5]),
   relatedProductsTitle: [['RESUCITACIÓN']],
   upToPrice: [['$5.00']],
   addedToCartMessage: COUNT_BOUNDARIES.map((count) => ['CUPÓN CANJEABLE PARA FAMILIAR', count]),
@@ -239,16 +238,6 @@ describe('count labels at the boundaries', () => {
     expect(uiText('es').cartCountLabel(Number.NaN)).toBe('Carrito');
     expect(uiText('en').cartCountLabel(Number.NaN)).toBe('Cart');
     expect(uiText('ja').cartCountLabel(Number.NaN)).toBe('カート');
-  });
-
-  it('agrees between the summary sentence and the product count', () => {
-    expect(uiText('es').categoriesSummary(48, 10)).toBe(
-      '48 productos repartidos en 10 categorías.',
-    );
-    expect(uiText('es').categoriesSummary(1, 1)).toBe('1 producto repartido en 1 categoría.');
-    expect(uiText('en').categoriesSummary(48, 10)).toBe('48 products across 10 categories.');
-    expect(uiText('en').categoriesSummary(1, 1)).toBe('1 product across 1 category.');
-    expect(uiText('ja').categoriesSummary(48, 10)).toBe('商品48点を10カテゴリに分類しています。');
   });
 });
 

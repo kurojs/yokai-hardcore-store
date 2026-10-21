@@ -108,13 +108,19 @@ describe('App', () => {
     );
   });
 
-  it('keeps the non-affiliation note in the footer, where a buyer can find it', async () => {
+  it('shows the brand and what the store is, and nothing else in the footer', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
 
-    expect(host.querySelector('footer')?.textContent).toContain(
-      'No está afiliada a Mojang Studios',
+    const footer = host.querySelector('footer');
+    expect(footer?.querySelector('.shell__footer-brand')?.textContent?.trim()).toBe(
+      'Yokai Hardcore Store',
     );
+    expect(footer?.querySelector('.shell__footer-tagline')?.textContent?.trim()).toBe(
+      'Tienda de la comunidad del servidor Yokai Hardcore.',
+    );
+    // The legal boilerplate went with the rest of the filler copy.
+    expect(footer?.textContent).not.toContain('Mojang');
   });
 });

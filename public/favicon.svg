@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#0d0f0e" />
-  <g fill="#35d07f">
+  <rect width="64" height="64" rx="12" fill="#0d0a13" />
+  <g fill="#a78bfa">
     <path
       fill-rule="evenodd"
       d="M18 10H46L54 18V38L46 52L38 58H26L18 52L10 38V18Z

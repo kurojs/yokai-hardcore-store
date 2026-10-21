@@ -93,6 +93,8 @@ import { PricePipe } from './price.pipe';
 
     .summary__money {
       font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--color-price);
     }
 
     .summary__note {

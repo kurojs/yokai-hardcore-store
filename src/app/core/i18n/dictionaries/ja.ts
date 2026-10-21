@@ -46,13 +46,6 @@ function relatedProductsTitle(categoryName: string): string {
   return `${categoryName}の関連商品`;
 }
 
-function categoriesSummary(productCount: number, categoryCount: number): string {
-  const products = normaliseCount(productCount);
-  const categories = normaliseCount(categoryCount);
-  if (products === null || categories === null) return '';
-  return `商品${products}点を${categories}カテゴリに分類しています。`;
-}
-
 function cartLineQuantityLabel(productName: string): string {
   return `${productName}の数量`;
 }
@@ -99,8 +92,6 @@ export const JA_UI_TEXT: UiText = {
   cartLinkHint: 'カートページへ移動',
   footerBrand: 'Yokai Hardcore Store',
   footerTagline: 'Yokai Hardcore サーバーのコミュニティストア。',
-  footerNote:
-    'Mojang Studios および Microsoft とは提携していません。Minecraft は Mojang Studios の商標です。',
   languageLabel: '言語',
   languageChanged,
 
@@ -111,7 +102,6 @@ export const JA_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'カタログを読み込めませんでした',
   retryLabel: '再試行',
 
-  homeEyebrow: 'Minecraft コミュニティ',
   homeTitle: '冥界へ備えよう',
   homeLead:
     'Yokai Hardcore の食料、アーティファクト、宝物を次の冒険に。カテゴリを見て、インベントリを整えましょう。',
@@ -119,22 +109,14 @@ export const JA_UI_TEXT: UiText = {
   homeCategoriesAction: 'カテゴリを見る',
   homeStatProducts: '商品',
   homeStatCategories: 'カテゴリ',
-  homeStatFrom: '最安値',
   homeLoading: 'カタログを読み込んでいます…',
   categoriesTitle: 'カテゴリ',
-  categoriesSummary,
   featuredTitle: '注目の商品',
-  featuredNote: 'コレクションの一部をご紹介します。各商品には詳しい商品ページがあります。',
 
-  catalogEyebrow: 'カタログ',
   catalogAllProducts: 'すべての商品',
   catalogUnknownCategoryHeading: 'カテゴリが見つかりません',
   catalogUnknownCategoryTitle: '該当するカテゴリが見つかりません',
   catalogLoading: 'カタログを読み込んでいます…',
-  catalogLeadAll: 'ストアのすべての商品を検索・絞り込み・並べ替えできます。',
-  catalogLeadLoading: 'カタログを読み込んでいます…',
-  catalogLeadUnavailable: '現在ご利用いただけません。',
-  catalogLeadUnknownCategory: 'カテゴリ名が変更されたか、存在しない可能性があります。',
   catalogUnknownCategoryMessage: 'URL を確認するか、カタログ全体に戻ってください。',
   catalogViewAll: 'カタログをすべて見る',
   categoriesNavLabel: 'カテゴリ',
@@ -155,7 +137,6 @@ export const JA_UI_TEXT: UiText = {
   sortPriceAsc: '価格の安い順',
   sortPriceDesc: '価格の高い順',
   sortNameAsc: '名前順（A-Z）',
-  productTagDigital: 'デジタル配信',
 
   productLoading: '商品を読み込んでいます…',
   productNotFoundTitle: '商品が見つかりません',

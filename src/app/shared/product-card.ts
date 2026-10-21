@@ -120,7 +120,7 @@ import { PricePipe } from './price.pipe';
       margin-top: auto;
       font-family: var(--font-mono);
       font-size: 1.0625rem;
-      color: var(--color-text);
+      color: var(--color-price);
     }
   `,
 })

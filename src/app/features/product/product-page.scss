@@ -45,6 +45,33 @@
   background: var(--color-surface-raised);
 }
 
+/* The one continuous animation in the store: the hero photograph drifts a few pixels, slowly
+   enough to read as breathing rather than as movement. It is guarded twice — the animation only
+   exists under `no-preference`, and the reduce block removes it outright instead of letting the
+   global 0.01ms rule freeze it mid-offset. */
+@media (prefers-reduced-motion: no-preference) {
+  .product__media {
+    animation: product-float 7s ease-in-out infinite alternate;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product__media {
+    animation: none;
+    transform: none;
+  }
+}
+
+@keyframes product-float {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(-6px);
+  }
+}
+
 .product__image {
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -77,10 +104,13 @@
   letter-spacing: -0.01em;
 }
 
-/* Prices are numbers to be compared, so they keep the mono face the cards use. */
+/* Prices are numbers to be compared, so they keep the mono face the cards use, and they are
+   gold: the one place the money accent appears on this page. */
 .product__price {
   font-family: var(--font-mono);
   font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-price);
 }
 
 .product__buy {

@@ -49,23 +49,6 @@ function relatedProductsTitle(categoryName: string): string {
   return `Más de ${categoryName}`;
 }
 
-/**
- * The landing page's one-sentence summary: `48 productos repartidos en 10 categorías.`
- *
- * `repartidos` agrees with `productos`, so the singular case needs its own participle. Today
- * only the 48-product landing page renders this, but a rule that is wrong for one input is not
- * a rule worth keeping.
- */
-function categoriesSummary(productCount: number, categoryCount: number): string {
-  const products = normaliseCount(productCount);
-  const categories = normaliseCount(categoryCount);
-  if (products === null || categories === null) return '';
-  const productPart =
-    products === 1 ? '1 producto repartido' : `${products} productos repartidos`;
-  const categoryPart = categories === 1 ? '1 categoría' : `${categories} categorías`;
-  return `${productPart} en ${categoryPart}.`;
-}
-
 function cartLineQuantityLabel(productName: string): string {
   return `Cantidad de ${productName}`;
 }
@@ -118,8 +101,6 @@ export const ES_UI_TEXT: UiText = {
   cartLinkHint: 'Ir a la página del carrito',
   footerBrand: 'Yokai Hardcore Store',
   footerTagline: 'Tienda de la comunidad del servidor Yokai Hardcore.',
-  footerNote:
-    'No está afiliada a Mojang Studios ni a Microsoft. Minecraft es una marca de Mojang Studios.',
   languageLabel: 'Idioma',
   languageChanged,
 
@@ -130,7 +111,6 @@ export const ES_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'No pudimos cargar el catálogo',
   retryLabel: 'Reintentar',
 
-  homeEyebrow: 'Comunidad de Minecraft',
   homeTitle: 'Equípate para el inframundo',
   homeLead:
     'Alimentos, artefactos y tesoros de Yokai Hardcore, listos para tu próxima partida. Explora las categorías y arma tu inventario.',
@@ -138,22 +118,14 @@ export const ES_UI_TEXT: UiText = {
   homeCategoriesAction: 'Explorar categorías',
   homeStatProducts: 'Productos',
   homeStatCategories: 'Categorías',
-  homeStatFrom: 'Desde',
   homeLoading: 'Cargando catálogo…',
   categoriesTitle: 'Categorías',
-  categoriesSummary,
   featuredTitle: 'Destacados',
-  featuredNote: 'Una muestra de la colección. Cada producto tiene su ficha completa.',
 
-  catalogEyebrow: 'Catálogo',
   catalogAllProducts: 'Todos los productos',
   catalogUnknownCategoryHeading: 'Categoría no encontrada',
   catalogUnknownCategoryTitle: 'No encontramos esa categoría',
   catalogLoading: 'Cargando catálogo…',
-  catalogLeadAll: 'Busca, filtra y ordena todo lo que la tienda tiene para ofrecer.',
-  catalogLeadLoading: 'Cargando el catálogo…',
-  catalogLeadUnavailable: 'No está disponible por ahora.',
-  catalogLeadUnknownCategory: 'Puede que la categoría haya cambiado de nombre o ya no exista.',
   catalogUnknownCategoryMessage: 'Revisa la dirección o vuelve al catálogo completo.',
   catalogViewAll: 'Ver todo el catálogo',
   categoriesNavLabel: 'Categorías',
@@ -174,7 +146,6 @@ export const ES_UI_TEXT: UiText = {
   sortPriceAsc: 'Precio: de menor a mayor',
   sortPriceDesc: 'Precio: de mayor a menor',
   sortNameAsc: 'Nombre: A-Z',
-  productTagDigital: 'Entrega digital',
 
   productLoading: 'Cargando producto…',
   productNotFoundTitle: 'No encontramos ese producto',
