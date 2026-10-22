@@ -48,7 +48,7 @@ export interface LandingSceneHandle {
 }
 
 /** Radians per second the city turns around its own axis. Slow: a background, not a showcase. */
-export const CITY_TURNTABLE_RADIANS_PER_SECOND = 0.06;
+export const CITY_TURNTABLE_RADIANS_PER_SECOND = 0.025;
 
 /** The angle the still frame is shot from. Also the frame a reduced-motion visitor always gets. */
 export const CITY_START_ANGLE = 0.45;

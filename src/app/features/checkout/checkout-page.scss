@@ -109,9 +109,7 @@
   padding: var(--space-3);
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  /* The same glass fill the catalog's search field uses: a flat near-black well inside a
-     translucent panel reads as a hole in the card rather than as a control on it. */
-  background: var(--glass-bg);
+  background: var(--field-bg);
   color: var(--color-text);
   font: inherit;
   font-size: var(--text-base);

@@ -99,6 +99,11 @@ export const JA_UI_TEXT: UiText = {
   footerCategoriesNavLabel: 'ストアのカテゴリ',
   footerCopyright: (year: number) => `© ${year} Yokai Hardcore`,
   languageLabel: '言語',
+  currencyLabel: '表示通貨',
+  currencyButtonLabel: (currency: string) => `表示通貨を選択。現在: ${currency}`,
+  currencyRateNote: '参考レートは1日ごとに更新されます。決済合計は表示のみです。',
+  currencyRateUnavailable: 'レートを取得できません。価格はUSDで表示します。',
+  currencyRateLoading: '日次参考レートを読み込み中…',
   languageChanged,
 
   productCountLabel,

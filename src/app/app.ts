@@ -3,8 +3,8 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { CartStore } from './core/cart/cart-store';
 import { CatalogStore } from './core/catalog/catalog-store';
+import { CurrencyStore, DISPLAY_CURRENCIES } from './core/format/currency-store';
 import { LanguageStore } from './core/i18n/language-store';
-import { LANGUAGE_LABELS, normalizeLanguage, type Language } from './core/i18n/language';
 import { BrandMark } from './shared/brand-mark';
 import { BackToTop } from './shared/back-to-top';
 import { PlayerAccount } from './shared/player-account';
@@ -52,13 +52,17 @@ function reportBackgroundFailure(cause: unknown): void {
 export class App {
   private readonly cart = inject(CartStore);
   private readonly catalog = inject(CatalogStore);
+  private readonly currencyStore = inject(CurrencyStore);
   private readonly i18n = inject(LanguageStore);
   private readonly destroyRef = inject(DestroyRef);
 
   /** The active dictionary; every visible word in the header and footer reads through it. */
   protected readonly text = this.i18n.text;
 
-  protected readonly language = this.i18n.language;
+  protected readonly currencyOptions = DISPLAY_CURRENCIES;
+  protected readonly displayCurrency = this.currencyStore.currency;
+  protected readonly currencyRatesReady = this.currencyStore.rateReady;
+  protected readonly currencyRatesFailed = this.currencyStore.rateFailed;
 
   /**
    * The footer's category links: the five biggest categories, in browse order.
@@ -103,17 +107,6 @@ export class App {
   protected readonly itemCount = this.cart.itemCount;
 
   /**
-   * The switcher's options.
-   *
-   * Labels are endonyms (`Español`, `English`, `日本語`) and therefore identical in all three
-   * languages; they are data in `language.ts`, not translated copy.
-   */
-  protected readonly languageOptions = this.i18n.languages.map((value) => ({
-    value,
-    label: LANGUAGE_LABELS[value],
-  }));
-
-  /**
    * The cart indicator's text: an empty-cart status or the localized unit count.
    *
    * It is the visible text of a link to `/cart`. The link's accessible name appends a visually
@@ -127,17 +120,6 @@ export class App {
   protected readonly cartLabel = computed(() =>
     this.text().cartCountLabel(this.cart.itemCount()),
   );
-
-  /**
-   * What the language live region says.
-   *
-   * A `role="status"` region only announces *changes*, so this starts empty and is filled when a
-   * switch actually happens. It is set from the new dictionary, so the announcement is already in
-   * the language the visitor just chose — which is the language they are now reading.
-   */
-  private readonly languageAnnouncement = signal('');
-
-  protected readonly announcement = this.languageAnnouncement.asReadonly();
 
   constructor() {
     // The badge pops on a change, never on the first value: a visitor arriving with two items in
@@ -158,6 +140,7 @@ export class App {
       sync();
       window.addEventListener('scroll', sync, { passive: true });
       this.destroyRef.onDestroy(() => window.removeEventListener('scroll', sync));
+      this.currencyStore.load();
     });
 
     // The background is the shell's, and it starts loading as soon as the shell has painted. A
@@ -193,12 +176,9 @@ export class App {
     this.badgeBump.set(false);
   }
 
-  protected onLanguageChange(event: Event): void {
+  protected onCurrencyChange(event: Event): void {
     const target = event.target;
     if (!(target instanceof HTMLSelectElement)) return;
-
-    const next: Language = normalizeLanguage(target.value);
-    this.i18n.set(next);
-    this.languageAnnouncement.set(this.text().languageChanged(LANGUAGE_LABELS[next]));
+    this.currencyStore.setCurrency(target.value);
   }
 }

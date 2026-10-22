@@ -157,7 +157,7 @@ const EFFECT_ICON_BASE =
       row-gap: var(--space-1);
       margin: 0;
       padding: var(--space-3);
-      border: 1px solid transparent;
+      border: 1px solid rgb(167 139 250 / 0.22);
       border-radius: var(--radius-md);
       background: var(--glass-bg) padding-box;
       -webkit-backdrop-filter: var(--glass-blur);
@@ -172,41 +172,50 @@ const EFFECT_ICON_BASE =
       border-radius: inherit;
       background: conic-gradient(
         from var(--effect-angle, 0deg),
-        transparent 0 22%,
-        rgb(177 92 255 / 0.85) 34%,
-        rgb(255 65 196 / 0.9) 48%,
-        transparent 62% 100%
+        transparent 0 28%,
+        rgb(139 92 246 / 0.4) 40%,
+        rgb(196 181 253 / 0.72) 49%,
+        rgb(167 139 250 / 0.48) 58%,
+        transparent 72% 100%
       ) border-box;
       content: '';
       -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
       mask-composite: exclude;
-      opacity: 0.78;
+      filter:
+        drop-shadow(0 0 4px rgb(167 139 250 / 0.28))
+        drop-shadow(0 0 12px rgb(139 92 246 / 0.12));
+      opacity: 0.72;
       pointer-events: none;
     }
 
     @media (prefers-reduced-motion: no-preference) {
       .description__effect::before {
-        animation: effect-border-spin 8s linear infinite;
+        animation: effect-border-drift 18s linear infinite;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .description__effect::before {
-        background: linear-gradient(110deg, rgb(177 92 255 / 0.75), rgb(255 65 196 / 0.75)) border-box;
+        background: conic-gradient(
+          from 35deg,
+          transparent 0 28%,
+          rgb(139 92 246 / 0.4) 40%,
+          rgb(196 181 253 / 0.72) 49%,
+          rgb(167 139 250 / 0.48) 58%,
+          transparent 72% 100%
+        ) border-box;
       }
     }
 
-    @keyframes effect-border-spin {
+    @keyframes effect-border-drift {
       from {
         --effect-angle: 0deg;
-        opacity: 0.68;
       }
 
       to {
         --effect-angle: 360deg;
-        opacity: 0.95;
       }
     }
 

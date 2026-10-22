@@ -20,9 +20,9 @@ describe('PricePipe', () => {
   it('formats catalog amounts the way the rest of the app does', () => {
     const pipe = new PricePipe();
 
-    expect(pipe.transform(1)).toBe('$1.00');
-    expect(pipe.transform(3)).toBe('$3.00');
-    expect(pipe.transform(1234.5)).toBe('$1,234.50');
+    expect(pipe.transform(1)).toBe('USD\u00a01.00');
+    expect(pipe.transform(3)).toBe('USD\u00a03.00');
+    expect(pipe.transform(1234.5)).toBe('USD\u00a01,234.50');
   });
 
   it('returns an empty string rather than $NaN for absent or non-finite amounts', () => {
@@ -45,7 +45,7 @@ describe('PricePipe', () => {
     await fixture.whenStable();
 
     const host = fixture.nativeElement as HTMLElement;
-    expect(host.querySelector('.amount')?.textContent?.trim()).toBe('$12.00');
+    expect(host.querySelector('.amount')?.textContent?.trim()).toBe('USD\u00a012.00');
     expect(host.querySelector('.missing')?.textContent?.trim()).toBe('');
   });
 });

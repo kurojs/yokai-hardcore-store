@@ -129,7 +129,7 @@
   min-height: var(--header-height);
 }
 
-/* The bar carries five controls on a phone. Giving back most of the gap is what keeps them all
+/* The bar carries four controls on a phone. Giving back most of the gap is what keeps them all
    on one line at 360px without hiding anything. */
 @media (max-width: 30rem) {
   .shell__bar {
@@ -137,7 +137,7 @@
   }
 }
 
-/* Left to right: brand, navigation, flexible spacer, language, cart, player. The spacer is what
+/* Left to right: brand, navigation, flexible spacer, cart, currency, player. The spacer is what
    keeps the two groups apart without pushing the navigation against the brand; the avatar closes
    the bar, in the cart's corner, where an account control is looked for. */
 .shell__spacer {
@@ -230,36 +230,95 @@
   color: var(--color-accent);
 }
 
-.language-switcher {
+.currency-switcher {
+  position: relative;
+  flex: none;
+}
+
+.currency-switcher__button {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  flex: none;
-  font-size: var(--text-small);
+  min-height: 2rem;
+  padding: 0.25rem 0.35rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
   color: var(--color-text-muted);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  transition:
+    border-color var(--transition),
+    background var(--transition),
+    color var(--transition);
 }
 
-.language-switcher__label {
-  letter-spacing: 0.01em;
+.currency-switcher__button::-webkit-details-marker {
+  display: none;
 }
 
-.language-switcher__select {
-  padding: 0.35rem var(--space-2);
+.currency-switcher__button::after {
+  width: 0.34rem;
+  height: 0.34rem;
+  margin-left: var(--space-1);
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  content: '';
+  transform: translateY(-0.1rem) rotate(45deg);
+}
+
+.currency-switcher__button:hover,
+.currency-switcher[open] .currency-switcher__button {
+  border-color: var(--glass-border-soft);
+  background: var(--glass-bg);
+  color: var(--color-text);
+}
+
+.currency-switcher__popover {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  right: 0;
+  z-index: 12;
+  display: grid;
+  gap: var(--space-2);
+  width: min(17rem, calc(100vw - 2rem));
+  padding: var(--space-3);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  background: var(--field-bg);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.currency-switcher__label {
+  font-size: var(--text-small);
+  font-weight: 600;
+}
+
+.currency-switcher__select {
+  width: 100%;
+  padding: 0.4rem var(--space-2);
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  background: var(--glass-bg);
+  background: var(--field-bg);
   color: var(--color-text);
   font: inherit;
   font-size: var(--text-small);
-  cursor: pointer;
-  transition:
-    border-color var(--transition),
-    background var(--transition);
 }
 
-.language-switcher__select:hover {
-  border-color: var(--color-text-muted);
-  background: var(--glass-bg-strong);
+.currency-switcher__select:disabled {
+  cursor: wait;
+  opacity: 0.68;
+}
+
+.currency-switcher__note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-micro);
+  line-height: 1.45;
 }
 
 .cart-indicator {
@@ -402,24 +461,9 @@
   }
 }
 
-/* The language label is chrome, not content: at tablet width the globe plus the select already
-   say what the control is, so the word is dropped from the layout but stays in the accessibility
-   tree as the select's name. */
 @media (max-width: 48rem) {
   .shell__bar {
     gap: var(--space-2);
-  }
-
-  .language-switcher__label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
   }
 }
 

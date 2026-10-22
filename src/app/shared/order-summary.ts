@@ -49,6 +49,10 @@ import { PricePipe } from './price.pipe';
     .summary {
       padding: var(--space-5);
       border-radius: var(--radius-md);
+      background: var(--field-bg);
+      border: 1px solid var(--glass-border-soft);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
     }
 
     .summary__title {

@@ -1,9 +1,9 @@
 /**
  * The floating "back to top" button.
  *
- * It appears only near the bottom of a page that is actually long, which is the one moment a
- * visitor has scrolled far enough from the header that a one-click way back is useful. On a short
- * page it never renders, so the checkout and the cart do not grow a button that does nothing.
+ * It appears after a visitor has moved well past the first screen on a page that is actually
+ * long. On a short page it never renders, so the checkout and the cart do not grow a button that
+ * does nothing.
  *
  * The button is a real `<button>`, not a link to `#`: the page's own scroll container is the
  * document, and `window.scrollTo` is what the browser's own scroll restoration respects. Smooth
@@ -20,8 +20,8 @@ import {
 
 import { LanguageStore } from '../core/i18n/language-store';
 
-/** How close to the end of the document counts as "at the bottom". */
-const BOTTOM_THRESHOLD_PX = 320;
+/** Show the button once the visitor has scrolled three quarters of a viewport. */
+const SHOW_AFTER_VIEWPORTS = 0.75;
 
 /** A page shorter than this many viewports never shows the button. */
 const MINIMUM_VIEWPORTS = 1.5;
@@ -150,8 +150,8 @@ export class BackToTop {
     const scrolled = window.scrollY;
 
     const longEnough = page > viewport * MINIMUM_VIEWPORTS;
-    const nearBottom = page - (scrolled + viewport) <= BOTTOM_THRESHOLD_PX;
+    const farEnough = scrolled >= viewport * SHOW_AFTER_VIEWPORTS;
 
-    this.visible.set(longEnough && nearBottom);
+    this.visible.set(longEnough && farEnough);
   };
 }

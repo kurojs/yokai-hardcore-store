@@ -39,7 +39,7 @@
 
 .product__media {
   width: 100%;
-  max-width: 38rem;
+  max-width: 32rem;
   justify-self: center;
   overflow: hidden;
   margin: 0;
@@ -78,12 +78,13 @@
 .product__image {
   width: 100%;
   aspect-ratio: 4 / 3;
-  object-fit: cover;
+  max-height: 24rem;
+  object-fit: contain;
 }
 
 @media (max-width: 47.999rem) {
   .product__media {
-    max-width: 42rem;
+    max-width: 32rem;
   }
 }
 

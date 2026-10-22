@@ -1,27 +1,44 @@
 /**
- * The `price` pipe: catalog prices formatted the one way the storefront formats them.
+ * Formats USD catalog amounts using the currently selected display currency and reference rate.
  *
- * It exists for two reasons. First, a template cannot call `formatUsdPrice` cheaply on every
- * change-detection pass, while Angular caches a pure pipe's result per input — which is
- * exactly the memoisation a 48-card grid wants. Second, it keeps the formatting rule in one
- * place instead of letting each template reach for `@angular/common`'s `currency` pipe.
- *
- * `currency` is deliberately not used directly: `formatUsdPrice` pins the USD loan locale,
- * so cards, the cart totals T7 will add and any future receipt cannot render the same amount
- * three different ways.
+ * This pipe is impure so a rate or selected currency change refreshes every existing price
+ * display without changing each feature template. Intl formatters are cached by locale and code.
+ * All input values remain USD; only this presentation boundary converts them.
  */
 
-import { Pipe, PipeTransform } from '@angular/core';
+import { Optional, Pipe, PipeTransform } from '@angular/core';
 
-import { DEFAULT_PRICE_LOCALE, formatUsdPrice } from '../core/format/price';
+import { CurrencyStore } from '../core/format/currency-store';
+import { DEFAULT_PRICE_LOCALE, formatDisplayPrice } from '../core/format/price';
+import { LanguageStore } from '../core/i18n/language-store';
+import type { Language } from '../core/i18n/language';
 
-@Pipe({ name: 'price' })
+const PRICE_LOCALE_BY_LANGUAGE: Readonly<Record<Language, string>> = {
+  en: 'en-US',
+  es: 'es-MX',
+  ja: 'ja-JP',
+};
+
+@Pipe({ name: 'price', pure: false })
 export class PricePipe implements PipeTransform {
+  constructor(
+    @Optional() private readonly currency: CurrencyStore | null = null,
+    @Optional() private readonly language: LanguageStore | null = null,
+  ) {}
+
   /**
-   * @returns `$1.00`-style text, or `''` for `null`, `undefined` or a non-finite amount, so a
-   *   missing price renders as nothing rather than as `$NaN`.
+   * @returns A locale-formatted amount with its ISO code, or `''` for missing/non-finite input.
    */
-  transform(amount: number | null | undefined, locale: string = DEFAULT_PRICE_LOCALE): string {
-    return amount === null || amount === undefined ? '' : formatUsdPrice(amount, locale);
+  transform(amount: number | null | undefined, locale?: string): string {
+    if (amount === null || amount === undefined) return '';
+    return formatDisplayPrice(
+      amount,
+      this.currency?.currency() ?? 'USD',
+      this.currency?.rate() ?? 1,
+      locale ??
+        (this.language === null
+          ? DEFAULT_PRICE_LOCALE
+          : PRICE_LOCALE_BY_LANGUAGE[this.language.language()]),
+    );
   }
 }

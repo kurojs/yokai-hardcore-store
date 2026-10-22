@@ -25,6 +25,7 @@ export const DEFAULT_PRICE_LOCALE = 'en-US';
 // Building an `Intl.NumberFormat` is expensive relative to formatting with one, and a
 // catalog grid formats 48 prices on every change-detection pass, so formatters are reused.
 const formatters = new Map<string, Intl.NumberFormat>();
+const displayFormatters = new Map<string, Intl.NumberFormat>();
 
 function formatterFor(locale: string): Intl.NumberFormat {
   let formatter = formatters.get(locale);
@@ -51,4 +52,28 @@ function formatterFor(locale: string): Intl.NumberFormat {
 export function formatUsdPrice(amount: number, locale: string = DEFAULT_PRICE_LOCALE): string {
   if (!Number.isFinite(amount)) return '';
   return formatterFor(locale).format(amount);
+}
+
+/** Formats a converted display amount with its ISO currency code, e.g. `MXN 17.00`. */
+export function formatDisplayPrice(
+  usdAmount: number,
+  currency: string,
+  rate: number,
+  locale: string = DEFAULT_PRICE_LOCALE,
+): string {
+  if (!Number.isFinite(usdAmount) || !Number.isFinite(rate) || rate <= 0) return '';
+  const amount = usdAmount * rate;
+  if (!Number.isFinite(amount)) return '';
+
+  const key = `${locale}\u0000${currency}`;
+  let formatter = displayFormatters.get(key);
+  if (formatter === undefined) {
+    formatter = new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'code',
+    });
+    displayFormatters.set(key, formatter);
+  }
+  return formatter.format(amount);
 }

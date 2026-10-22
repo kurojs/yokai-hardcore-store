@@ -108,6 +108,11 @@ export const ES_UI_TEXT: UiText = {
   footerCategoriesNavLabel: 'Categorías de la tienda',
   footerCopyright: (year: number) => `© ${year} Yokai Hardcore`,
   languageLabel: 'Idioma',
+  currencyLabel: 'Moneda de visualización',
+  currencyButtonLabel: (currency: string) => `Elegir moneda de visualización. Actual: ${currency}`,
+  currencyRateNote: 'Tipos de referencia diarios e indicativos. Los totales de pago son solo de visualización.',
+  currencyRateUnavailable: 'No hay tipos disponibles; los precios siguen en USD.',
+  currencyRateLoading: 'Cargando tipos de referencia diarios…',
   languageChanged,
 
   productCountLabel,

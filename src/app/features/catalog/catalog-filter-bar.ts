@@ -57,7 +57,7 @@ import type { UiText } from '../../core/i18n/ui-text';
       padding: 0.5rem var(--space-3);
       border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
-      background: var(--glass-bg);
+      background: var(--field-bg);
       -webkit-backdrop-filter: var(--glass-blur);
       backdrop-filter: var(--glass-blur);
       color: var(--color-text);
@@ -70,7 +70,7 @@ import type { UiText } from '../../core/i18n/ui-text';
 
     .search__input:hover {
       border-color: var(--color-text-muted);
-      background: var(--glass-bg-strong);
+      background: var(--field-bg-hover);
     }
 
     .search__input::placeholder {

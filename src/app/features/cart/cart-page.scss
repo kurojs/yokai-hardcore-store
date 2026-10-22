@@ -9,6 +9,13 @@
   margin-bottom: var(--space-4);
 }
 
+.cart-empty {
+  background: var(--field-bg);
+  border: 1px solid var(--glass-border-soft);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
 .cart__layout {
   display: grid;
   gap: var(--space-5);
@@ -44,7 +51,7 @@
   align-items: center;
   padding: var(--space-3);
   border-radius: var(--radius-md);
-  background: var(--glass-bg);
+  background: var(--field-bg);
   border: 1px solid var(--glass-border-soft);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);

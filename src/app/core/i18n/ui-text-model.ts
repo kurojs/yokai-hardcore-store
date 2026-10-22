@@ -57,6 +57,13 @@ export interface UiText {
   /** Visible label of the language switcher. */
   readonly languageLabel: string;
 
+  /** Visible and accessible labels for the compact display-currency selector. */
+  readonly currencyLabel: string;
+  readonly currencyButtonLabel: (currency: string) => string;
+  readonly currencyRateNote: string;
+  readonly currencyRateUnavailable: string;
+  readonly currencyRateLoading: string;
+
   /** Announced politely after the visitor changes language. */
   readonly languageChanged: (languageName: string) => string;
 

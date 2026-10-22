@@ -231,7 +231,7 @@ import { PlayerStore } from '../core/player/player-store';
       padding: 0.6rem var(--space-3);
       border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
-      background: var(--color-surface);
+      background: var(--field-bg);
       color: var(--color-text);
       font: inherit;
       font-size: var(--text-base);

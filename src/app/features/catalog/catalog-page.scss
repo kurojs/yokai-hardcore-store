@@ -45,6 +45,37 @@
   top: calc(var(--header-height) + var(--space-4));
   align-self: start;
   border-radius: var(--radius-md);
+  background: var(--field-bg);
+  max-height: calc(100vh - var(--header-height) - var(--space-7));
+  max-height: calc(100dvh - var(--header-height) - var(--space-7));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: rgb(161 161 170 / 0.38) transparent;
+  scrollbar-width: thin;
+}
+
+.catalog-sidebar:hover {
+  scrollbar-color: rgb(167 139 250 / 0.58) transparent;
+}
+
+.catalog-sidebar::-webkit-scrollbar {
+  width: 0.45rem;
+}
+
+.catalog-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.catalog-sidebar::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: var(--radius-pill);
+  background: rgb(161 161 170 / 0.38);
+  background-clip: padding-box;
+}
+
+.catalog-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgb(167 139 250 / 0.58);
+  background-clip: padding-box;
 }
 
 .catalog-sidebar__summary {
@@ -134,7 +165,7 @@
   height: 1rem;
   border: 1px solid var(--color-border-control);
   border-radius: 4px;
-  background: var(--glass-bg);
+  background: var(--field-bg);
   transition:
     background var(--transition),
     border-color var(--transition);
@@ -184,7 +215,7 @@
   padding: 0.45rem var(--space-2);
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  background: var(--glass-bg);
+  background: var(--field-bg);
   color: var(--color-text);
   font: inherit;
   font-size: var(--text-small);
@@ -196,7 +227,7 @@
 
 .filter-control:hover {
   border-color: var(--color-text-muted);
-  background: var(--glass-bg-strong);
+  background: var(--field-bg-hover);
 }
 
 .catalog-results {
@@ -247,6 +278,8 @@
 
   .catalog-sidebar {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 
   .catalog-sidebar__panel {

@@ -66,6 +66,9 @@
      every value here is dark enough on its own that text stays readable without it. */
   --glass-bg: rgb(255 255 255 / 0.045);
   --glass-bg-strong: rgb(255 255 255 / 0.07);
+  /* Fields read as dark wells inside glass panels without becoming opaque. */
+  --field-bg: rgb(0 0 0 / 0.42);
+  --field-bg-hover: rgb(0 0 0 / 0.56);
   --glass-border: rgb(255 255 255 / 0.1);
   --glass-border-soft: rgb(255 255 255 / 0.06);
   --glass-blur: blur(16px) saturate(140%);
@@ -362,12 +365,10 @@ a {
 
 @keyframes card-reveal {
   from {
-    opacity: 0;
     transform: translateY(10px);
   }
 
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }

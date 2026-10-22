@@ -78,40 +78,6 @@
 
     <div class="shell__spacer" aria-hidden="true"></div>
 
-    <!-- A native select is the most reliable keyboard- and screen-reader-operable language
-         control there is: it is one tab stop, the platform provides the list behaviour, and
-         the visible label is translated with everything else. The status region below
-         announces the change, because picking an option is not self-announcing. -->
-    <div class="language-switcher">
-      <svg
-        class="icon"
-        viewBox="0 0 24 24"
-        width="18"
-        height="18"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <circle cx="12" cy="12" r="8.5" />
-        <path d="M3.5 12h17" />
-        <path d="M12 3.5c2.6 2.4 4 5.4 4 8.5s-1.4 6.1-4 8.5c-2.6-2.4-4-5.4-4-8.5s1.4-6.1 4-8.5Z" />
-      </svg>
-      <label class="language-switcher__label" for="language-select">{{
-        text().languageLabel
-      }}</label>
-      <select id="language-select" class="language-switcher__select" (change)="onLanguageChange($event)">
-        @for (option of languageOptions; track option.value) {
-          <option [value]="option.value" [selected]="option.value === language()">{{
-            option.label
-          }}</option>
-        }
-      </select>
-    </div>
-
     <!-- The count is the link's visible text and part of its accessible name, so the header
          says how much is in the cart and where to go. The hidden status repeats the text: a
          live region announces a changed count politely without taking focus from the page. -->
@@ -143,12 +109,45 @@
       >
     </a>
 
+    <details class="currency-switcher">
+      <summary
+        class="currency-switcher__button"
+        [attr.aria-label]="text().currencyButtonLabel(displayCurrency())"
+      >
+        <span aria-hidden="true">{{ displayCurrency() }}</span>
+      </summary>
+      <div class="currency-switcher__popover">
+        <label class="currency-switcher__label" for="currency-select">
+          {{ text().currencyLabel }}
+        </label>
+        <select
+          id="currency-select"
+          class="currency-switcher__select"
+          [value]="displayCurrency()"
+          [disabled]="!currencyRatesReady()"
+          (change)="onCurrencyChange($event)"
+        >
+          @for (currency of currencyOptions; track currency) {
+            <option [value]="currency">{{ currency }}</option>
+          }
+        </select>
+        <p class="currency-switcher__note" aria-live="polite">
+          @if (currencyRatesFailed()) {
+            {{ text().currencyRateUnavailable }}
+          } @else if (!currencyRatesReady()) {
+            {{ text().currencyRateLoading }}
+          } @else {
+            {{ text().currencyRateNote }}
+          }
+        </p>
+      </div>
+    </details>
+
     <!-- The player closes the bar: the avatar sits beside the cart, at the far right end, so
          identity and checkout share the same corner of the screen. -->
     <app-player-account />
 
     <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
-    <p class="visually-hidden" role="status" aria-live="polite">{{ announcement() }}</p>
   </div>
 </header>
 
