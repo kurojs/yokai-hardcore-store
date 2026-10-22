@@ -46,20 +46,29 @@ import type { UiText } from '../../core/i18n/ui-text';
       white-space: nowrap;
     }
 
+    /* A definite width, not min(24rem, 100%): inside a shrink-to-fit flex row the percentage
+       resolved against an indefinite parent and the field fell back to its default width, which
+       clipped the placeholder mid-word. */
     .search__input {
-      width: min(24rem, 100%);
+      flex: 0 1 24rem;
+      width: 24rem;
+      max-width: 100%;
       min-width: 0;
-      padding: 0.375rem var(--space-3);
+      padding: 0.5rem var(--space-3);
       border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
-      background: var(--color-surface);
+      background: var(--glass-bg);
       color: var(--color-text);
       font: inherit;
-      font-size: var(--text-small);
+      font-size: var(--text-ui);
+      transition:
+        border-color var(--transition),
+        background var(--transition);
     }
 
     .search__input:hover {
       border-color: var(--color-text-muted);
+      background: var(--glass-bg-strong);
     }
 
     .search__input::placeholder {

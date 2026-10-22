@@ -1,5 +1,5 @@
-/* Cart page. Tokens, `.page-width`, `.state*` and `.button` come from `styles.scss`; this file
-   holds the line layout and the summary column only. */
+/* Cart page. Tokens, `.page-width`, `.glass`, `.state*` and `.button` come from `styles.scss`;
+   this file holds the line layout and the summary column only. */
 
 .cart {
   padding-block: var(--space-5);
@@ -7,8 +7,6 @@
 
 .cart__title {
   margin-bottom: var(--space-4);
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  letter-spacing: -0.01em;
 }
 
 .cart__layout {
@@ -32,20 +30,24 @@
 }
 
 /* One row: photograph, identity, quantity, line total, remove. On a phone the controls wrap
-   under the product; from tablet up they sit on one line. */
+   under the product; from tablet up they sit on one line. The quantity spans two columns because
+   the stepper is 7.5rem wide on its own — giving it the 5rem photo column made it run under the
+   line total. */
 .line {
   display: grid;
-  grid-template-columns: 5rem minmax(0, 1fr);
+  grid-template-columns: 5rem minmax(0, 1fr) auto;
   grid-template-areas:
-    'media info'
-    'quantity total'
-    'remove remove';
+    'media info info'
+    'quantity quantity total'
+    'remove remove remove';
   gap: var(--space-3);
   align-items: center;
   padding: var(--space-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 
 @media (min-width: 48rem) {
@@ -84,6 +86,7 @@
 /* Names are source-faithful and sometimes long and SHOUTING; breaking anywhere is what keeps
    a 39-character ALL CAPS name from pushing the controls out of the row. */
 .line__name {
+  font-size: var(--text-ui);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -93,22 +96,19 @@
 }
 
 .line__category {
-  font-size: 0.8125rem;
+  font-size: var(--text-micro);
   color: var(--color-text-muted);
 }
 
 .line__caption {
   display: block;
-  font-size: 0.6875rem;
+  font-size: var(--text-micro);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   color: var(--color-text-muted);
 }
 
 .line__money {
-  font-family: var(--font-mono);
-  font-size: 0.9375rem;
+  font-size: var(--text-ui);
   font-variant-numeric: tabular-nums;
   color: var(--color-price);
 }
@@ -126,14 +126,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-  justify-self: start;
-}
-
-@media (min-width: 48rem) {
-  .line__total {
-    justify-self: end;
-    text-align: right;
-  }
+  justify-self: end;
+  text-align: right;
 }
 
 .line__remove {
@@ -144,7 +138,7 @@
   background: none;
   color: var(--color-text-muted);
   font: inherit;
-  font-size: 0.8125rem;
+  font-size: var(--text-micro);
   text-decoration: underline;
   cursor: pointer;
   transition: color var(--transition);
@@ -165,7 +159,7 @@
 
 .cart__continue {
   justify-self: start;
-  font-size: 0.875rem;
+  font-size: var(--text-small);
   color: var(--color-text-muted);
   text-decoration: underline;
 }

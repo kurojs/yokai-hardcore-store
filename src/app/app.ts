@@ -1,10 +1,12 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, afterNextRender, computed, effect, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { CartStore } from './core/cart/cart-store';
+import { CatalogStore } from './core/catalog/catalog-store';
 import { LanguageStore } from './core/i18n/language-store';
 import { LANGUAGE_LABELS, normalizeLanguage, type Language } from './core/i18n/language';
 import { BrandMark } from './shared/brand-mark';
+import { PlayerAccount } from './shared/player-account';
 
 /**
  * The application shell: header, routed content, footer.
@@ -20,21 +22,62 @@ import { BrandMark } from './shared/brand-mark';
  *
  * Copy comes from `LanguageStore`, never from a literal: the header is the one surface every
  * page shares, so a forgotten string here would be visible in all three languages at once.
+ *
+ * Two pieces of behaviour belong to the shell rather than to a component:
+ *
+ * - **The scrolled header state.** One passive scroll listener flips a signal only when the
+ *   boolean it stores actually changes, so a scroll of a thousand pixels costs zero change
+ *   detections. The CSS does the rest.
+ * - **The cart badge pop.** The badge animates when the count changes, never on first render.
+ *   The component owns the flag and clears it on `animationend`; the keyframe lives in CSS.
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, BrandMark],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, BrandMark, PlayerAccount],
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })
 export class App {
   private readonly cart = inject(CartStore);
+  private readonly catalog = inject(CatalogStore);
   private readonly i18n = inject(LanguageStore);
+  private readonly destroyRef = inject(DestroyRef);
 
   /** The active dictionary; every visible word in the header and footer reads through it. */
   protected readonly text = this.i18n.text;
 
   protected readonly language = this.i18n.language;
+
+  /**
+   * The footer's category links: the five biggest categories, in browse order.
+   *
+   * Empty until the catalog loads, and the column is then not rendered at all. A footer that
+   * shows five empty bullets while the catalog is in flight is worse than one that grows a
+   * useful column a moment later.
+   */
+  protected readonly footerCategories = computed(() =>
+    this.catalog.orderedCategories().slice(0, 5),
+  );
+
+  /** The copyright year, read once: a build does not need to re-evaluate it per frame. */
+  protected readonly currentYear = new Date().getFullYear();
+
+  /** The header's denser glass state, set from a passive scroll listener. */
+  protected readonly scrolled = signal(false);
+
+  /** True while the badge is playing its pop. */
+  protected readonly badgeBump = signal(false);
+
+  /** Set on the first count the shell sees, so a page load does not animate the badge. */
+  private badgeSettled = false;
+
+  /**
+   * The cart's unit count, for the badge.
+   *
+   * It is the store's own count, not a length of something the shell derives: the badge, the
+   * link's accessible name and the live region must always agree.
+   */
+  protected readonly itemCount = this.cart.itemCount;
 
   /**
    * The switcher's options.
@@ -72,6 +115,33 @@ export class App {
   private readonly languageAnnouncement = signal('');
 
   protected readonly announcement = this.languageAnnouncement.asReadonly();
+
+  constructor() {
+    // The badge pops on a change, never on the first value: a visitor arriving with two items in
+    // the cart should not see an animation for a change that never happened in this tab.
+    effect(() => {
+      this.itemCount();
+      if (!this.badgeSettled) {
+        this.badgeSettled = true;
+        return;
+      }
+      this.badgeBump.set(true);
+    });
+
+    // A passive listener rather than a host binding: `scroll` fires on every frame of a gesture,
+    // and the signal only notifies Angular when the boolean it stores actually flips.
+    afterNextRender(() => {
+      const sync = (): void => this.scrolled.set(window.scrollY > 8);
+      sync();
+      window.addEventListener('scroll', sync, { passive: true });
+      this.destroyRef.onDestroy(() => window.removeEventListener('scroll', sync));
+    });
+  }
+
+  /** The keyframe has finished, so the class can be removed and the next change can replay it. */
+  protected onBadgeAnimationEnd(): void {
+    this.badgeBump.set(false);
+  }
 
   protected onLanguageChange(event: Event): void {
     const target = event.target;

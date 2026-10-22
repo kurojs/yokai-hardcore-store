@@ -50,6 +50,16 @@ describe('ProductCard', () => {
     expect(host.querySelector('.product-card__category')?.textContent?.trim()).toBe('Mascotas');
   });
 
+  it('omits the category label when the caller already names the category', async () => {
+    const fixture = TestBed.createComponent(ProductCard);
+    fixture.componentRef.setInput('product', product('algodones', 'curacion'));
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+
+    // Under a catalog group header the label would repeat the header on every card.
+    expect(host.querySelector('.product-card__category')).toBeNull();
+  });
+
   it('renders the local image, lazily, with an empty alt because the name is adjacent', async () => {
     const { host } = await render({ imagePath: '/products/algodones/imagen.png' });
     const image = host.querySelector('img');

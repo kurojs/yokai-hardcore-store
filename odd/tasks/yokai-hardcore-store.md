@@ -214,9 +214,13 @@ model.
 | T5 | Catalog UI: shell/layout, home, category browse, search, filters, product cards | Delegated writer | Write rule | **done** (2026-10-19, `87e641d` `081d446` `330d4c4` `1800b73` `1a3a77e` `5a41c0b` `aa6ad8f`) |
 | T6 | Product detail view, image-first (no 3D on SKUs) + cart core + shell count | Delegated writer | Write rule | **done** (2026-10-19, `bddadc5` `f264421` `8d1553e` `22fa58c` `fe41acc` `63462bb`) |
 | T7 | Cart page, demo checkout and the header link | Delegated writer | Write rule | **done** (2026-10-19, `373002f` `bedf8fc` `dbe9180` `0004c22` `54ae53c`) |
-| T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | pending |
+| T8 | i18n ES/EN/JP + a11y + responsive polish | Delegated writer | Write rule | **done** (2026-10-19, `0adf6b5` `41ac9de`) |
 | T9 | Landing decorative 3D: animated Tlaloc plus **procedurally generated** voxel decoration (downloads rejected, see T9 section) | Delegated writer | Write rule | **done** (2026-10-19, `95f90b3` `065eb55` `a6799a0`) |
 | T10 | Docs: README, ASSETS.md, LICENSES.md, architecture notes | Delegated writer | Write rule | pending |
+| T11 | First visual overhaul (jade palette, voxel backdrop, sidebar/rows, oni mark) | Delegated writer | Write rule | **done, rejected by the user** (2026-10-20, `17f302c`) |
+| T12 | Violet identity, curated category order, filler copy removed | Delegated writer | Write rule | **done, rejected by the user** (2026-10-20, `fd2725b`) |
+| T13 | Glass neutral redesign: Arial type scale, glass tokens, icon topbar, Destacados and filler removed, card grids, motion | Delegated writer (execution completed after the delegate hit a provider rate limit) | Write rule | **done** (2026-10-22) |
+| T14 | Enderman brand mark + favicon, Minotar helmet avatar with a username dialog, real footer, island turntable | Inline (delegation unavailable: three provider rate-limit failures) | Write rule, route declared | **done** (2026-10-22) |
 
 Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 → T10.
 
@@ -304,6 +308,9 @@ Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 �
 | 2026-10-20 | T11 — first visual overhaul | Commit `17f302c`. Replaced the blue-teal dev-tool palette with a near-black surface plus a jade accent, added a generated 4×4 voxel background tile, an inline oni-mask brand mark and `favicon.svg`, rebuilt `/catalog` as a sticky filter sidebar with dense Modrinth-style rows, made the landing island full-bleed behind a CSS mask, and replaced the gradient-monogram category placeholder with a real product image | `npm test -- --watch=false` PASS **794/794** (64 files), `npm run build` PASS at 292.32 kB initial, `catalog:verify` PASS, three.js still lazy | User rejected the result as still too generic |
 | 2026-10-20 | T12 — violet identity and curated order | Commit `fd2725b`. Curated ordering: categories by product count desc then name, `/catalog` grouped under category headers, flat lists for a category route or an active search, and per-group sorting. Removed the duplicated category pill and the identical-everywhere `Producto digital` pill. Violet surfaces, amethyst interaction accent, gold reserved for prices only. Deleted the hero `Desde $1` stat, the hero eyebrow, the section notes, the catalog leads and the Mojang non-affiliation footer line. Added staggered card reveal, row image zoom on hover, and a slow product-image float, all no-ops under reduced motion | `npm test -- --watch=false` PASS **807/807** (66 files), `npm run build` PASS at 290.35 kB initial, `catalog:verify` PASS, three.js still a separate 581.71 kB lazy chunk with no preload | Parent re-ran the suite, the build and `catalog:verify` and confirmed all three green |
 | 2026-10-20 | Delivery | Created private repository `kurojs/yokai-hardcore-store` and pushed both `main` and `feat/yokai-hardcore-store`; `main` is the default branch. No PR was opened | `gh repo view` reports `visibility: PRIVATE` | Payment is still unresolved by user decision: the checkout cannot charge and says so in one muted line |
+| 2026-10-22 | T13 — glass neutral redesign | Uncommitted working tree at the time the delegate was interrupted by a provider rate limit; the work was complete enough to build and was finished by hand. Neutral near-black base, translucent glass panels with `backdrop-filter`, one Arial type scale raised one step (13/14/15/16px), **purple = interaction, green = money** as the only saturated colours, header rebuilt with icon-led navigation in a coherent order, `Destacados` deleted with its component and spec, every filler string deleted (hero eyebrow, taglines, section notes, catalog leads, `Producto digital` pill, the hidden `0 productos` row), category cards fixed to render the stored banner or the product fallback, the vertical product rows replaced by card grids, and staggered reveal/hover motion that is a no-op under reduced motion | `npm test -- --watch=false` PASS **829/829** (67 files), `npm run build` PASS at **310.37 kB** initial, `catalog:verify` exit 0 | The one test the redesign broke was a tooling assertion pinning the exact contents of `public/brand/`; it was corrected to the real file set rather than loosened |
+| 2026-10-22 | T14 — brand, player identity and footer | Enderman head from the user's own icon folder becomes the brand mark (inset in a glass tile so a black face reads on a near-black header) and the favicon, and the dead oni-mask `favicon.svg` is deleted. New `core/player/`: a pure name normaliser reusing the checkout's rule, a pure `minotarHelmetUrl`, and a `PlayerStore` persisted under `yokai.player.v1` that degrades to "nobody signed in" on corrupt or unavailable storage. `PlayerAccount` renders a 32px helmet avatar or a sign-in button, opens a native `<dialog>` with one username field, an inline rule message and a plain statement that the skin image comes from minotar.net — **no password field and no claim of authentication**, because no backend exists. The checkout prefills and later remembers the same username. Footer rebuilt as brand + Shop + top-five categories + `© <year>`, with the category column absent until the catalog loads rather than rendered empty | `npm test -- --watch=false` PASS **829/829** (67 files, 9 new player specs), `npm run build` PASS at **310.37 kB** initial, `catalog:verify` exit 0, three.js still a **568.1 kB** lazy chunk with exactly one `modulepreload` (the framework chunk) | Two defects caught before commit: the header's `backdrop-filter` made it the containing block for the modal `<dialog>`, so the dialog would have been trapped inside the 4.5rem bar — the blur moved to a `::before` layer; and jsdom ships `<dialog>` without `showModal`/`close`, so the spec supplies them instead of weakening the component |
+| 2026-10-22 | Island turntable | `island-scene.ts` now rotates the island group at **0.12 rad/s** (a revolution every ~52 s) from a deliberate **−0.35 rad** start, which is also the reduced-motion frame because `still` passes `elapsed = 0` | Knob is a named constant; the camera's own sway and lift are unchanged | Rotating the model rather than orbiting the camera keeps the CSS mask and framing stable, but **no frame has been seen** — the speed is reasoned, not observed |
 
 ---
 
@@ -658,16 +665,27 @@ hidden:
 - **Catalog content is Spanish in all three languages.** A Japanese visitor reads Japanese chrome
   around Spanish product copy. Translating 48 descriptions is a content decision, not engineering.
 
+**Update after T13/T14 (2026-10-22).** The visual layer was rebuilt twice more at the user's
+request, and the shell gained an identity control. The three gaps above are unchanged, and one is
+now sharper: the enderman tile, the new type scale, the grid density and the turntable speed are
+**all unobserved**. Everything else about them is proven structurally — no skin request when
+nobody is signed in, a corrupt stored name degrading to `null`, the dialog's one field, the
+footer's links resolving to real routes, and three.js still out of the first paint.
+
 What remains:
 
-- **T8b (a11y + responsive polish)** — the deliberate audit that T8 deliberately did not do. It now
-  has to cover the landing scene too, so running it after T9 was the right order.
-- **T10 (docs)** — `README.md`, `ASSETS.md`, `LICENSES.md`, architecture notes. `LICENSES.md` got
-  simpler and more honest in T9: the 3D content is the user's own Blockbench work plus textures
-  generated arithmetically in code, so there are no third-party asset licences to track at all.
-- **Delivery** — the branch is now ~20 commits and still unpushed, with no remote. The recorded slice
-  plan predates T6–T9 and needs re-measuring before any PR is cut. Commit, push and PR remain the
-  user's decisions.
+- **A browser pass by the user.** Nothing else can validate contrast, wrapping, the 32px enderman
+  tile, the dialog over the sticky header, or whether 0.12 rad/s reads as alive or as a turntable.
+- **T8b (a11y + responsive polish)** — still the deliberate audit T8 did not do. It must now also
+  cover the header at 360px, where brand + two icon links + language + player + cart share one bar.
+- **T10 (docs)** — `README.md`, `ASSETS.md`, `LICENSES.md`, architecture notes. `LICENSES.md`
+  stays simple: the 3D content is the user's own Blockbench work plus textures generated in code.
+  The enderman icon is the user's own file, so it needs no third-party attribution.
+- **Real authentication, if it is ever wanted.** The player control is identification, not a
+  session. A genuine login needs Microsoft OAuth plus a backend, and Minotar would be replaced by
+  the authenticated skin endpoint.
+- **Delivery** — the branch is now ~25 commits and pushed to `origin`; `main` was fast-forwarded
+  once. Commit, push and PR remain the user's decisions.
 
 **RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
 The user's decision: the models are wanted only as **decoration on the landing**, animated, and

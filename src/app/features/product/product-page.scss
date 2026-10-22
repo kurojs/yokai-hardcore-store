@@ -1,5 +1,5 @@
-/* Product detail layout. Tokens, `.page-width`, `.state*`, `.button` and `.card-grid` come from
-   `styles.scss`, so this file only holds the page's own two-column hero and the breadcrumb. */
+/* Product detail layout. Tokens, `.page-width`, `.state*`, `.button` and `.product-grid` come
+   from `styles.scss`, so this file only holds the page's own two-column hero and the breadcrumb. */
 
 .breadcrumb {
   display: flex;
@@ -7,7 +7,7 @@
   align-items: center;
   gap: var(--space-2);
   padding-block: var(--space-4);
-  font-size: 0.875rem;
+  font-size: var(--text-small);
   color: var(--color-text-muted);
 }
 
@@ -21,7 +21,7 @@
 }
 
 .breadcrumb__separator {
-  color: var(--color-border-strong);
+  color: var(--color-text-muted);
 }
 
 .product__layout {
@@ -40,7 +40,7 @@
 .product__media {
   overflow: hidden;
   margin: 0;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--glass-border-soft);
   border-radius: var(--radius-lg);
   background: var(--color-surface-raised);
 }
@@ -89,26 +89,25 @@
 }
 
 .product__category {
-  font-size: 0.75rem;
+  font-size: var(--text-small);
   font-weight: 600;
-  letter-spacing: 0.06em;
-  color: var(--color-accent);
+  color: var(--color-text-muted);
 }
 
 .product__category-link:hover {
+  color: var(--color-accent);
   text-decoration: underline;
 }
 
 .product__name {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
-/* Prices are numbers to be compared, so they keep the mono face the cards use, and they are
-   gold: the one place the money accent appears on this page. */
+/* Prices are numbers to be compared, so they keep tabular figures and they are green: the one
+   place the money accent appears on this page. */
 .product__price {
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--color-price);
 }
@@ -121,11 +120,12 @@
   padding-block: var(--space-2);
 }
 
-/* Always in the layout, so the live region exists before it has something to announce. */
+/* Always in the layout, so the live region exists before it has something to announce. A
+   confirmation is the one other place green is allowed: it is a success, not decoration. */
 .product__confirmation {
   min-height: 1.5rem;
-  font-size: 0.875rem;
-  color: var(--color-accent);
+  font-size: var(--text-small);
+  color: var(--color-price);
 }
 
 .product__description {

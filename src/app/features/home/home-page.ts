@@ -1,12 +1,13 @@
 /**
- * The landing page: a hero, then the catalog's categories and a featured spread.
+ * The landing page: the store's name and one action, then the categories.
  *
- * It is the slice's only container, and its whole job is to read the shared catalog store and
- * hand plain values to `shared/` cards. The pieces of behaviour worth naming:
+ * That is the whole page. The previous version carried a tagline, a two-stat block ("48
+ * productos / 10 categorías") and a featured strip; none of it told a visitor anything the
+ * heading, the catalog link or the categories themselves did not already say, so it is gone and
+ * deliberately not replaced.
  *
- * - The featured selection is not "the first four products". `selectFeatured` spreads it across
- *   categories, and it is a pure function in its own module so the rule is tested without a
- *   TestBed.
+ * The pieces of behaviour worth naming:
+ *
  * - The page has three states, and all three are real: loading while `/data/catalog.json` is in
  *   flight, an error with a retry action when the fetch or the validation fails, and the content
  *   itself. A catalog page that renders an empty grid on failure would look like a store with
@@ -35,9 +36,7 @@ import { CatalogStore } from '../../core/catalog/catalog-store';
 import { categoryFallbackImage } from '../../core/catalog/category-visual';
 import { LanguageStore } from '../../core/i18n/language-store';
 import { CategoryCard } from '../../shared/category-card';
-import { ProductCard } from '../../shared/product-card';
 import { RevealOnScroll } from '../../shared/reveal-on-scroll';
-import { FEATURED_COUNT, selectFeatured } from './featured';
 
 /** One quiet line if the scene's chunk cannot be fetched; never an error box. */
 let sceneLoadFailureReported = false;
@@ -53,7 +52,7 @@ function reportSceneLoadFailure(cause: unknown): void {
 @Component({
   selector: 'app-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CategoryCard, ProductCard, RevealOnScroll],
+  imports: [RouterLink, CategoryCard, RevealOnScroll],
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
@@ -80,15 +79,6 @@ export class HomePage implements OnDestroy {
    * lead, and the four single-product ones stop interrupting the grid.
    */
   protected readonly categories = this.catalog.orderedCategories;
-  protected readonly featured = computed(() =>
-    selectFeatured(this.catalog.entries(), FEATURED_COUNT),
-  );
-
-  private readonly productCount = computed(() => this.catalog.entries().length);
-  protected readonly countLabel = computed(() =>
-    this.text().productCountLabel(this.productCount()),
-  );
-  protected readonly categoryCount = computed(() => this.catalog.categories().length);
 
   /**
    * A product photograph per category, used only by cards whose category ships no banner.

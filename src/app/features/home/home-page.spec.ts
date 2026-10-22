@@ -3,8 +3,12 @@
  *
  * The page is mostly a view over the shared store, so what is worth pinning is the three states
  * and the fact that the cards receive real catalog values: a page that renders an empty grid
- * when the fetch fails would look like a store with nothing to sell. The category and product
- * links are asserted by `href`, because that is the one thing a visitor can actually act on.
+ * when the fetch fails would look like a store with nothing to sell. The category links are
+ * asserted by `href`, because that is the one thing a visitor can actually act on.
+ *
+ * The page is deliberately short: the store's name, one action and the categories. The specs
+ * below also pin the absences — no tagline, no counts block, no featured strip — because copy
+ * that was removed on request is exactly what tends to grow back.
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -65,7 +69,7 @@ describe('HomePage', () => {
     expect(host.querySelector('app-category-card')).toBeNull();
   });
 
-  it('renders the real category and featured counts once the catalog arrives', async () => {
+  it('renders the categories once the catalog arrives', async () => {
     stubFetch(readCommittedCatalogDocument());
 
     const { fixture, host } = await render();
@@ -74,12 +78,7 @@ describe('HomePage', () => {
       expect(host.querySelectorAll('app-category-card')).toHaveLength(10);
     });
 
-    const stats = [...host.querySelectorAll('.hero__stat dd')].map((node) =>
-      node.textContent?.trim(),
-    );
-    expect(stats).toEqual(['48 productos', '10']);
-    expect(host.querySelectorAll('app-product-card')).toHaveLength(4);
-    expect(host.querySelectorAll('.card-grid')).toHaveLength(2);
+    expect(host.querySelectorAll('.card-grid')).toHaveLength(1);
 
     // The category strip follows the browse order, not the JSON's authoring order: the
     // thirteen-product food category leads instead of whatever was written first.
@@ -90,14 +89,14 @@ describe('HomePage', () => {
       '/catalog/alimento-yokai-para-guerreros-y-pets',
     );
 
-    // Every card carries its own stagger index; the CSS multiplies it by 40ms.
+    // Every card carries its own stagger index; the CSS multiplies it by 45ms, capped at 420ms.
     const items = [...host.querySelectorAll<HTMLElement>('#categorias .card-grid > li')];
     expect(items.map((item) => item.style.getPropertyValue('--reveal-index'))).toEqual([
       '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     ]);
   });
 
-  it('fills the bannerless categories with a real product photograph', async () => {
+  it('gives every rendered category a non-empty image source', async () => {
     stubFetch(readCommittedCatalogDocument());
 
     const { fixture, host } = await render();
@@ -106,15 +105,18 @@ describe('HomePage', () => {
       expect(host.querySelectorAll('app-category-card')).toHaveLength(10);
     });
 
-    // Three of the ten categories ship without a banner; each should borrow a product image
-    // from its own catalog instead of falling back to a monogram.
-    const fallbacks = [...host.querySelectorAll('.category-card__fallback')];
-    expect(fallbacks).toHaveLength(3);
-    for (const fallback of fallbacks) {
-      const src = fallback.querySelector('img')?.getAttribute('src');
-      expect(src?.startsWith('/products/')).toBe(true);
-      expect(fallback.querySelector('.category-card__overlay')?.textContent?.trim()).not.toBe('');
+    // Seven categories have a banner and three borrow a product photograph. The card resolves
+    // that chain itself, so the landing page only has to prove that no card is left without a
+    // source: an empty `src` is the state that rendered as an empty box.
+    const cards = [...host.querySelectorAll('app-category-card')];
+    expect(cards).toHaveLength(10);
+
+    const sources = cards.map((card) => card.querySelector('img')?.getAttribute('src') ?? '');
+    for (const source of sources) {
+      expect(source.length).toBeGreaterThan(0);
     }
+    expect(sources.filter((source) => source.startsWith('/categories/'))).toHaveLength(7);
+    expect(sources.filter((source) => source.startsWith('/products/'))).toHaveLength(3);
   });
 
   it('links each category card to its filtered catalog route', async () => {
@@ -133,20 +135,28 @@ describe('HomePage', () => {
     expect(hrefs).toHaveLength(10);
   });
 
-  it('links each featured product to its detail page', async () => {
+  it('keeps the page to the name, one action and the categories', async () => {
     stubFetch(readCommittedCatalogDocument());
 
     const { fixture, host } = await render();
     await vi.waitFor(async () => {
       await fixture.whenStable();
-      expect(host.querySelectorAll('app-product-card')).toHaveLength(4);
+      expect(host.querySelectorAll('app-category-card')).toHaveLength(10);
     });
 
-    const hrefs = [
-      ...host.querySelectorAll('section[aria-labelledby="destacados-title"] a.card-link'),
-    ].map((link) => link.getAttribute('href'));
-    expect(hrefs).toHaveLength(4);
-    expect(hrefs.every((href) => href?.startsWith('/product/'))).toBe(true);
+    // The name is the heading, and the catalog link is the only action in the hero.
+    expect(host.querySelector('.hero__title')?.textContent?.trim()).toBe('Yokai Hardcore Store');
+    const heroActions = [...host.querySelectorAll('.hero__actions a')];
+    expect(heroActions).toHaveLength(1);
+    expect(heroActions[0]?.getAttribute('href')).toBe('/catalog');
+
+    // The copy that was removed on request stays removed.
+    expect(host.querySelector('.hero__lead')).toBeNull();
+    expect(host.querySelector('.hero__stats')).toBeNull();
+    expect(host.querySelector('.hero__stat')).toBeNull();
+    expect(host.querySelector('section[aria-labelledby="destacados-title"]')).toBeNull();
+    expect(host.textContent).not.toContain('inframundo');
+    expect(host.textContent).not.toContain('Destacados');
   });
 
   it('reserves a decorative full-bleed scene without taking any copy out of the page', async () => {
@@ -164,8 +174,7 @@ describe('HomePage', () => {
     // than given a label that would announce a decoration.
     expect(panel?.getAttribute('aria-hidden')).toBe('true');
     // The hero copy is outside that panel and still readable without the scene.
-    expect(host.querySelector('.hero__title')?.textContent).toContain('inframundo');
-    expect(host.querySelector('.hero__lead')?.textContent).toContain('Yokai Hardcore');
+    expect(host.querySelector('.hero__title')?.textContent).toContain('Yokai Hardcore Store');
   });
 
   it('shows the failure and recovers when the visitor retries', async () => {

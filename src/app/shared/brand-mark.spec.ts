@@ -1,11 +1,12 @@
 /**
  * Specs for the brand mark.
  *
- * The mark is decorative, so what matters is that it cannot leak into the accessibility tree
- * and that it scales from one number instead of carrying a fixed pixel size.
+ * The mark is decorative, so what matters is that it cannot leak into the accessibility tree,
+ * that it never blocks the layout while the image decodes, and that it scales from one number
+ * instead of carrying a fixed pixel size.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
 import { BrandMark } from './brand-mark';
 
@@ -21,26 +22,31 @@ describe('BrandMark', () => {
     await TestBed.configureTestingModule({ imports: [BrandMark] }).compileComponents();
   });
 
-  it('is decorative and inherits its colour from the surrounding text', async () => {
+  it('is decorative: the image is hidden and the surrounding link carries the name', async () => {
     const { host } = await render();
-    const svg = host.querySelector('svg');
+    const image = host.querySelector('img');
 
-    expect(svg?.getAttribute('aria-hidden')).toBe('true');
-    expect(svg?.getAttribute('focusable')).toBe('false');
-    expect(svg?.getAttribute('fill')).toBe('currentColor');
-    // No font is involved: the mark is paths, so it cannot degrade into a missing glyph.
-    expect(svg?.querySelector('text')).toBeNull();
+    expect(image?.getAttribute('alt')).toBe('');
+    expect(image?.getAttribute('aria-hidden')).toBe('true');
   });
 
-  it('draws a horned mask and its face holes at any requested size', async () => {
-    const { host } = await render(16);
-    const svg = host.querySelector('svg');
-    const paths = [...host.querySelectorAll('path')];
+  it('draws the shipped enderman icon, not a generated one', async () => {
+    const { host } = await render();
 
-    expect(svg?.getAttribute('width')).toBe('16');
-    expect(svg?.getAttribute('height')).toBe('16');
-    expect(svg?.getAttribute('viewBox')).toBe('0 0 64 64');
-    expect(paths).toHaveLength(3);
-    expect(paths[0]?.getAttribute('fill-rule')).toBe('evenodd');
+    expect(host.querySelector('img')?.getAttribute('src')).toBe('brand/enderman.png');
+  });
+
+  it('scales the tile from the size input', async () => {
+    const { host } = await render(16);
+    const tile = host.querySelector('.mark') as HTMLElement;
+
+    expect(tile.style.width).toBe('16px');
+    expect(tile.style.height).toBe('16px');
+  });
+
+  it('decodes off the critical path', async () => {
+    const { host } = await render();
+
+    expect(host.querySelector('img')?.getAttribute('decoding')).toBe('async');
   });
 });

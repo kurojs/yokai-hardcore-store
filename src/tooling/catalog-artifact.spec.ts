@@ -245,7 +245,7 @@ describe('generated catalog contents', () => {
 describe('copied assets on disk', () => {
   it('has the brand renders', () => {
     const brand = fs.readdirSync(path.join(REPO_ROOT, 'public', 'brand')).sort();
-    expect(brand).toEqual(['final.jpg', 'yokai_1.png']);
+    expect(brand).toEqual(['enderman.ico', 'enderman.png', 'final.jpg', 'yokai_1.png']);
   });
 
   it('has both boss blueprints', () => {

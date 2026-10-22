@@ -1,10 +1,13 @@
 /**
  * Specs for the category card.
  *
- * Three of the ten real categories have no banner, so the fallback is a supported state and
- * gets the bulk of the coverage: a real product photograph from that category under a dark
- * overlay, and a plain token surface when the category has no image at all. The card never
- * renders a monogram placeholder any more.
+ * The image chain is the important part. Three of the ten real categories have no banner, and one
+ * of the seven banners in the committed data is not actually an image (an HTML error page saved
+ * with a `.png` extension), so "the file exists" is not the same as "the browser can draw it".
+ * The card therefore resolves banner → product photograph → voxel placeholder, and a failed
+ * decode moves it along that chain.
+ *
+ * The description paragraph is asserted absent: it was removed as filler copy.
  */
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -28,6 +31,11 @@ async function render(
   return { fixture, host: fixture.nativeElement as HTMLElement };
 }
 
+/** Dispatches the `error` event the browser fires when an image cannot be decoded. */
+function failImage(host: HTMLElement): void {
+  host.querySelector('img')?.dispatchEvent(new Event('error'));
+}
+
 describe('CategoryCard', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({ imports: [CategoryCard] }).compileComponents();
@@ -40,8 +48,7 @@ describe('CategoryCard', () => {
       '/categories/resucitacion/banner.png',
     );
     expect(host.querySelector('.category-card__image')?.getAttribute('alt')).toBe('');
-    expect(host.querySelector('.category-card__fallback')).toBeNull();
-    expect(host.querySelector('.category-card__overlay')).toBeNull();
+    expect(host.querySelector('.category-card__placeholder')).toBeNull();
   });
 
   it('prefers the banner over the fallback image', async () => {
@@ -57,29 +64,51 @@ describe('CategoryCard', () => {
     );
   });
 
-  it('renders a product photograph and the name overlay when the category has no banner', async () => {
+  it('renders the product photograph when the category has no banner', async () => {
     const { host } = await render(
       { name: 'RESUCITACIÓN', bannerImage: null },
       13,
       '/products/tlaloc/1.png',
     );
 
-    expect(host.querySelector('.category-card__fallback')).not.toBeNull();
-    expect(host.querySelector('.category-card__fallback--surface')).toBeNull();
     expect(host.querySelector('.category-card__image')?.getAttribute('src')).toBe(
       '/products/tlaloc/1.png',
     );
     expect(host.querySelector('.category-card__image')?.getAttribute('alt')).toBe('');
-    expect(host.querySelector('.category-card__overlay')?.textContent?.trim()).toBe('RESUCITACIÓN');
-    expect(host.querySelector('.category-card__overlay')?.getAttribute('aria-hidden')).toBe('true');
+    expect(host.querySelector('.category-card__placeholder')).toBeNull();
   });
 
-  it('falls back to a plain surface with the name when no image is available', async () => {
-    const { host } = await render({ name: 'RESUCITACIÓN', bannerImage: null }, 13, null);
+  it('falls back to the product photograph when the banner cannot be decoded', async () => {
+    const { fixture, host } = await render(
+      { bannerImage: '/categories/rota/categoria_imagen_1.png' },
+      13,
+      '/products/tlaloc/1.png',
+    );
 
-    expect(host.querySelector('.category-card__image')).toBeNull();
-    expect(host.querySelector('.category-card__fallback--surface')).not.toBeNull();
-    expect(host.querySelector('.category-card__overlay')?.textContent?.trim()).toBe('RESUCITACIÓN');
+    failImage(host);
+    await fixture.whenStable();
+
+    expect(host.querySelector('.category-card__image')?.getAttribute('src')).toBe(
+      '/products/tlaloc/1.png',
+    );
+    expect(host.querySelector('.category-card__placeholder')).toBeNull();
+  });
+
+  it('falls back to a named voxel plate when no image can be shown', async () => {
+    const { fixture, host } = await render(
+      { name: 'RESUCITACIÓN', bannerImage: '/categories/rota/categoria-imagen.png' },
+      13,
+      null,
+    );
+
+    failImage(host);
+    await fixture.whenStable();
+
+    expect(host.querySelector('img')).toBeNull();
+    expect(host.querySelector('.category-card__placeholder')).not.toBeNull();
+    expect(host.querySelector('.category-card__placeholder-name')?.textContent?.trim()).toBe(
+      'RESUCITACIÓN',
+    );
   });
 
   it('labels the product count through the shared helper', async () => {
@@ -101,6 +130,14 @@ describe('CategoryCard', () => {
     const { host } = await render({ name: 'RESUCITACIÓN' });
 
     expect(host.querySelector('.category-card__name')?.textContent?.trim()).toBe('RESUCITACIÓN');
+    expect(host.querySelector('h3.category-card__name')).not.toBeNull();
+  });
+
+  it('renders the name and the count, and no filler description', async () => {
+    const { host } = await render({ description: 'Cuatro líneas de copy de marketing.' }, 13);
+
+    expect(host.querySelector('.category-card__description')).toBeNull();
+    expect(host.textContent).not.toContain('copy de marketing');
   });
 
   it('stays presentational: an article, never a link', async () => {

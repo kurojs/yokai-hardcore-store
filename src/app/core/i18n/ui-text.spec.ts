@@ -45,6 +45,8 @@ const PROBE_ARGS: Readonly<Record<string, readonly (readonly unknown[])[]>> = {
     ['too-long'],
     ['illegal-characters'],
   ] satisfies readonly MinecraftUsernameProblem[][],
+  accountOpenLabel: [['Notch']],
+  footerCopyright: [[2026]],
 };
 
 /**

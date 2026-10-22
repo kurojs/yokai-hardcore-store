@@ -21,10 +21,28 @@ import { BLOCK_KINDS, type BlockKind } from './palette';
 import { createBlockMaterial } from './textures';
 import { blockTint, type VoxelBlock, type VoxelIsland } from './voxels';
 
+/**
+ * How fast the island turns, in radians per second.
+ *
+ * A full revolution takes about 52 seconds: fast enough that the visitor can see the diorama
+ * moving without reading it as a spinning loader, slow enough that reading the hero copy is
+ * never disturbed by it.
+ */
+const TURNTABLE_RADIANS_PER_SECOND = 0.12;
+
+/**
+ * The angle shown when motion is not allowed.
+ *
+ * Reduced motion passes `elapsed = 0`, so this is the frame a motion-averse visitor sees. It is
+ * a deliberate three-quarter view rather than the model's own zero, which faces the camera flat
+ * and loses the depth that makes the island read as a solid object.
+ */
+const START_ANGLE = -0.35;
+
 /** What the renderer drives, and the one method it must call on destroy. */
 export interface IslandScene {
   readonly root: THREE.Group;
-  /** Kept so the renderer's frame loop has one stable call shape; the island is static. */
+  /** Places the island at the turntable angle for `elapsed` seconds of animation. */
   update(elapsed: number): void;
   /** Releases every geometry, material, texture and instance buffer exactly once. */
   dispose(): void;
@@ -134,11 +152,17 @@ export function createIslandScene(island: VoxelIsland): IslandScene {
     root.add(mesh);
   }
 
+  // The reduced-motion frame is the first frame, so the starting angle is applied at build time
+  // as well as on every update.
+  root.rotation.y = START_ANGLE;
+
   let disposed = false;
   return {
     root,
-    update(): void {
-      // The island is a still diorama; the camera supplies all of the motion.
+    update(elapsed: number): void {
+      // The island turns; the camera keeps its own gentle sway. Rotating the model rather than
+      // orbiting the camera keeps the CSS mask and the framing stable.
+      root.rotation.y = START_ANGLE + elapsed * TURNTABLE_RADIANS_PER_SECOND;
     },
     dispose(): void {
       if (disposed) return;

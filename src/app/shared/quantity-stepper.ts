@@ -48,7 +48,8 @@ import type { UiText } from '../core/i18n/ui-text';
       align-items: stretch;
       border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
-      background: var(--color-surface);
+      background: var(--glass-bg);
+      overflow: hidden;
     }
 
     .stepper__button {
@@ -63,11 +64,12 @@ import type { UiText } from '../core/i18n/ui-text';
     }
 
     .stepper__button:hover:not(:disabled) {
-      background: var(--color-surface-raised);
+      background: var(--color-row-hover);
     }
 
     .stepper__button:disabled {
-      color: var(--color-border-strong);
+      color: var(--color-text-muted);
+      opacity: 0.5;
       cursor: not-allowed;
     }
 
@@ -76,8 +78,8 @@ import type { UiText } from '../core/i18n/ui-text';
       place-items: center;
       min-width: 2.5rem;
       border-inline: 1px solid var(--color-border);
-      font-family: var(--font-mono);
-      font-size: 0.9375rem;
+      font-size: var(--text-ui);
+      font-variant-numeric: tabular-nums;
     }
   `,
 })

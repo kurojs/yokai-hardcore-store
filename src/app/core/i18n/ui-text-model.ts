@@ -34,6 +34,7 @@ export interface UiText {
 
   readonly navHome: string;
   readonly navCatalog: string;
+  readonly navCart: string;
 
   /** The hidden half of the cart link's accessible name. */
   readonly cartLinkHint: string;
@@ -41,8 +42,14 @@ export interface UiText {
   /** The language-independent brand line in the footer. */
   readonly footerBrand: string;
 
-  /** What the store is, in one line. */
-  readonly footerTagline: string;
+  /** Visible headings and accessible names of the footer's two link columns. */
+  readonly footerShopTitle: string;
+  readonly footerCategoriesTitle: string;
+  readonly footerShopNavLabel: string;
+  readonly footerCategoriesNavLabel: string;
+
+  /** The closing line: the year and the store name. */
+  readonly footerCopyright: (year: number) => string;
 
   /** Visible label of the language switcher. */
   readonly languageLabel: string;
@@ -75,16 +82,9 @@ export interface UiText {
   // ---------------------------------------------------------------------------------------
 
   readonly homeTitle: string;
-  readonly homeLead: string;
   readonly homeCatalogAction: string;
-  readonly homeCategoriesAction: string;
-
-  readonly homeStatProducts: string;
-  readonly homeStatCategories: string;
-
   readonly homeLoading: string;
   readonly categoriesTitle: string;
-  readonly featuredTitle: string;
 
   // ---------------------------------------------------------------------------------------
   // Catalog
@@ -190,6 +190,31 @@ export interface UiText {
   readonly checkoutBackLabel: string;
 
   readonly usernameProblemMessage: (problem: MinecraftUsernameProblem) => string;
+
+  // ---------------------------------------------------------------------------------------
+  // Player account — a username, not an authentication session
+  // ---------------------------------------------------------------------------------------
+
+  /** Visible label of the header control when nobody is signed in. */
+  readonly signInLabel: string;
+
+  /** Dialog heading. */
+  readonly accountDialogTitle: string;
+
+  /** What the field is for, in one sentence. */
+  readonly accountDialogHint: string;
+
+  readonly accountNameLabel: string;
+
+  /** Accessible name of the avatar button, which also says what activating it does. */
+  readonly accountOpenLabel: (playerName: string) => string;
+
+  readonly accountSignOutLabel: string;
+  readonly accountSaveLabel: string;
+  readonly accountCancelLabel: string;
+
+  /** Where the skin image comes from, said plainly because it is a third-party request. */
+  readonly accountNetworkNote: string;
 
   // ---------------------------------------------------------------------------------------
   // Document titles

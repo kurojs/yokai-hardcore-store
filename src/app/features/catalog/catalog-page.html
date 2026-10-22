@@ -40,8 +40,8 @@
     <div class="catalog-layout">
       <!-- A native `<details>` is the collapsible panel: no JavaScript, keyboard-operable by
            default, and `open` means the filters are visible before anyone interacts. On a wide
-           screen it is a sticky column; on a narrow one it is a panel above the list. -->
-      <details class="catalog-sidebar" open>
+           screen it is a sticky glass column; on a narrow one it is a panel above the grid. -->
+      <details class="catalog-sidebar glass" open>
         <summary class="catalog-sidebar__summary">{{ text().catalogFiltersSummary }}</summary>
 
         <div class="catalog-sidebar__panel">
@@ -124,14 +124,13 @@
                   }}</span>
                 </header>
 
-                <ul class="result-list">
-                  @for (entry of group.entries; track entry.product.id) {
-                    <li class="result-list__item">
-                      <a class="row-link" [routerLink]="['/product', entry.product.slug]">
-                        <app-product-row
-                          [product]="entry.product"
-                          [categoryName]="entry.category.name"
-                        />
+                <!-- One grid per group, and one observer with it: the cards enter together when
+                     the group reaches the viewport, in the same order the visitor reads them. -->
+                <ul class="product-grid" appRevealOnScroll>
+                  @for (entry of group.entries; track entry.product.id; let index = $index) {
+                    <li [style.--reveal-index]="index">
+                      <a class="card-link" [routerLink]="['/product', entry.product.slug]">
+                        <app-product-card [product]="entry.product" />
                       </a>
                     </li>
                   }
@@ -139,13 +138,13 @@
               </section>
             }
           } @else {
-            <ul class="result-list">
-              @for (entry of results(); track entry.product.id) {
-                <li class="result-list__item">
-                  <a class="row-link" [routerLink]="['/product', entry.product.slug]">
-                    <app-product-row
+            <ul class="product-grid" appRevealOnScroll>
+              @for (entry of results(); track entry.product.id; let index = $index) {
+                <li [style.--reveal-index]="index">
+                  <a class="card-link" [routerLink]="['/product', entry.product.slug]">
+                    <app-product-card
                       [product]="entry.product"
-                      [categoryName]="entry.category.name"
+                      [categoryName]="labelsCategoryOnCards() ? entry.category.name : null"
                     />
                   </a>
                 </li>

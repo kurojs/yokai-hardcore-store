@@ -37,6 +37,7 @@ import { PricePipe } from '../../shared/price.pipe';
 import { ProductCard } from '../../shared/product-card';
 import { ProductDescription } from '../../shared/product-description';
 import { QuantityStepper } from '../../shared/quantity-stepper';
+import { RevealOnScroll } from '../../shared/reveal-on-scroll';
 import { RELATED_COUNT, selectRelated } from './related';
 
 @Component({
@@ -49,6 +50,7 @@ import { RELATED_COUNT, selectRelated } from './related';
     ProductDescription,
     QuantityStepper,
     AddToCartButton,
+    RevealOnScroll,
   ],
   templateUrl: './product-page.html',
   styleUrl: './product-page.scss',

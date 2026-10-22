@@ -1,21 +1,18 @@
 /* Landing page layout. Colours, spacing and the card grid come from `styles.scss`; only the
-   hero's own wash and the section rhythm are local. */
+   hero's own box and the section rhythm are local.
+
+   The hero holds two things now: the store's name and one action. The island behind it is the
+   only decoration, which is why there is no wash or gradient here any more — the page-wide
+   backdrop already carries the light. */
 
 .hero {
   position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
-  min-height: clamp(28rem, 52vh, 36rem);
+  min-height: clamp(20rem, 42vh, 30rem);
   padding-block: var(--space-7);
   border-bottom: 1px solid var(--color-border);
-  /* A single accent wash behind the headline, fading into the page. It is the only decoration
-     on the page, so the product photography stays the loudest thing on screen. */
-  background: radial-gradient(
-    56rem 22rem at 12% -10%,
-    color-mix(in srgb, var(--color-accent) 11%, transparent),
-    transparent 70%
-  );
 }
 
 .hero__grid {
@@ -27,7 +24,7 @@
 /* The island is full-bleed: it runs to the viewport edge and dissolves into the page with a
    mask instead of sitting in a bordered panel. The box is reserved before three.js is fetched,
    so the copy never moves when the canvas arrives, and it is also the whole fallback: without
-   WebGL the hero is simply the wash above, not a hole. */
+   WebGL the hero is simply the name on the backdrop, not a hole. */
 .hero__scene {
   position: absolute;
   top: 0;
@@ -65,50 +62,24 @@
   }
 
   .hero__grid {
-    padding-top: var(--space-5);
+    padding-top: var(--space-6);
   }
 }
 
 .hero__inner {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 36rem;
+  align-items: flex-start;
+  gap: var(--space-5);
+  max-width: 34rem;
 }
 
 .hero__title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  letter-spacing: -0.01em;
-}
-
-.hero__lead {
-  max-width: 40rem;
-  font-size: 1.0625rem;
-  color: var(--color-text-muted);
+  text-wrap: balance;
 }
 
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
-  margin-top: var(--space-2);
-}
-
-.hero__stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6);
-  margin: var(--space-4) 0 0;
-}
-
-.hero__stat dt {
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  color: var(--color-text-muted);
-}
-
-.hero__stat dd {
-  margin: 0;
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
 }

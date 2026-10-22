@@ -71,14 +71,16 @@ describe('App language switcher', () => {
     await fixture.whenStable();
 
     expect(host.querySelector('.skip-link')?.textContent?.trim()).toBe('本文へスキップ');
-    expect([...host.querySelectorAll('nav a')].map((link) => link.textContent?.trim())).toEqual([
+    expect([...host.querySelectorAll('.nav a')].map((link) => link.textContent?.trim())).toEqual([
       'ホーム',
       'カタログ',
     ]);
     expect(host.querySelector('.language-switcher__label')?.textContent?.trim()).toBe('言語');
     expect(host.querySelector('.cart-indicator')?.textContent).toContain('カートは空です');
-    expect(host.querySelector('footer .shell__footer-tagline')?.textContent?.trim()).toBe(
-      'Yokai Hardcore サーバーのコミュニティストア。',
+    // The footer is chrome too, and its headings are translated with everything else.
+    expect(host.querySelector('.shell__footer-heading')?.textContent?.trim()).toBe('ストア');
+    expect(host.querySelector('.shell__footer-bottom')?.textContent?.trim()).toBe(
+      `© ${new Date().getFullYear()} Yokai Hardcore`,
     );
     expect(document.documentElement.lang).toBe('ja');
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('ja');

@@ -76,9 +76,14 @@ export const EN_UI_TEXT: UiText = {
   primaryNavLabel: 'Main navigation',
   navHome: 'Home',
   navCatalog: 'Catalog',
+  navCart: 'Cart',
   cartLinkHint: 'Go to the cart page',
   footerBrand: 'Yokai Hardcore Store',
-  footerTagline: 'Community store for the Yokai Hardcore server.',
+  footerShopTitle: 'Shop',
+  footerCategoriesTitle: 'Categories',
+  footerShopNavLabel: 'Shop links',
+  footerCategoriesNavLabel: 'Shop categories',
+  footerCopyright: (year: number) => `© ${year} Yokai Hardcore`,
   languageLabel: 'Language',
   languageChanged,
 
@@ -89,16 +94,10 @@ export const EN_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'We could not load the catalog',
   retryLabel: 'Try again',
 
-  homeTitle: 'Gear up for the underworld',
-  homeLead:
-    'Food, artifacts and treasures from Yokai Hardcore, ready for your next session. Browse the categories and build your inventory.',
+  homeTitle: 'Yokai Hardcore Store',
   homeCatalogAction: 'Browse the catalog',
-  homeCategoriesAction: 'Explore categories',
-  homeStatProducts: 'Products',
-  homeStatCategories: 'Categories',
   homeLoading: 'Loading the catalog…',
   categoriesTitle: 'Categories',
-  featuredTitle: 'Featured',
 
   catalogAllProducts: 'All products',
   catalogUnknownCategoryHeading: 'Category not found',
@@ -181,7 +180,18 @@ export const EN_UI_TEXT: UiText = {
   checkoutBackLabel: 'Back to the catalog',
   usernameProblemMessage,
 
-  homeDocumentTitle: 'Yokai Hardcore Store — Gear up for the underworld',
+  signInLabel: 'Sign in',
+  accountDialogTitle: 'Your player',
+  accountDialogHint:
+    'Enter your Minecraft username. It is used only to show your skin in the store.',
+  accountNameLabel: 'Minecraft username',
+  accountOpenLabel: (playerName: string) => `Player ${playerName}. Change player`,
+  accountSignOutLabel: 'Remove player',
+  accountSaveLabel: 'Save',
+  accountCancelLabel: 'Cancel',
+  accountNetworkNote: 'The skin image loads from minotar.net.',
+
+  homeDocumentTitle: 'Yokai Hardcore Store',
   catalogDocumentTitle: 'Catalog — Yokai Hardcore Store',
   cartDocumentTitle: 'Your cart — Yokai Hardcore Store',
   checkoutDocumentTitle: 'Review and confirm — Yokai Hardcore Store',

@@ -22,7 +22,7 @@ import { PricePipe } from './price.pipe';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [PricePipe],
   template: `
-    <section class="summary">
+    <section class="summary glass glass--strong">
       <h2 class="summary__title">{{ resolvedHeading() }}</h2>
 
       <dl class="summary__rows">
@@ -49,15 +49,13 @@ import { PricePipe } from './price.pipe';
     }
 
     .summary {
-      padding: var(--space-4);
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
+      padding: var(--space-5);
       border-radius: var(--radius-md);
     }
 
     .summary__title {
       margin-bottom: var(--space-3);
-      font-size: 1.125rem;
+      font-size: 1.25rem;
     }
 
     .summary__rows {
@@ -71,7 +69,7 @@ import { PricePipe } from './price.pipe';
       align-items: baseline;
       justify-content: space-between;
       gap: var(--space-3);
-      font-size: 0.9375rem;
+      font-size: var(--text-ui);
     }
 
     .summary__row dt {
@@ -86,20 +84,19 @@ import { PricePipe } from './price.pipe';
     .summary__row--total {
       margin-top: var(--space-2);
       padding-top: var(--space-3);
-      border-top: 1px solid var(--color-border);
-      font-size: 1.0625rem;
-      font-weight: 600;
+      border-top: 1px solid var(--glass-border);
+      font-size: 1.125rem;
+      font-weight: 700;
     }
 
     .summary__money {
-      font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
       color: var(--color-price);
     }
 
     .summary__note {
       margin-top: var(--space-3);
-      font-size: 0.8125rem;
+      font-size: var(--text-small);
       color: var(--color-text-muted);
     }
   `,

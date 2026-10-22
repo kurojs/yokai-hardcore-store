@@ -98,9 +98,14 @@ export const ES_UI_TEXT: UiText = {
   primaryNavLabel: 'Navegación principal',
   navHome: 'Inicio',
   navCatalog: 'Catálogo',
+  navCart: 'Carrito',
   cartLinkHint: 'Ir a la página del carrito',
   footerBrand: 'Yokai Hardcore Store',
-  footerTagline: 'Tienda de la comunidad del servidor Yokai Hardcore.',
+  footerShopTitle: 'Tienda',
+  footerCategoriesTitle: 'Categorías',
+  footerShopNavLabel: 'Enlaces de la tienda',
+  footerCategoriesNavLabel: 'Categorías de la tienda',
+  footerCopyright: (year: number) => `© ${year} Yokai Hardcore`,
   languageLabel: 'Idioma',
   languageChanged,
 
@@ -111,16 +116,10 @@ export const ES_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'No pudimos cargar el catálogo',
   retryLabel: 'Reintentar',
 
-  homeTitle: 'Equípate para el inframundo',
-  homeLead:
-    'Alimentos, artefactos y tesoros de Yokai Hardcore, listos para tu próxima partida. Explora las categorías y arma tu inventario.',
+  homeTitle: 'Yokai Hardcore Store',
   homeCatalogAction: 'Ver catálogo',
-  homeCategoriesAction: 'Explorar categorías',
-  homeStatProducts: 'Productos',
-  homeStatCategories: 'Categorías',
   homeLoading: 'Cargando catálogo…',
   categoriesTitle: 'Categorías',
-  featuredTitle: 'Destacados',
 
   catalogAllProducts: 'Todos los productos',
   catalogUnknownCategoryHeading: 'Categoría no encontrada',
@@ -202,7 +201,18 @@ export const ES_UI_TEXT: UiText = {
   checkoutBackLabel: 'Volver al catálogo',
   usernameProblemMessage,
 
-  homeDocumentTitle: 'Yokai Hardcore Store — Equípate para el inframundo',
+  signInLabel: 'Iniciar sesión',
+  accountDialogTitle: 'Tu jugador',
+  accountDialogHint:
+    'Escribe tu nombre de usuario de Minecraft. Se usa solo para mostrar tu skin en la tienda.',
+  accountNameLabel: 'Nombre de usuario de Minecraft',
+  accountOpenLabel: (playerName: string) => `Jugador ${playerName}. Cambiar de jugador`,
+  accountSignOutLabel: 'Quitar jugador',
+  accountSaveLabel: 'Guardar',
+  accountCancelLabel: 'Cancelar',
+  accountNetworkNote: 'La imagen de la skin se carga desde minotar.net.',
+
+  homeDocumentTitle: 'Yokai Hardcore Store',
   catalogDocumentTitle: 'Catálogo — Yokai Hardcore Store',
   cartDocumentTitle: 'Tu carrito — Yokai Hardcore Store',
   checkoutDocumentTitle: 'Revisar y confirmar — Yokai Hardcore Store',

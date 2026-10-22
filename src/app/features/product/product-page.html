@@ -77,11 +77,11 @@
       <div class="section__head">
         <h2 id="relacionados-title">{{ relatedTitle() }}</h2>
       </div>
-      <ul class="card-grid">
-        @for (entry of related.entries; track entry.product.slug) {
-          <li>
+      <ul class="product-grid" appRevealOnScroll>
+        @for (entry of related.entries; track entry.product.slug; let index = $index) {
+          <li [style.--reveal-index]="index">
             <a class="card-link" [routerLink]="['/product', entry.product.slug]">
-              <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
+              <app-product-card [product]="entry.product" />
             </a>
           </li>
         }

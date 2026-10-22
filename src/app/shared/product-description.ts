@@ -52,18 +52,17 @@ import { parseDescription } from '../core/catalog/description';
       color: var(--color-text);
     }
 
-    /* A label with no body is a heading for the sections after it. It gets a small mono
-       treatment so the hierarchy is visible without turning every label into a heading. */
+    /* A label with no body is a heading for the sections after it. It gets a quiet, slightly
+       tracked treatment so the hierarchy is visible without turning every label into a heading. */
     .description__block--heading {
       margin-top: var(--space-2);
       color: var(--color-text);
     }
 
     .description__block--heading .description__label {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      letter-spacing: 0.08em;
-      color: var(--color-accent);
+      font-size: var(--text-micro);
+      font-weight: 700;
+      letter-spacing: 0.04em;
     }
   `,
 })

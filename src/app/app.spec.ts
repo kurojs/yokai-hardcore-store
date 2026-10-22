@@ -55,7 +55,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
     const host = fixture.nativeElement as HTMLElement;
-    const hrefs = [...host.querySelectorAll('nav a')].map((link) => link.getAttribute('href'));
+    const hrefs = [...host.querySelectorAll('.nav a')].map((link) => link.getAttribute('href'));
 
     expect(hrefs).toEqual(['/', '/catalog']);
     expect(host.querySelector('.brand')?.getAttribute('href')).toBe('/');
@@ -108,17 +108,43 @@ describe('App', () => {
     );
   });
 
-  it('shows the brand and what the store is, and nothing else in the footer', async () => {
+  it('closes the page with a real footer: brand, shop links and the biggest categories', async () => {
     const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-    const host = fixture.nativeElement as HTMLElement;
 
+    await vi.waitFor(async () => {
+      await fixture.whenStable();
+      expect(TestBed.inject(CatalogStore).isReady()).toBe(true);
+    });
+
+    const host = fixture.nativeElement as HTMLElement;
     const footer = host.querySelector('footer');
+
     expect(footer?.querySelector('.shell__footer-brand')?.textContent?.trim()).toBe(
       'Yokai Hardcore Store',
     );
-    expect(footer?.querySelector('.shell__footer-tagline')?.textContent?.trim()).toBe(
-      'Tienda de la comunidad del servidor Yokai Hardcore.',
+
+    const columns = [...(footer?.querySelectorAll('.shell__footer-column') ?? [])];
+    expect(columns.map((column) => column.querySelector('h2')?.textContent?.trim())).toEqual([
+      'Tienda',
+      'Categorías',
+    ]);
+
+    // The shop column is navigation, by href, so the links are proven to point at real routes.
+    expect([...columns[0].querySelectorAll('a')].map((link) => link.getAttribute('href'))).toEqual([
+      '/',
+      '/catalog',
+      '/cart',
+    ]);
+
+    // The category column is catalog data in Spanish, five links into /catalog/:slug.
+    const categoryLinks = [...columns[1].querySelectorAll('a')];
+    expect(categoryLinks).toHaveLength(5);
+    for (const link of categoryLinks) {
+      expect(link.getAttribute('href')).toMatch(/^\/catalog\/[a-z0-9-]+$/);
+    }
+
+    expect(footer?.querySelector('.shell__footer-bottom')?.textContent?.trim()).toBe(
+      `© ${new Date().getFullYear()} Yokai Hardcore`,
     );
     // The legal boilerplate went with the rest of the filler copy.
     expect(footer?.textContent).not.toContain('Mojang');

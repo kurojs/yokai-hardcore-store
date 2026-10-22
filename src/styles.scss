@@ -2,63 +2,83 @@
  * Global styles: the design tokens every slice draws from, the base document and the small
  * set of utilities shared by more than one page.
  *
- * The palette is a violet-black world surface with two accents that never trade places:
+ * The palette is a neutral near-black storefront lit by glass surfaces, with two accents that
+ * never trade places:
  *
- * - **Amethyst is interaction.** Links, focus rings, primary buttons, active states and the
- *   brand mark. If a thing can be clicked or is currently selected, it is amethyst.
- * - **Gold is money.** Prices, and only prices. It never appears on a button, a heading, a
- *   border or a hover state, so a gold number always means "this is what you pay".
- * - Everything else is a violet-tinted grey: surfaces, hairlines and copy.
+ * - **Purple is interaction.** Links, focus rings, primary buttons, the active navigation state
+ *   and the brand mark. If a thing can be clicked or is currently selected, it is purple.
+ * - **Green is money.** Prices, and the cart's count badge. It never appears on a button, a
+ *   heading, a border or a hover state, so a green number always means "this is a price".
+ * - **Copy is never accent-coloured.** Body text is a neutral near-white and secondary copy is a
+ *   neutral grey; both clear 4.5:1 on every surface they sit on, including a glass surface with
+ *   `backdrop-filter` unsupported.
  *
  * Two rules keep the storefront coherent:
  *
  * - Components never hard-code a colour. They read these custom properties, so the shell, the
- *   catalog rows and the checkout cannot drift apart.
- * - Radii and spacing are small. The browse surface is dense and information-first; large
- *   rounded cards and drop shadows were the part the design review rejected.
+ *   catalog and the checkout cannot drift apart.
+ * - Surfaces are translucent glass over a fixed background, not flat fills. The fill and the
+ *   1px border carry the separation; the blur is decoration on top of them.
  *
  * The page background is a procedurally authored 4x4 voxel tile (see `--texture-voxel` below)
- * so the surface reads as a blocky world without shipping a texture download.
+ * plus two soft radial glows, so the glass has something to refract. Neither ships an image.
  */
 
 :root {
   color-scheme: dark;
 
-  /* Surfaces, from the page upwards. All three are the same violet hue at different values,
-     which is what makes the stack read as one material instead of three greys. */
-  --color-bg: #0d0a13;
-  --color-surface: #141020;
-  --color-surface-raised: #1b1528;
+  /* Base surfaces. The page is neutral near-black, with no violet tint left in it: the accents
+     are the only saturated colours on screen, which is what keeps them reading as accents. */
+  --color-bg: #09090b;
+  --color-surface: #101013;
+  --color-surface-raised: #17171b;
 
   /* Hairlines: borders are low-contrast separators, never frames. */
-  --color-border: #2a2238;
-  --color-border-strong: #3b3049;
+  --color-border: rgb(255 255 255 / 0.08);
+  --color-border-strong: rgb(255 255 255 / 0.14);
 
-  /* Control boundaries are a different job from separators: an input or a button has to be
-     identifiable as a control, so this token clears 3:1 against every surface it sits on. */
-  --color-border-control: #6b5e85;
+  /* Control boundaries are a different job from separators: an input, a checkbox, a stepper or a
+     button has to be identifiable as a control, so this token clears 3:1 against every surface it
+     sits on (3.02:1 on the page, 3.11:1 on glass and 3.09:1 over the purple glow), measured with
+     the fill composited and `backdrop-filter` ignored. */
+  --color-border-control: rgb(255 255 255 / 0.34);
 
-  /* Text. `muted` clears 4.5:1 on the page, the surface and the raised surface. */
-  --color-text: #ece9f5;
-  --color-text-muted: #a49cba;
+  /* Text. `muted` clears 4.5:1 on the page and on every glass fill, with the blur ignored. */
+  --color-text: #f4f4f5;
+  --color-text-muted: #a1a1aa;
 
-  /* The interaction accent: amethyst, tuned for a violet-black page. */
+  /* The interaction accent. */
   --color-accent: #a78bfa;
-  --color-accent-hover: #bda6ff;
+  --color-accent-hover: #c4b5fd;
   --color-on-accent: #120a1e;
 
-  /* The money accent. Reserved for prices; see the palette note above. */
-  --color-price: #f0c674;
+  /* The money accent. Reserved for prices and the cart badge; see the palette note above. */
+  --color-price: #34d399;
 
   /* Interaction surfaces that are not quite a card. */
-  --color-row-hover: #1a1424;
+  --color-row-hover: rgb(255 255 255 / 0.06);
 
   /* Errors only. Never used for decoration. */
-  --color-danger: #f08a8a;
+  --color-danger: #f87171;
 
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
+  /* Glass. `bg` is the resting surface, `bg-strong` the raised one (header, summary panels),
+     and `border`/`border-soft` are its two hairlines. The blur is applied by `.glass` below;
+     every value here is dark enough on its own that text stays readable without it. */
+  --glass-bg: rgb(255 255 255 / 0.045);
+  --glass-bg-strong: rgb(255 255 255 / 0.07);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --glass-border-soft: rgb(255 255 255 / 0.06);
+  --glass-blur: blur(16px) saturate(140%);
+  --shadow-card: 0 24px 48px -28px rgb(0 0 0 / 0.9);
+
+  /* The sticky header's two glass fills: the resting one, and the slightly denser one it swaps
+     to once the page has scrolled past the point where content passes underneath. */
+  --header-bg: rgb(9 9 11 / 0.55);
+  --header-bg-scrolled: rgb(9 9 11 / 0.78);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
   --radius-pill: 999px;
 
   --space-1: 0.25rem;
@@ -73,26 +93,31 @@
   --measure: 74rem;
 
   /* The sticky header's height, so sticky columns can offset themselves by it. */
-  --header-height: 3.25rem;
+  --header-height: 4.5rem;
+  /* One face, no download: Arial with the platform's metric-compatible fallbacks. Prices keep
+     `font-variant-numeric: tabular-nums` instead of a monospaced family, so a column of prices
+     still lines up without a second typeface. */
+  --font-sans: Arial, Helvetica, sans-serif;
 
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* The type scale. 16px is the body; 15/14/13 is the interface floor, and nothing in the UI
+     may render smaller than `--text-micro`. */
+  --text-base: 1rem;
+  --text-ui: 0.9375rem;
+  --text-small: 0.875rem;
+  --text-micro: 0.8125rem;
 
-  --text-ui: 0.875rem;
-  --text-small: 0.8125rem;
-  --text-micro: 0.75rem;
-
-  --transition: 140ms ease;
+  --transition: 180ms ease;
+  --transition-slow: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
 
   /**
    * A seamless 4x4 voxel tile.
    *
-   * Each cell is a slightly different dark violet value and the internal edges are one hairline
-   * of a lighter violet; the whole group is drawn at 7.5% opacity so it reads as a blocky world
-   * only when the eye leaves the copy. The fills are authored here rather than downloaded: there
-   * is no network request and no non-deterministic randomness.
+   * Each cell is a slightly different neutral value and the internal edges are one hairline of a
+   * lighter grey. The fills are authored here rather than downloaded: there is no network
+   * request and no non-deterministic randomness. The whole group is drawn at 5% opacity so it
+   * reads as a blocky world only when the eye leaves the copy.
    */
-  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.075'%3E%3Crect%20width='32'%20height='32'%20fill='%232c2438'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%23241d2f'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%23332a42'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%23281f36'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%232f2740'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%23221b2d'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%23352c45'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%232a2238'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%232d2540'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%23231c30'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%23342b44'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%23271f35'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%2330283f'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%23251e32'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%23362d46'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%232b2339'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%237c6a9a'%20stroke-opacity='.5'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.05'%3E%3Crect%20width='32'%20height='32'%20fill='%23303036'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%2326262b'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%23393940'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%232a2a30'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%2334343a'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%23232328'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%233c3c43'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%232d2d33'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%23323238'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%23242429'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%233a3a41'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%2328282d'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%2336363d'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%2325252a'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%233e3e45'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%232b2b31'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%23808088'%20stroke-opacity='.6'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 *,
@@ -101,6 +126,15 @@
   box-sizing: border-box;
 }
 
+/* The bar loses half a rem on a phone so the page's own content starts higher. */
+@media (max-width: 48rem) {
+  :root {
+    --header-height: 4rem;
+  }
+}
+
+/* The page colour sits on the root element, not on `body`: the app's backdrop layer is fixed
+   behind the content with `z-index: -1`, and a body background would paint over it. */
 html {
   background: var(--color-bg);
 }
@@ -112,18 +146,10 @@ body {
 }
 
 body {
-  background-color: var(--color-bg);
-  /* The vignette darkens the edges of the viewport; the tile repeats underneath it. It is the
-     page colour rather than black, so the wash belongs to the violet base. */
-  background-image:
-    radial-gradient(120% 90% at 50% 0%, transparent 30%, rgb(13 10 19 / 62%) 100%),
-    var(--texture-voxel);
-  background-repeat: no-repeat, repeat;
-  background-size: 100% 100%, 128px 128px;
-  background-attachment: fixed, scroll;
+  background-color: transparent;
   color: var(--color-text);
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: var(--text-base);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
@@ -132,7 +158,22 @@ h1,
 h2,
 h3 {
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 1.25rem;
 }
 
 p {
@@ -171,6 +212,7 @@ a {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
   }
 }
 
@@ -188,49 +230,109 @@ a {
 }
 
 /**
- * The secondary card grid, used by the landing page's category and featured strips and by the
- * product page's related products. The catalog's browse surface is a list of rows instead.
+ * Glass.
  *
- * `auto-fill` with a minimum column width keeps the cards readable from a phone to a wide
- * screen without a single breakpoint. The list markers are reset here because the grid is a
+ * Every translucent surface in the store applies this class: the header, the product and
+ * category cards, the catalog sidebar and its controls, the cart lines, the order summary and the
+ * checkout panel. Two things make it safe rather than decorative:
+ *
+ * - The fill is a **dark** surface (4.5% white over a near-black page), and the 1px border is
+ *   what the eye uses to find the edge. Text contrast is computed against the fill alone, so
+ *   `backdrop-filter` is never the only thing separating copy from the backdrop.
+ * - The blur is additive. Where it is unsupported the surface is simply a slightly lighter dark
+ *   rectangle, which is why the class does not raise its alpha in a `@supports` fallback.
+ */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border-soft);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.glass--strong {
+  background: var(--glass-bg-strong);
+  border-color: var(--glass-border);
+}
+
+/**
+ * The secondary card grid: the landing page's category strip and the product page's related
+ * products. `auto-fill` with a minimum column width keeps the cards readable from a phone to a
+ * wide screen without a single breakpoint. The list markers are reset here because the grid is a
  * `<ul>`: a list is the honest semantic for a collection of cards.
  */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 /**
+ * The product grid: the browse surface for every product listing in the store.
+ *
+ * Four columns on a wide screen, three on a laptop, two on a tablet and one on a phone. The
+ * breakpoints are the ones the layout actually needs, not a decoration: at 64rem four 15rem cards
+ * no longer fit beside the catalog sidebar, and below 30rem two cards would each be narrower than
+ * the 13rem a product name needs.
+ */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 64rem) {
+  .product-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 48rem) {
+  .product-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 30rem) {
+  .product-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/**
  * The entrance for a card grid, driven by `RevealOnScroll`.
  *
  * The directive adds `is-revealed` to the container when it first enters the viewport; each item
- * reads its own `--reveal-index` (set in the template from `$index`) for the stagger. Without
- * the class, a card is simply visible — there is no `opacity: 0` waiting to be cleared, so a
- * missing observer or a no-JavaScript render cannot leave a blank section.
+ * reads its own `--reveal-index` (set in the template from `$index`) for the stagger. Without the
+ * class, a card is simply visible — there is no `opacity: 0` waiting to be cleared, so a missing
+ * observer or a no-JavaScript render cannot leave a blank section.
  *
- * The delay is 40ms per item. The longest grid in the store has ten items, so the last card
- * starts at 360ms, under the 400ms ceiling; the animation itself is 440ms.
+ * The stagger is 45ms per item and capped at 420ms, so the last card of a thirteen-item grid
+ * starts well inside half a second instead of making the reader wait out a long cascade.
  */
 @media (prefers-reduced-motion: no-preference) {
-  .card-grid.is-revealed > li {
-    animation: card-reveal 440ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-    animation-delay: calc(var(--reveal-index, 0) * 40ms);
+  .card-grid.is-revealed > li,
+  .product-grid.is-revealed > li {
+    animation: card-reveal 380ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: min(calc(var(--reveal-index, 0) * 45ms), 420ms);
   }
 }
 
 @keyframes card-reveal {
   from {
     opacity: 0;
-    transform: translateY(8px) scale(0.985);
+    transform: translateY(10px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -253,34 +355,79 @@ a {
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-4);
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-5);
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  background: var(--color-surface);
+  background: var(--glass-bg-strong);
   color: var(--color-text);
   font: inherit;
   font-size: var(--text-ui);
   font-weight: 600;
   cursor: pointer;
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
   transition:
     background var(--transition),
     border-color var(--transition),
-    color var(--transition);
+    color var(--transition),
+    transform var(--transition);
 }
 
 .button:hover {
-  background: var(--color-surface-raised);
+  background: var(--color-row-hover);
+  border-color: var(--color-text-muted);
+  transform: translateY(-1px);
 }
 
+/**
+ * The primary action: purple fill, and a slow diagonal sheen that crosses it on hover.
+ *
+ * The sheen is a pseudo-element translating across the button, not an animated gradient, so it
+ * costs one compositor transform and cannot reflow anything. It is removed outright under
+ * reduced motion rather than frozen mid-sweep.
+ */
 .button--primary {
-  background: var(--color-accent);
+  position: relative;
+  overflow: hidden;
   border-color: var(--color-accent);
+  background: var(--color-accent);
   color: var(--color-on-accent);
 }
 
 .button--primary:hover {
-  background: var(--color-accent-hover);
   border-color: var(--color-accent-hover);
+  background: var(--color-accent-hover);
+}
+
+.button--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 35%,
+    rgb(255 255 255 / 0.4) 50%,
+    transparent 65%
+  );
+  transform: translateX(-120%);
+  transition: transform 620ms ease;
+}
+
+@media (hover: hover) {
+  .button--primary:hover::after {
+    transform: translateX(120%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button--primary::after {
+    display: none;
+  }
+
+  .button:hover {
+    transform: none;
+  }
 }
 
 /**
@@ -321,10 +468,6 @@ a {
   margin-bottom: var(--space-4);
 }
 
-.section__head h2 {
-  font-size: 1.25rem;
-}
-
 /**
  * The three load states every page needs: loading, failure and empty.
  *
@@ -341,7 +484,8 @@ a {
 
 .state__title {
   margin-bottom: var(--space-2);
-  font-size: 1.25rem;
+  font-size: 1.75rem;
+  font-weight: 700;
 }
 
 .state__message {

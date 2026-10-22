@@ -3,7 +3,7 @@
     The scene is full-bleed: it sits behind the copy and fades into the page, so the island
     reads as part of the background rather than as a framed widget. The element is part of the
     static layout, which reserves the scene's space before any JavaScript for three.js is
-    fetched, and it is marked decorative because every claim in the hero is already in the copy.
+    fetched, and it is marked decorative because the hero holds the store's name and one action.
     The anchor is where the lazily imported scene component is mounted after the first render.
   -->
   <div class="hero__scene" aria-hidden="true">
@@ -13,25 +13,10 @@
   <div class="page-width hero__grid">
     <div class="hero__inner">
       <h1 class="hero__title">{{ text().homeTitle }}</h1>
-      <p class="hero__lead">{{ text().homeLead }}</p>
 
       <div class="hero__actions">
         <a class="button button--primary" routerLink="/catalog">{{ text().homeCatalogAction }}</a>
-        <a class="button" href="#categorias">{{ text().homeCategoriesAction }}</a>
       </div>
-
-      @if (isReady()) {
-        <dl class="hero__stats">
-          <div class="hero__stat">
-            <dt>{{ text().homeStatProducts }}</dt>
-            <dd>{{ countLabel() }}</dd>
-          </div>
-          <div class="hero__stat">
-            <dt>{{ text().homeStatCategories }}</dt>
-            <dd>{{ categoryCount() }}</dd>
-          </div>
-        </dl>
-      }
     </div>
   </div>
 </section>
@@ -62,22 +47,6 @@
               [fallbackImage]="fallbackImageFor(category.id)"
               [text]="text()"
             />
-          </a>
-        </li>
-      }
-    </ul>
-  </section>
-
-  <section class="section page-width" aria-labelledby="destacados-title">
-    <div class="section__head">
-      <h2 id="destacados-title">{{ text().featuredTitle }}</h2>
-    </div>
-
-    <ul class="card-grid" appRevealOnScroll>
-      @for (entry of featured(); track entry.product.id; let index = $index) {
-        <li [style.--reveal-index]="index">
-          <a class="card-link" [routerLink]="['/product', entry.product.slug]">
-            <app-product-card [product]="entry.product" [categoryName]="entry.category.name" />
           </a>
         </li>
       }

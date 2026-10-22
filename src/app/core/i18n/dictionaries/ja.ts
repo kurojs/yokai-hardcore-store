@@ -89,9 +89,14 @@ export const JA_UI_TEXT: UiText = {
   primaryNavLabel: 'メインナビゲーション',
   navHome: 'ホーム',
   navCatalog: 'カタログ',
+  navCart: 'カート',
   cartLinkHint: 'カートページへ移動',
   footerBrand: 'Yokai Hardcore Store',
-  footerTagline: 'Yokai Hardcore サーバーのコミュニティストア。',
+  footerShopTitle: 'ストア',
+  footerCategoriesTitle: 'カテゴリ',
+  footerShopNavLabel: 'ストアのリンク',
+  footerCategoriesNavLabel: 'ストアのカテゴリ',
+  footerCopyright: (year: number) => `© ${year} Yokai Hardcore`,
   languageLabel: '言語',
   languageChanged,
 
@@ -102,16 +107,10 @@ export const JA_UI_TEXT: UiText = {
   catalogLoadErrorTitle: 'カタログを読み込めませんでした',
   retryLabel: '再試行',
 
-  homeTitle: '冥界へ備えよう',
-  homeLead:
-    'Yokai Hardcore の食料、アーティファクト、宝物を次の冒険に。カテゴリを見て、インベントリを整えましょう。',
+  homeTitle: 'Yokai Hardcore Store',
   homeCatalogAction: 'カタログを見る',
-  homeCategoriesAction: 'カテゴリを見る',
-  homeStatProducts: '商品',
-  homeStatCategories: 'カテゴリ',
   homeLoading: 'カタログを読み込んでいます…',
   categoriesTitle: 'カテゴリ',
-  featuredTitle: '注目の商品',
 
   catalogAllProducts: 'すべての商品',
   catalogUnknownCategoryHeading: 'カテゴリが見つかりません',
@@ -194,7 +193,18 @@ export const JA_UI_TEXT: UiText = {
   checkoutBackLabel: 'カタログに戻る',
   usernameProblemMessage,
 
-  homeDocumentTitle: 'Yokai Hardcore Store｜冥界へ備えよう',
+  signInLabel: 'サインイン',
+  accountDialogTitle: 'プレイヤー',
+  accountDialogHint:
+    'Minecraft のユーザー名を入力してください。ストアでスキンを表示するためだけに使います。',
+  accountNameLabel: 'Minecraft ユーザー名',
+  accountOpenLabel: (playerName: string) => `プレイヤー ${playerName}。プレイヤーを変更`,
+  accountSignOutLabel: 'プレイヤーを解除',
+  accountSaveLabel: '保存',
+  accountCancelLabel: 'キャンセル',
+  accountNetworkNote: 'スキン画像は minotar.net から読み込みます。',
+
+  homeDocumentTitle: 'Yokai Hardcore Store',
   catalogDocumentTitle: 'カタログ｜Yokai Hardcore Store',
   cartDocumentTitle: 'カート｜Yokai Hardcore Store',
   checkoutDocumentTitle: 'ご注文の確認｜Yokai Hardcore Store',

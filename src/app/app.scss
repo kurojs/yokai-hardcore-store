@@ -1,14 +1,41 @@
 /* Shell chrome. Only layout and the header/footer surfaces live here; colours and spacing come
    from the tokens in `styles.scss`, so a theme change is one file.
 
-   The header is flat: a hairline, a compact bar and small type. No shadow, no blur, no pill
-   navigation — the browse surface underneath should be the loudest thing on screen. */
+   The header is a glass bar: a translucent fill, a hairline, a 4.5rem height and icons on every
+   control. It strengthens its fill once the page has scrolled, which is the only signal a sticky
+   header needs to stop reading as part of the hero. */
 
 :host {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
+}
+
+/**
+ * The backdrop the glass refracts.
+ *
+ * It is one fixed box behind the whole app holding, bottom to top, the neutral voxel tile and two
+ * soft radial glows — purple bleeding from the top-left, green from the bottom-right. Both glows
+ * are deliberately weak (16% and 11%) and heavily faded: they exist to give the translucent
+ * surfaces something to pick up, not to tint the copy. It never receives pointer events, so it
+ * cannot intercept a click or a text selection.
+ */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(48rem 36rem at 8% -6%, rgb(167 139 250 / 0.16), transparent 70%),
+    radial-gradient(42rem 34rem at 96% 104%, rgb(52 211 153 / 0.11), transparent 72%),
+    var(--texture-voxel);
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size:
+    auto,
+    auto,
+    128px 128px;
 }
 
 .skip-link {
@@ -37,24 +64,57 @@
   top: 0;
   z-index: 10;
   border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg);
+  transition: border-color var(--transition);
+}
+
+/* The glass lives on a pseudo-element, not on the header itself.
+ *
+ * `backdrop-filter` makes an element the containing block for its fixed-position descendants.
+ * The header hosts the player dialog, which is a modal `<dialog>`: with the blur on the header,
+ * that dialog would be positioned inside a 4.5rem bar instead of the viewport. Moving the fill
+ * one layer down keeps the same look and leaves the header a plain stacking context. */
+.shell__header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--header-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  pointer-events: none;
+  transition: background var(--transition);
+}
+
+/* Past ~8px the content is under the bar, so the fill comes up and the hairline brightens. */
+.shell__header.is-scrolled {
+  border-bottom-color: var(--glass-border);
+}
+
+.shell__header.is-scrolled::before {
+  background: var(--header-bg-scrolled);
 }
 
 .shell__bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-5);
+  gap: var(--space-4);
   min-height: var(--header-height);
+}
+
+/* Left to right: brand, navigation, flexible spacer, language, player, cart. The spacer is what
+   keeps the two groups apart without pushing the navigation against the brand. */
+.shell__spacer {
+  flex: 1 1 auto;
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: 0.9375rem;
+  flex: none;
+  font-size: 1.0625rem;
   font-weight: 700;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 
@@ -62,88 +122,136 @@
   color: var(--color-accent);
 }
 
+.icon {
+  display: block;
+  flex: none;
+  color: currentColor;
+}
+
 .nav {
   display: flex;
-  gap: var(--space-4);
-  font-size: var(--text-small);
-}
-
-/* The navigation, the cart count and the language control share the right-hand side of the
-   bar; four loose children would spread across the header. */
-.shell__actions {
-  display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-1);
 }
 
-/* The language control is chrome, not content: it stays as small as the cart link and uses a
-   hairline only on hover, so a switcher does not compete with navigation for attention. */
+/* The active state is a colour change plus a 2px underline, not a filled pill: the underline
+   reserves its own 2px while inactive, so switching route never nudges the bar. */
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.55rem var(--space-3);
+  border-bottom: 2px solid transparent;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-size: var(--text-ui);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition:
+    color var(--transition),
+    background var(--transition);
+}
+
+.nav a:hover {
+  background: var(--glass-bg);
+  color: var(--color-text);
+}
+
+.nav a.is-active {
+  border-bottom-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.nav a.is-active .icon {
+  color: var(--color-accent);
+}
+
 .language-switcher {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--text-micro);
+  flex: none;
+  font-size: var(--text-small);
   color: var(--color-text-muted);
 }
 
 .language-switcher__label {
-  letter-spacing: 0.04em;
+  letter-spacing: 0.01em;
 }
 
 .language-switcher__select {
-  padding: 0.125rem var(--space-1);
+  padding: 0.35rem var(--space-2);
   border: 1px solid var(--color-border-control);
   border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--color-text-muted);
+  background: var(--glass-bg);
+  color: var(--color-text);
   font: inherit;
-  font-size: var(--text-micro);
+  font-size: var(--text-small);
   cursor: pointer;
+  transition:
+    border-color var(--transition),
+    background var(--transition);
 }
 
 .language-switcher__select:hover {
   border-color: var(--color-text-muted);
-  color: var(--color-text);
-}
-
-.nav a {
-  position: relative;
-  padding-block: 0.35rem;
-  color: var(--color-text-muted);
-  transition: color var(--transition);
-}
-
-.nav a:hover {
-  color: var(--color-text);
-}
-
-/* The active state is a colour change plus a 2px rule, not a filled pill. */
-.nav a.is-active {
-  color: var(--color-text);
-}
-
-.nav a.is-active::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  background: var(--color-accent);
+  background: var(--glass-bg-strong);
 }
 
 .cart-indicator {
   display: inline-flex;
   align-items: center;
-  padding-block: 0.25rem;
-  font-size: var(--text-small);
+  gap: var(--space-2);
+  flex: none;
+  padding: 0.4rem var(--space-2);
+  border-radius: var(--radius-sm);
   color: var(--color-text-muted);
-  white-space: nowrap;
-  transition: color var(--transition);
+  transition:
+    color var(--transition),
+    background var(--transition);
 }
 
 .cart-indicator:hover {
+  background: var(--glass-bg);
   color: var(--color-text);
+}
+
+/* The badge is the only green in the header, because green means money and this is the number
+   the visitor is about to pay for. */
+.cart-indicator__badge {
+  display: grid;
+  place-items: center;
+  min-width: 1.375rem;
+  height: 1.375rem;
+  padding-inline: 0.3125rem;
+  border: 1px solid rgb(52 211 153 / 0.4);
+  border-radius: var(--radius-pill);
+  background: rgb(52 211 153 / 0.14);
+  color: var(--color-price);
+  font-size: var(--text-micro);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* One short pop when the count changes. The `animationend` handler in the shell removes the
+   class, so the next change replays it instead of the badge staying scaled up. */
+@media (prefers-reduced-motion: no-preference) {
+  .cart-indicator__badge.is-bumping {
+    animation: badge-pop 320ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+}
+
+@keyframes badge-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  40% {
+    transform: scale(1.28);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .shell__main {
@@ -153,46 +261,127 @@
 .shell__footer {
   margin-top: var(--space-7);
   border-top: 1px solid var(--color-border);
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
 }
 
 .shell__footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--space-4);
-  padding-block: var(--space-5);
-  font-size: var(--text-micro);
+  display: grid;
+  gap: var(--space-5);
+  padding-block: var(--space-6);
+  font-size: var(--text-ui);
   color: var(--color-text-muted);
 }
 
 .shell__footer-identity {
-  display: grid;
-  gap: var(--space-1);
+  display: flex;
 }
 
+/* The footer repeats the brand as a link home, not as a heading: it is furniture, and the
+   header already establishes the store's name. */
 .shell__footer-brand {
-  font-size: var(--text-small);
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
   color: var(--color-text);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.shell__footer-tagline {
-  max-width: 30rem;
+.shell__footer-column {
+  display: grid;
+  gap: var(--space-3);
+  align-content: start;
 }
 
-/* Four header children (brand, navigation, language, cart) no longer fit on one line on a
-   phone. Wrapping the bar keeps every control visible instead of clipping or scrolling the
-   cart link off-screen; the reduced gap keeps the second row from looking like a separate
-   section. */
-@media (max-width: 46rem) {
+.shell__footer-heading {
+  font-size: var(--text-micro);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.shell__footer-links {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.shell__footer-links a {
+  color: var(--color-text);
+  transition: color var(--transition);
+}
+
+.shell__footer-links a:hover {
+  color: var(--color-accent);
+}
+
+.shell__footer-bottom {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--text-small);
+  color: var(--color-text-muted);
+}
+
+/* Three columns once there is room for them; stacked below, where the brand and the two lists
+   read as one short block instead of a squeezed grid. */
+@media (min-width: 48rem) {
+  .shell__footer-inner {
+    grid-template-columns: minmax(12rem, 1.4fr) repeat(2, minmax(10rem, 1fr));
+    gap: var(--space-6);
+  }
+}
+
+/* The language label is chrome, not content: at tablet width the globe plus the select already
+   say what the control is, so the word is dropped from the layout but stays in the accessibility
+   tree as the select's name. */
+@media (max-width: 48rem) {
   .shell__bar {
-    flex-wrap: wrap;
-    row-gap: var(--space-1);
-    padding-block: var(--space-2);
+    gap: var(--space-2);
   }
 
-  .shell__actions {
-    flex-wrap: wrap;
-    gap: var(--space-3);
+  .language-switcher__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* Icon-only navigation on a phone: the labels move into the same clipped box, so the two links
+   keep their accessible names while the bar keeps fitting. */
+@media (max-width: 40rem) {
+  .nav a {
+    padding-inline: var(--space-2);
+  }
+
+  .nav__label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+/* At 360px the wordmark is the only thing left that can give: the mark alone still identifies
+   the store, and the link keeps its accessible name. */
+@media (max-width: 26rem) {
+  .brand__text {
+    display: none;
   }
 }

@@ -24,13 +24,14 @@ import { CATALOG_SORTS, applyQuery, type CatalogSort } from '../../core/catalog/
 import { CatalogStore } from '../../core/catalog/catalog-store';
 import { LanguageStore } from '../../core/i18n/language-store';
 import { PricePipe } from '../../shared/price.pipe';
-import { ProductRow } from '../../shared/product-row';
+import { ProductCard } from '../../shared/product-card';
+import { RevealOnScroll } from '../../shared/reveal-on-scroll';
 import { CatalogFilterBar } from './catalog-filter-bar';
 
 @Component({
   selector: 'app-catalog-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, CatalogFilterBar, ProductRow, PricePipe],
+  imports: [RouterLink, CatalogFilterBar, ProductCard, RevealOnScroll, PricePipe],
   templateUrl: './catalog-page.html',
   styleUrl: './catalog-page.scss',
 })
@@ -89,6 +90,15 @@ export class CatalogPage {
   protected readonly showGroups = computed(
     () => this.category() === null && this.searchText().trim().length === 0,
   );
+
+  /**
+   * Whether a card has to name its own category.
+   *
+   * The grouped browse and a category page both put the category name above the cards, so the
+   * label would repeat it on every one of them. A search is the one flat grid whose hits span
+   * categories, so that is the only case that needs the label.
+   */
+  protected readonly labelsCategoryOnCards = computed(() => this.searchText().trim().length > 0);
 
   protected readonly countLabel = computed(() =>
     this.text().productCountLabel(this.results().length),

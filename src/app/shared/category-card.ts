@@ -1,19 +1,24 @@
 /**
- * One category as a card: banner (or a real product image from that category), name, blurb and
- * count.
+ * One category as a card: an image and the category's name and product count.
  *
  * Presentational only: the category, its product count and the fallback image arrive as inputs
  * and the card renders no link, so both the landing page and the catalog page can decide what a
  * click means without this component knowing about routing.
  *
- * Three of the ten categories have no banner image, so the fallback is a normal state rather
- * than an error path. It shows the first product photograph from that category under a dark
- * overlay, and only if the category has no image at all does it use a plain token surface with
- * the category name. The previous monogram-on-gradient treatment is gone: it read as a
- * placeholder, not as merchandise.
+ * **Every card shows an image.** Three of the ten categories ship no banner, so a category card
+ * resolves its picture through a chain: the category's own banner, then the first product
+ * photograph from that category, and only when neither can be shown a voxel-tile placeholder
+ * carrying the category name. The chain is not decoration — one banner in the committed data is
+ * an HTML error page saved with an image extension, so "the file exists" is not the same as "the
+ * browser can draw it". A failed decode moves the card to the next source instead of leaving an
+ * empty box.
+ *
+ * The description paragraph is gone: it was four lines of Spanish marketing copy clamped to two,
+ * identical in kind to the catalog's own copy, and it competed with the product photography for
+ * the card's height. The name and the count are what a buyer chooses between.
  */
 
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 
 import type { Category } from '../core/catalog/catalog-model';
 import type { UiText } from '../core/i18n/ui-text';
@@ -22,25 +27,28 @@ import type { UiText } from '../core/i18n/ui-text';
   selector: 'app-category-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <article class="category-card">
+    <article class="category-card glass">
       <div class="category-card__media">
-        @if (category().bannerImage; as src) {
-          <img class="category-card__image" [src]="src" alt="" loading="lazy" decoding="async" />
-        } @else if (fallbackImage(); as src) {
-          <div class="category-card__fallback">
-            <img class="category-card__image" [src]="src" alt="" loading="lazy" decoding="async" />
-            <span class="category-card__overlay" aria-hidden="true">{{ category().name }}</span>
-          </div>
+        @if (image(); as src) {
+          <img
+            class="category-card__image"
+            [src]="src"
+            alt=""
+            loading="lazy"
+            decoding="async"
+            (error)="onImageError(src)"
+          />
         } @else {
-          <div class="category-card__fallback category-card__fallback--surface" aria-hidden="true">
-            <span class="category-card__overlay">{{ category().name }}</span>
+          <div class="category-card__placeholder">
+            <span class="category-card__placeholder-name" aria-hidden="true">{{
+              category().name
+            }}</span>
           </div>
         }
       </div>
 
       <div class="category-card__body">
         <h3 class="category-card__name">{{ category().name }}</h3>
-        <p class="category-card__description">{{ category().description }}</p>
         <p class="category-card__count">{{ countLabel() }}</p>
       </div>
     </article>
@@ -56,21 +64,21 @@ import type { UiText } from '../core/i18n/ui-text';
       flex-direction: column;
       height: 100%;
       overflow: hidden;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
       border-radius: var(--radius-md);
-      transition: border-color var(--transition);
+      transition:
+        transform var(--transition-slow),
+        border-color var(--transition-slow),
+        box-shadow var(--transition-slow);
     }
 
-    @media (hover: hover) {
-      :host(:hover) .category-card {
-        border-color: var(--color-border-strong);
-      }
-    }
-
+    /* The media box never shrinks. It is the card's largest element, and a flex item defaults to
+       shrinking: without this, a category with long copy visibly squashed its own picture and
+       the strip read as a row of cards with different image heights. */
     .category-card__media {
       position: relative;
+      flex: none;
       aspect-ratio: 16 / 9;
+      overflow: hidden;
       background: var(--color-surface-raised);
     }
 
@@ -78,70 +86,69 @@ import type { UiText } from '../core/i18n/ui-text';
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: transform var(--transition-slow);
     }
 
-    .category-card__fallback {
-      position: relative;
+    /* The last resort: a neutral voxel plate with the category's name on it, so a card whose
+       image cannot be drawn still says which category it is instead of showing an empty box. */
+    .category-card__placeholder {
+      display: grid;
+      place-items: center;
       width: 100%;
       height: 100%;
+      padding: var(--space-3);
+      background-image: var(--texture-voxel);
+      background-size: 128px 128px;
     }
 
-    /* The overlay is what keeps the name legible over an arbitrary product photograph. It uses
-       the page colour rather than black, so the scrim belongs to the same palette. */
-    .category-card__fallback::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        180deg,
-        transparent 35%,
-        color-mix(in srgb, var(--color-bg) 82%, transparent) 100%
-      );
-    }
-
-    .category-card__fallback--surface {
-      background: var(--color-surface-raised);
-    }
-
-    .category-card__overlay {
-      position: absolute;
-      right: var(--space-3);
-      bottom: var(--space-2);
-      left: var(--space-3);
-      z-index: 1;
+    .category-card__placeholder-name {
       font-size: var(--text-small);
       font-weight: 600;
-      color: var(--color-text);
+      color: var(--color-text-muted);
+      text-align: center;
       overflow-wrap: anywhere;
+    }
+
+    @media (hover: hover) {
+      :host(:hover) .category-card {
+        transform: translateY(-4px);
+        border-color: var(--glass-border);
+        box-shadow: var(--shadow-card);
+      }
+
+      :host(:hover) .category-card__image {
+        transform: scale(1.05);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      :host(:hover) .category-card {
+        transform: none;
+        box-shadow: none;
+      }
+
+      :host(:hover) .category-card__image {
+        transform: none;
+      }
     }
 
     .category-card__body {
       display: flex;
       flex: 1;
       flex-direction: column;
-      gap: 0.3rem;
-      padding: var(--space-3);
+      gap: var(--space-1);
+      padding: var(--space-3) var(--space-4) var(--space-4);
     }
 
     .category-card__name {
-      font-size: 0.9375rem;
+      font-size: 1.125rem;
       font-weight: 600;
-    }
-
-    .category-card__description {
-      display: -webkit-box;
-      overflow: hidden;
-      font-size: var(--text-small);
-      color: var(--color-text-muted);
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
-      line-clamp: 2;
+      line-height: 1.3;
     }
 
     .category-card__count {
       margin-top: auto;
-      padding-top: var(--space-1);
-      font-size: var(--text-micro);
+      font-size: var(--text-small);
       font-variant-numeric: tabular-nums;
       color: var(--color-text-muted);
     }
@@ -157,11 +164,35 @@ export class CategoryCard {
   /**
    * A product image from this category, used when the category has no banner of its own.
    *
-   * `null` is a supported state: the card then shows a token surface with the category name.
+   * `null` is a supported state: the card then shows the voxel placeholder with the name.
    */
   readonly fallbackImage = input<string | null>(null);
+
+  /**
+   * Sources the browser has already failed to decode.
+   *
+   * A set of URLs rather than a boolean, because a failure has to move the card *along* the
+   * chain (banner → product photograph → placeholder) and must reset by itself when the card is
+   * reused for a different category.
+   */
+  private readonly failedSources = signal<ReadonlySet<string>>(new Set());
+
+  protected readonly image = computed(() => {
+    const failed = this.failedSources();
+    const banner = this.category().bannerImage;
+    if (banner !== null && banner !== '' && !failed.has(banner)) return banner;
+
+    const fallback = this.fallbackImage();
+    if (fallback !== null && fallback !== '' && !failed.has(fallback)) return fallback;
+
+    return null;
+  });
 
   protected readonly countLabel = computed(() =>
     this.text().productCountLabel(this.productCount()),
   );
+
+  protected onImageError(source: string): void {
+    this.failedSources.update((current) => new Set(current).add(source));
+  }
 }

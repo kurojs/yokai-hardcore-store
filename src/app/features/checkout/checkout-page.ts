@@ -42,6 +42,7 @@ import { CatalogStore } from '../../core/catalog/catalog-store';
 import { createDemoOrder, type DemoOrder } from '../../core/checkout/demo-order';
 import { ORDER_REFERENCE_NONCE_SPACE } from '../../core/checkout/order-reference';
 import { validateMinecraftUsername } from '../../core/checkout/username';
+import { PlayerStore } from '../../core/player/player-store';
 import { LanguageStore } from '../../core/i18n/language-store';
 import { OrderSummary } from '../../shared/order-summary';
 import { PricePipe } from '../../shared/price.pipe';
@@ -58,6 +59,7 @@ export class CheckoutPage {
   private readonly cart = inject(CartStore);
   private readonly router = inject(Router);
   private readonly i18n = inject(LanguageStore);
+  private readonly player = inject(PlayerStore);
   private readonly documentTitle = inject(Title);
 
   protected readonly text = this.i18n.text;
@@ -74,8 +76,14 @@ export class CheckoutPage {
   /** The same totals the cart page renders, from `CartStore.totals`. */
   protected readonly totals = this.cart.totals;
 
-  /** What the visitor has typed. Never persisted: there is no delivery to save it for. */
-  private readonly draft = signal('');
+  /**
+   * What the visitor has typed.
+   *
+   * Prefilled from the player the header already knows, because typing the same username twice
+   * is a needless step. The value is not a saved order: only the username is remembered, on a
+   * successful submit, so the avatar can reflect the same player everywhere.
+   */
+  private readonly draft = signal(this.player.playerName() ?? '');
   protected readonly draftValue = this.draft.asReadonly();
 
   /** True after the first failed submit, so errors do not appear before the visitor acts. */
@@ -153,6 +161,10 @@ export class CheckoutPage {
       }),
     );
     this.cart.clear();
+
+    // The username is the player the store now knows: the header shows that skin afterwards,
+    // and the checkout prefills the same name on the next visit.
+    this.player.signIn(result.value);
   }
 
   protected retry(): void {

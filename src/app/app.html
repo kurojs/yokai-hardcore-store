@@ -1,56 +1,145 @@
+<!--
+  The backdrop is the layer the glass refracts: one fixed, non-interactive box holding the
+  neutral voxel tile and the two accent glows. It is pure CSS (no image request, no JavaScript)
+  and it sits behind everything at `z-index: -1`, which is why the page colour lives on `html`
+  rather than on `body`.
+-->
+<div class="backdrop" aria-hidden="true"></div>
+
 <a class="skip-link" href="#main">{{ text().skipToContent }}</a>
 
-<header class="shell__header">
+<header class="shell__header" [class.is-scrolled]="scrolled()">
   <div class="page-width shell__bar">
     <a class="brand" routerLink="/" [attr.aria-label]="text().brandHomeLabel">
-      <app-brand-mark class="brand__mark" [size]="26" />
+      <app-brand-mark class="brand__mark" [size]="34" />
       <span class="brand__text">Yokai Hardcore</span>
     </a>
 
-    <div class="shell__actions">
-      <nav class="nav" [attr.aria-label]="text().primaryNavLabel">
-        <a
-          routerLink="/"
-          routerLinkActive="is-active"
-          ariaCurrentWhenActive="page"
-          [routerLinkActiveOptions]="{ exact: true }"
-          >{{ text().navHome }}</a
-        >
-        <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page">{{
-          text().navCatalog
-        }}</a>
-      </nav>
-
-      <!-- A native select is the most reliable keyboard- and screen-reader-operable language
-           control there is: it is one tab stop, the platform provides the list behaviour, and
-           the visible label is translated with everything else. The status region below
-           announces the change, because picking an option is not self-announcing. -->
-      <div class="language-switcher">
-        <label class="language-switcher__label" for="language-select">{{
-          text().languageLabel
-        }}</label>
-        <select
-          id="language-select"
-          class="language-switcher__select"
-          (change)="onLanguageChange($event)"
-        >
-          @for (option of languageOptions; track option.value) {
-            <option [value]="option.value" [selected]="option.value === language()">{{
-              option.label
-            }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- The count is the link's visible text and part of its accessible name, so the header
-           says how much is in the cart and where to go. The hidden status repeats the text: a
-           live region announces a changed count politely without taking focus from the page. -->
-      <a class="cart-indicator" routerLink="/cart"
-        >{{ cartLabel() }}<span class="visually-hidden">. {{ text().cartLinkHint }}</span></a
+    <!-- Icons are inline paths, not an icon font or a library: four small glyphs do not justify
+         a dependency, and a stroke on `currentColor` inherits the active and hover states. The
+         glyph is always `aria-hidden`; the link text is the accessible name. -->
+    <nav class="nav" [attr.aria-label]="text().primaryNavLabel">
+      <a
+        routerLink="/"
+        routerLinkActive="is-active"
+        ariaCurrentWhenActive="page"
+        [routerLinkActiveOptions]="{ exact: true }"
       >
-      <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
-      <p class="visually-hidden" role="status" aria-live="polite">{{ announcement() }}</p>
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path d="M3.5 10.5 12 3.5l8.5 7" />
+          <path d="M5.5 9.5V20h13V9.5" />
+          <path d="M10 20v-5.5h4V20" />
+        </svg>
+        <span class="nav__label">{{ text().navHome }}</span>
+      </a>
+
+      <a routerLink="/catalog" routerLinkActive="is-active" ariaCurrentWhenActive="page">
+        <svg
+          class="icon"
+          viewBox="0 0 24 24"
+          width="20"
+          height="20"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <rect x="3.75" y="3.75" width="7" height="7" rx="1.4" />
+          <rect x="13.25" y="3.75" width="7" height="7" rx="1.4" />
+          <rect x="3.75" y="13.25" width="7" height="7" rx="1.4" />
+          <rect x="13.25" y="13.25" width="7" height="7" rx="1.4" />
+        </svg>
+        <span class="nav__label">{{ text().navCatalog }}</span>
+      </a>
+    </nav>
+
+    <div class="shell__spacer" aria-hidden="true"></div>
+
+    <!-- A native select is the most reliable keyboard- and screen-reader-operable language
+         control there is: it is one tab stop, the platform provides the list behaviour, and
+         the visible label is translated with everything else. The status region below
+         announces the change, because picking an option is not self-announcing. -->
+    <div class="language-switcher">
+      <svg
+        class="icon"
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M3.5 12h17" />
+        <path d="M12 3.5c2.6 2.4 4 5.4 4 8.5s-1.4 6.1-4 8.5c-2.6-2.4-4-5.4-4-8.5s1.4-6.1 4-8.5Z" />
+      </svg>
+      <label class="language-switcher__label" for="language-select">{{
+        text().languageLabel
+      }}</label>
+      <select id="language-select" class="language-switcher__select" (change)="onLanguageChange($event)">
+        @for (option of languageOptions; track option.value) {
+          <option [value]="option.value" [selected]="option.value === language()">{{
+            option.label
+          }}</option>
+        }
+      </select>
     </div>
+
+    <!-- The player control sits immediately before the cart so the cart stays the rightmost
+         action: browsing, then identity, then the thing about to be bought. -->
+    <app-player-account />
+
+    <!-- The count is the link's visible text and part of its accessible name, so the header
+         says how much is in the cart and where to go. The hidden status repeats the text: a
+         live region announces a changed count politely without taking focus from the page. -->
+    <a class="cart-indicator" routerLink="/cart">
+      <svg
+        class="icon"
+        viewBox="0 0 24 24"
+        width="20"
+        height="20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path d="M2.75 4h2.4l2.4 10.2h9.8L19.25 7H6.1" />
+        <circle cx="9.6" cy="18.6" r="1.4" />
+        <circle cx="17" cy="18.6" r="1.4" />
+      </svg>
+      <span class="visually-hidden">{{ cartLabel() }}. {{ text().cartLinkHint }}</span>
+      <span
+        class="cart-indicator__badge"
+        [class.is-bumping]="badgeBump()"
+        (animationend)="onBadgeAnimationEnd()"
+        aria-hidden="true"
+        >{{ itemCount() }}</span
+      >
+    </a>
+    <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
+    <p class="visually-hidden" role="status" aria-live="polite">{{ announcement() }}</p>
   </div>
 </header>
 
@@ -61,8 +150,39 @@
 <footer class="shell__footer">
   <div class="page-width shell__footer-inner">
     <div class="shell__footer-identity">
-      <p class="shell__footer-brand">{{ text().footerBrand }}</p>
-      <p class="shell__footer-tagline">{{ text().footerTagline }}</p>
+      <a class="shell__footer-brand" routerLink="/" [attr.aria-label]="text().brandHomeLabel">
+        <app-brand-mark [size]="30" />
+        <span class="shell__footer-brand-text">{{ text().footerBrand }}</span>
+      </a>
     </div>
+
+    <!-- Two link columns, fed by the same store the pages read. The categories are catalog
+         data, in Spanish, and are never translated. The column disappears while the catalog is
+         still loading rather than rendering an empty list. -->
+    <nav class="shell__footer-column" [attr.aria-label]="text().footerShopNavLabel">
+      <h2 class="shell__footer-heading">{{ text().footerShopTitle }}</h2>
+      <ul class="shell__footer-links">
+        <li><a routerLink="/">{{ text().navHome }}</a></li>
+        <li><a routerLink="/catalog">{{ text().navCatalog }}</a></li>
+        <li><a routerLink="/cart">{{ text().navCart }}</a></li>
+      </ul>
+    </nav>
+
+    @if (footerCategories().length > 0) {
+      <nav class="shell__footer-column" [attr.aria-label]="text().footerCategoriesNavLabel">
+        <h2 class="shell__footer-heading">{{ text().footerCategoriesTitle }}</h2>
+        <ul class="shell__footer-links">
+          @for (category of footerCategories(); track category.slug) {
+            <li>
+              <a [routerLink]="['/catalog', category.slug]">{{ category.name }}</a>
+            </li>
+          }
+        </ul>
+      </nav>
+    }
+  </div>
+
+  <div class="page-width shell__footer-bottom">
+    <p>{{ text().footerCopyright(currentYear) }}</p>
   </div>
 </footer>
