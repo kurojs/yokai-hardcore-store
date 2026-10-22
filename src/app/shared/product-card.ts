@@ -57,15 +57,39 @@ import { PricePipe } from './price.pipe';
     }
 
     .product-card {
+      position: relative;
+      isolation: isolate;
       display: flex;
       flex-direction: column;
       height: 100%;
       overflow: hidden;
       border-radius: var(--radius-md);
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
       transition:
         transform var(--transition-slow),
         border-color var(--transition-slow),
         box-shadow var(--transition-slow);
+    }
+
+    /* Keep the backdrop filter on a separate inner glass layer, away from the card surface that
+       is translated on hover. The card and its contents keep their existing lift and image zoom. */
+    .product-card::before {
+      position: absolute;
+      z-index: 0;
+      inset: 1px;
+      border-radius: calc(var(--radius-md) - 1px);
+      background: rgb(0 0 0 / 0.42);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      content: '';
+      pointer-events: none;
+    }
+
+    .product-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     /* The photograph keeps its 4:3 box whatever the copy does; a flex item would otherwise shrink

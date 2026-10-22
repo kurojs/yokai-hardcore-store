@@ -91,6 +91,7 @@ export const JA_UI_TEXT: UiText = {
   navCatalog: 'カタログ',
   navCart: 'カート',
   cartLinkHint: 'カートページへ移動',
+  backToTopLabel: 'ページの先頭へ戻る',
   footerBrand: 'Yokai Hardcore Store',
   footerShopTitle: 'ストア',
   footerCategoriesTitle: 'カテゴリ',
@@ -156,7 +157,6 @@ export const JA_UI_TEXT: UiText = {
   orderSummaryItemsLabel: '点数',
   orderSummarySubtotalLabel: '小計',
   orderSummaryTotalLabel: '合計',
-  orderSummaryNote: 'デジタル商品のため、送料・税金はかかりません。',
 
   cartTitle: 'カート',
   cartLoading: 'カートを読み込んでいます…',
@@ -183,26 +183,22 @@ export const JA_UI_TEXT: UiText = {
   minecraftUsernameLabel: 'Minecraft ユーザー名',
   minecraftUsernameHelp:
     '3〜16文字。使用できるのはアクセント記号のない英字、数字、アンダースコア（_）です。',
-  checkoutSubmitLabel: 'デモを完了する',
-  checkoutDemoDisclosure: 'デモ用チェックアウトです。決済は処理されません。',
-  checkoutConfirmationTitle: 'デモが完了しました',
+  checkoutSubmitLabel: '注文を確定する',
+  checkoutConfirmationTitle: 'ご注文が完了しました',
   checkoutConfirmationMessage:
-    '料金は発生しておらず、注文も作成されていません。この控えはこのタブにのみ存在し、ページを再読み込みすると消えます。',
-  demoReceiptTitle: 'デモの控え',
-  orderReferenceLabel: 'ローカル参照番号',
+    'ご注文内容は以下のとおりです。この控えはブラウザ内で作成され、再読み込みすると失われます。',
+  orderReceiptTitle: 'ご注文内容',
+  orderReferenceLabel: '参照番号',
   checkoutBackLabel: 'カタログに戻る',
   usernameProblemMessage,
 
   signInLabel: 'サインイン',
   accountDialogTitle: 'プレイヤー',
-  accountDialogHint:
-    'Minecraft のユーザー名を入力してください。ストアでスキンを表示するためだけに使います。',
   accountNameLabel: 'Minecraft ユーザー名',
   accountOpenLabel: (playerName: string) => `プレイヤー ${playerName}。プレイヤーを変更`,
   accountSignOutLabel: 'プレイヤーを解除',
   accountSaveLabel: '保存',
   accountCancelLabel: 'キャンセル',
-  accountNetworkNote: 'スキン画像は minotar.net から読み込みます。',
 
   homeDocumentTitle: 'Yokai Hardcore Store',
   catalogDocumentTitle: 'カタログ｜Yokai Hardcore Store',

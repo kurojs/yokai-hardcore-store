@@ -78,6 +78,7 @@ export const EN_UI_TEXT: UiText = {
   navCatalog: 'Catalog',
   navCart: 'Cart',
   cartLinkHint: 'Go to the cart page',
+  backToTopLabel: 'Back to top',
   footerBrand: 'Yokai Hardcore Store',
   footerShopTitle: 'Shop',
   footerCategoriesTitle: 'Categories',
@@ -143,7 +144,6 @@ export const EN_UI_TEXT: UiText = {
   orderSummaryItemsLabel: 'Items',
   orderSummarySubtotalLabel: 'Subtotal',
   orderSummaryTotalLabel: 'Total',
-  orderSummaryNote: 'Digital products: no shipping or taxes.',
 
   cartTitle: 'Your cart',
   cartLoading: 'Loading cart…',
@@ -170,26 +170,22 @@ export const EN_UI_TEXT: UiText = {
   minecraftUsernameLabel: 'Minecraft username',
   minecraftUsernameHelp:
     'Between 3 and 16 characters: letters without accents, numbers and underscore (_).',
-  checkoutSubmitLabel: 'Complete the demo',
-  checkoutDemoDisclosure: 'Demo checkout: no payment is processed.',
-  checkoutConfirmationTitle: 'Demo complete',
+  checkoutSubmitLabel: 'Finish order',
+  checkoutConfirmationTitle: 'Order complete',
   checkoutConfirmationMessage:
-    'No charge was made and no order was created. This receipt exists only in this tab and disappears if you reload the page.',
-  demoReceiptTitle: 'Demo receipt',
-  orderReferenceLabel: 'Local reference',
+    'Here is your order summary. The receipt is generated in this browser and is lost if you reload the page.',
+  orderReceiptTitle: 'Order summary',
+  orderReferenceLabel: 'Reference',
   checkoutBackLabel: 'Back to the catalog',
   usernameProblemMessage,
 
   signInLabel: 'Sign in',
   accountDialogTitle: 'Your player',
-  accountDialogHint:
-    'Enter your Minecraft username. It is used only to show your skin in the store.',
   accountNameLabel: 'Minecraft username',
   accountOpenLabel: (playerName: string) => `Player ${playerName}. Change player`,
   accountSignOutLabel: 'Remove player',
   accountSaveLabel: 'Save',
   accountCancelLabel: 'Cancel',
-  accountNetworkNote: 'The skin image loads from minotar.net.',
 
   homeDocumentTitle: 'Yokai Hardcore Store',
   catalogDocumentTitle: 'Catalog — Yokai Hardcore Store',

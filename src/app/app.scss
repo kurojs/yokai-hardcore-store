@@ -38,6 +38,34 @@
     128px 128px;
 }
 
+/**
+ * The world behind the store.
+ *
+ * One fixed layer, owned by the shell rather than by a page, so the same scene stays on screen
+ * while the visitor moves from the landing to the catalog, a product and the cart. The canvas is
+ * mounted into it lazily; until then, and if WebGL or the model never arrives, the layer is simply
+ * empty and the backdrop above is what shows.
+ *
+ * The scrim is the reason copy stays readable over a busy model: it removes brightness from the
+ * scene as a whole instead of fading the scene out with a mask, which would have left the page
+ * with no background at all halfway down.
+ */
+.app-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.72;
+}
+
+.app-scene::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(9 9 11 / 0.28), rgb(9 9 11 / 0.62));
+}
+
 .skip-link {
   position: fixed;
   top: var(--space-2);
@@ -101,8 +129,17 @@
   min-height: var(--header-height);
 }
 
-/* Left to right: brand, navigation, flexible spacer, language, player, cart. The spacer is what
-   keeps the two groups apart without pushing the navigation against the brand. */
+/* The bar carries five controls on a phone. Giving back most of the gap is what keeps them all
+   on one line at 360px without hiding anything. */
+@media (max-width: 30rem) {
+  .shell__bar {
+    gap: var(--space-2);
+  }
+}
+
+/* Left to right: brand, navigation, flexible spacer, language, cart, player. The spacer is what
+   keeps the two groups apart without pushing the navigation against the brand; the avatar closes
+   the bar, in the cart's corner, where an account control is looked for. */
 .shell__spacer {
   flex: 1 1 auto;
 }
@@ -157,8 +194,36 @@
 }
 
 .nav a.is-active {
-  border-bottom-color: var(--color-accent);
+  position: relative;
   color: var(--color-text);
+}
+
+/* The active marker is a bar that breathes. It is a pseudo element so the animation touches
+   only its own opacity: the tab cannot grow, shift or glow, and the 2px border stays reserved
+   (transparent) so switching route never nudges the bar. */
+.nav a.is-active::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 -2px 0;
+  height: 2px;
+  background: var(--color-accent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nav a.is-active::after {
+    animation: nav-accent-breathe 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes nav-accent-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
 }
 
 .nav a.is-active .icon {
@@ -261,7 +326,7 @@
 .shell__footer {
   margin-top: var(--space-7);
   border-top: 1px solid var(--color-border);
-  background: var(--glass-bg);
+  background: rgb(0 0 0 / 0.48);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }

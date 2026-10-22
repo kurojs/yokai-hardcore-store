@@ -21,7 +21,7 @@
     <p class="state__message">{{ text().checkoutConfirmationMessage }}</p>
 
     <section class="receipt" aria-labelledby="receipt-title">
-      <h2 id="receipt-title" class="receipt__title">{{ text().demoReceiptTitle }}</h2>
+      <h2 id="receipt-title" class="receipt__title">{{ text().orderReceiptTitle }}</h2>
       <dl class="receipt__rows">
         <div class="receipt__row">
           <dt>{{ text().orderReferenceLabel }}</dt>
@@ -108,8 +108,6 @@
             <p id="mc-username-error" class="field__error" role="alert">{{ errorText() }}</p>
           }
         </div>
-
-        <p class="checkout__demo" role="note">{{ text().checkoutDemoDisclosure }}</p>
 
         <button type="submit" class="button button--primary checkout__submit">
           {{ text().checkoutSubmitLabel }}

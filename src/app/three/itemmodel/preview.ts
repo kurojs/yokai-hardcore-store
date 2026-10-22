@@ -16,7 +16,7 @@ export interface ItemPreviewModel {
   readonly id: string;
   /** Label shown on the switcher button. */
   readonly label: string;
-  /** Root-absolute URL: the component is mounted at `/dev/items`, so a relative path 404s. */
+  /** Document-relative URL: `<base href>` carries the deployment prefix, the route does not. */
   readonly url: string;
 }
 
@@ -31,19 +31,19 @@ export const ITEM_PREVIEW_MODELS: readonly ItemPreviewModel[] = [
   {
     id: 'tlaloc_hat',
     label: 'Tlaloc hat',
-    url: '/models/items/tlaloc/tlaloc_hat.json',
+    url: 'models/items/tlaloc/tlaloc_hat.json',
   },
   {
     id: 'tlaloc_staff',
     label: 'Tlaloc staff',
-    url: '/models/items/tlaloc/tlaloc_staff.json',
+    url: 'models/items/tlaloc/tlaloc_staff.json',
   },
   {
     id: 'netherite_sword',
     label: 'Netherite sword (sprite)',
-    url: '/models/items/tlaloc/netherite_sword.json',
+    url: 'models/items/tlaloc/netherite_sword.json',
   },
-  { id: 'paper', label: 'Paper (sprite)', url: '/models/items/tlaloc/paper.json' },
+  { id: 'paper', label: 'Paper (sprite)', url: 'models/items/tlaloc/paper.json' },
 ];
 
 /**

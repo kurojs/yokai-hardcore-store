@@ -60,15 +60,39 @@ import type { UiText } from '../core/i18n/ui-text';
     }
 
     .category-card {
+      position: relative;
+      isolation: isolate;
       display: flex;
       flex-direction: column;
       height: 100%;
       overflow: hidden;
       border-radius: var(--radius-md);
+      background: transparent;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
       transition:
         transform var(--transition-slow),
         border-color var(--transition-slow),
         box-shadow var(--transition-slow);
+    }
+
+    /* Keep the backdrop filter on a separate inner glass layer, away from the card surface that
+       is translated on hover. The card and its contents keep their existing lift and image zoom. */
+    .category-card::before {
+      position: absolute;
+      z-index: 0;
+      inset: 1px;
+      border-radius: calc(var(--radius-md) - 1px);
+      background: rgb(0 0 0 / 0.42);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
+      content: '';
+      pointer-events: none;
+    }
+
+    .category-card > * {
+      position: relative;
+      z-index: 1;
     }
 
     /* The media box never shrinks. It is the card's largest element, and a flex item defaults to

@@ -39,6 +39,9 @@ export interface UiText {
   /** The hidden half of the cart link's accessible name. */
   readonly cartLinkHint: string;
 
+  /** Accessible name of the floating button that returns to the top of a long page. */
+  readonly backToTopLabel: string;
+
   /** The language-independent brand line in the footer. */
   readonly footerBrand: string;
 
@@ -142,7 +145,6 @@ export interface UiText {
   readonly orderSummaryItemsLabel: string;
   readonly orderSummarySubtotalLabel: string;
   readonly orderSummaryTotalLabel: string;
-  readonly orderSummaryNote: string;
 
   // ---------------------------------------------------------------------------------------
   // Cart
@@ -167,7 +169,7 @@ export interface UiText {
   readonly cartCheckoutLabel: string;
 
   // ---------------------------------------------------------------------------------------
-  // Demo checkout
+  // Checkout
   // ---------------------------------------------------------------------------------------
 
   readonly checkoutTitle: string;
@@ -182,10 +184,9 @@ export interface UiText {
   readonly minecraftUsernameHelp: string;
 
   readonly checkoutSubmitLabel: string;
-  readonly checkoutDemoDisclosure: string;
   readonly checkoutConfirmationTitle: string;
   readonly checkoutConfirmationMessage: string;
-  readonly demoReceiptTitle: string;
+  readonly orderReceiptTitle: string;
   readonly orderReferenceLabel: string;
   readonly checkoutBackLabel: string;
 
@@ -201,9 +202,6 @@ export interface UiText {
   /** Dialog heading. */
   readonly accountDialogTitle: string;
 
-  /** What the field is for, in one sentence. */
-  readonly accountDialogHint: string;
-
   readonly accountNameLabel: string;
 
   /** Accessible name of the avatar button, which also says what activating it does. */
@@ -212,9 +210,6 @@ export interface UiText {
   readonly accountSignOutLabel: string;
   readonly accountSaveLabel: string;
   readonly accountCancelLabel: string;
-
-  /** Where the skin image comes from, said plainly because it is a third-party request. */
-  readonly accountNetworkNote: string;
 
   // ---------------------------------------------------------------------------------------
   // Document titles

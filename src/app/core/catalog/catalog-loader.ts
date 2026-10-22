@@ -15,8 +15,14 @@
 import type { Catalog } from './catalog-model';
 import { parseCatalogResponse } from './catalog-validation';
 
-/** Where the catalog is served from. Root-absolute, so it resolves from any route. */
-export const CATALOG_URL = '/data/catalog.json';
+/**
+ * Where the catalog is served from.
+ *
+ * Document-relative, not root-absolute: the same build runs at `/` locally and under
+ * `/yokai-hardcore-store/` on GitHub Pages, and `<base href>` already names that prefix. A
+ * leading slash would escape it.
+ */
+export const CATALOG_URL = 'data/catalog.json';
 
 /**
  * The part of `fetch` this module uses.

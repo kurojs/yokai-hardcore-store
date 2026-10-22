@@ -69,7 +69,7 @@ describe('parseCatalogResponse  Eaccepted documents', () => {
   it('maps localImage onto imagePath', () => {
     const catalog = parseCatalogResponse(catalogDocument());
 
-    expect(catalog.products[0]?.imagePath).toBe('/products/probe-product/imagen.png');
+    expect(catalog.products[0]?.imagePath).toBe('products/probe-product/imagen.png');
   });
 
   it('keeps an unaccompanied null banner and a null local image as null', () => {

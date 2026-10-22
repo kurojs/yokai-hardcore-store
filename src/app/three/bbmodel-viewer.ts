@@ -22,9 +22,9 @@ import * as THREE from 'three';
 import { createBbModelScene, type BbModelScene } from './bbmodel';
 import { createPreviewHost, describeError, type PreviewHost } from './preview-host';
 
-// Root-absolute on purpose: the component is mounted at `/dev/model`, so a relative
-// `models/...` would resolve against `/dev/` and 404.
-const DEFAULT_MODEL_URL = '/models/bosses/tlaloc.bbmodel';
+// Document-relative: `<base href>` carries the deployment prefix, so this resolves the same on
+// `/dev/model` locally and under `/yokai-hardcore-store/` on GitHub Pages.
+const DEFAULT_MODEL_URL = 'models/bosses/tlaloc.bbmodel';
 const INITIAL_CLIP = 'idle';
 
 @Component({

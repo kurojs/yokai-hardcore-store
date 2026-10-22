@@ -15,11 +15,11 @@ function fetchStub(response: Response): FetchLike & { calls: [string, RequestIni
 }
 
 describe('loadCatalog', () => {
-  it('serves the catalog from a root-absolute asset URL by default', () => {
-    // Root-absolute on purpose: the same URL has to resolve from `/`, from `/catalog` and
-    // from `/catalog/mascotas`.
-    expect(CATALOG_URL).toBe('/data/catalog.json');
-    expect(CATALOG_URL.startsWith('/')).toBe(true);
+  it('serves the catalog from a document-relative asset URL by default', () => {
+    // Document-relative on purpose: `<base href>` already carries the deployment prefix, so the
+    // same URL resolves from `/`, from `/catalog` and from `/yokai-hardcore-store/catalog`.
+    expect(CATALOG_URL).toBe('data/catalog.json');
+    expect(CATALOG_URL.startsWith('/')).toBe(false);
   });
 
   it('requests the default URL and returns the validated catalog', async () => {
@@ -64,7 +64,7 @@ describe('loadCatalog', () => {
     );
 
     await expect(loadCatalog({ fetchImpl })).rejects.toThrow(
-      new CatalogLoadError('GET /data/catalog.json responded 404 Not Found'),
+      new CatalogLoadError('GET data/catalog.json responded 404 Not Found'),
     );
   });
 
@@ -73,7 +73,7 @@ describe('loadCatalog', () => {
 
     await expect(loadCatalog({ fetchImpl })).rejects.toThrow(CatalogLoadError);
     await expect(loadCatalog({ fetchImpl })).rejects.toThrow(
-      'Could not reach /data/catalog.json: Failed to fetch',
+      'Could not reach data/catalog.json: Failed to fetch',
     );
   });
 

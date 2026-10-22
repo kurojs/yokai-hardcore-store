@@ -33,11 +33,14 @@
 /* The photograph leads on a phone and sits beside the purchase controls from tablet up. */
 @media (min-width: 48rem) {
   .product__layout {
-    grid-template-columns: minmax(0, 3fr) minmax(18rem, 2fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
   }
 }
 
 .product__media {
+  width: 100%;
+  max-width: 38rem;
+  justify-self: center;
   overflow: hidden;
   margin: 0;
   border: 1px solid var(--glass-border-soft);
@@ -76,6 +79,12 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+}
+
+@media (max-width: 47.999rem) {
+  .product__media {
+    max-width: 42rem;
+  }
 }
 
 .product__image--empty {

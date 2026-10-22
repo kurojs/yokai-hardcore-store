@@ -138,7 +138,7 @@ describe('parseDescription on the committed catalog', () => {
       'Descripción',
     ]);
     expect(blocks[0]?.body).toBe(
-      '¡Aliméntate como todo un guerrero con los Algodones de Azúcar Goblin!',
+      'Azúcar hilado por goblins: diez segundos de velocidad IX por unidad.',
     );
   });
 

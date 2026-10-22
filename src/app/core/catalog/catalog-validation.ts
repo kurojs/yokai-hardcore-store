@@ -147,7 +147,11 @@ function readAssetPath(
     );
     return undefined;
   }
-  return value;
+  // Stored root-absolute, handed out document-relative. The app is served from a sub-path on
+  // GitHub Pages (`/yokai-hardcore-store/`), so the leading slash has to go: the browser would
+  // otherwise resolve the path against the domain root and 404. Without it, `<base href>` — which
+  // already carries the deployment prefix — decides where the asset lives, on every route.
+  return value.slice(1);
 }
 
 /**

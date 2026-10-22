@@ -43,7 +43,7 @@ describe('the real catalog through the trust boundary', () => {
     for (const product of catalog.products) {
       expect(product).not.toHaveProperty('sourceFolder');
       expect(product).not.toHaveProperty('imageUrl');
-      expect(product.imagePath?.startsWith('/')).toBe(true);
+      expect(product.imagePath?.startsWith('/')).toBe(false);
     }
     for (const category of catalog.categories) {
       expect(category).not.toHaveProperty('sourceFolder');
@@ -57,7 +57,7 @@ describe('the real catalog through the trust boundary', () => {
     const azucar = catalog.products.find((product) => product.slug === '10-algodones-de-azucar');
 
     expect(azucar?.description).toContain(
-      '¡Aliméntate como todo un guerrero con los Algodones de Azúcar Goblin!',
+      'Azúcar hilado por goblins: diez segundos de velocidad IX por unidad.',
     );
     expect(catalog.categories.some((category) => category.name === 'RESUCITACIÓN')).toBe(true);
     expect(catalog.categories.some((category) => category.name === 'Artefactos Mágicos')).toBe(true);

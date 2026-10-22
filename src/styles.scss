@@ -71,6 +71,18 @@
   --glass-blur: blur(16px) saturate(140%);
   --shadow-card: 0 24px 48px -28px rgb(0 0 0 / 0.9);
 
+  /**
+   * A block edge instead of a hairline.
+   *
+   * Every glass surface is a cube face: one pixel of light along the top, two of shadow along the
+   * bottom. It costs two inset shadows and it is what makes a flat translucent rectangle read as
+   * a block in a voxel world rather than as a rounded app card.
+   */
+  --edge-bevel:
+    inset 0 1px 0 rgb(255 255 255 / 0.09), inset 0 -2px 0 rgb(0 0 0 / 0.5);
+  --edge-bevel-strong:
+    inset 0 1px 0 rgb(255 255 255 / 0.16), inset 0 -2px 0 rgb(0 0 0 / 0.55);
+
   /* The sticky header's two glass fills: the resting one, and the slightly denser one it swaps
      to once the page has scrolled past the point where content passes underneath. */
   --header-bg: rgb(9 9 11 / 0.55);
@@ -89,8 +101,9 @@
   --space-6: 2rem;
   --space-7: 3rem;
 
-  /* Reading width for page-level containers. */
-  --measure: 74rem;
+  /* Reading width for page-level containers. Deliberately close to the previous column: the
+     storefront was asked to be *bigger*, not wider, so the type grew and the measure did not. */
+  --measure: 76rem;
 
   /* The sticky header's height, so sticky columns can offset themselves by it. */
   --header-height: 4.5rem;
@@ -114,10 +127,11 @@
    *
    * Each cell is a slightly different neutral value and the internal edges are one hairline of a
    * lighter grey. The fills are authored here rather than downloaded: there is no network
-   * request and no non-deterministic randomness. The whole group is drawn at 5% opacity so it
-   * reads as a blocky world only when the eye leaves the copy.
+   * request and no non-deterministic randomness. The whole group is drawn at 8% opacity: enough
+   * that the page has a visible grain when the eye rests, faint enough that no line of copy sits
+   * on a wash of grey.
    */
-  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.05'%3E%3Crect%20width='32'%20height='32'%20fill='%23303036'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%2326262b'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%23393940'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%232a2a30'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%2334343a'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%23232328'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%233c3c43'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%232d2d33'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%23323238'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%23242429'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%233a3a41'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%2328282d'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%2336363d'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%2325252a'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%233e3e45'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%232b2b31'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%23808088'%20stroke-opacity='.6'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
+  --texture-voxel: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='128'%20height='128'%20viewBox='0%200%20128%20128'%3E%3Cg%20opacity='.08'%3E%3Crect%20width='32'%20height='32'%20fill='%23303036'/%3E%3Crect%20x='32'%20width='32'%20height='32'%20fill='%2326262b'/%3E%3Crect%20x='64'%20width='32'%20height='32'%20fill='%23393940'/%3E%3Crect%20x='96'%20width='32'%20height='32'%20fill='%232a2a30'/%3E%3Crect%20y='32'%20width='32'%20height='32'%20fill='%2334343a'/%3E%3Crect%20x='32'%20y='32'%20width='32'%20height='32'%20fill='%23232328'/%3E%3Crect%20x='64'%20y='32'%20width='32'%20height='32'%20fill='%233c3c43'/%3E%3Crect%20x='96'%20y='32'%20width='32'%20height='32'%20fill='%232d2d33'/%3E%3Crect%20y='64'%20width='32'%20height='32'%20fill='%23323238'/%3E%3Crect%20x='32'%20y='64'%20width='32'%20height='32'%20fill='%23242429'/%3E%3Crect%20x='64'%20y='64'%20width='32'%20height='32'%20fill='%233a3a41'/%3E%3Crect%20x='96'%20y='64'%20width='32'%20height='32'%20fill='%2328282d'/%3E%3Crect%20y='96'%20width='32'%20height='32'%20fill='%2336363d'/%3E%3Crect%20x='32'%20y='96'%20width='32'%20height='32'%20fill='%2325252a'/%3E%3Crect%20x='64'%20y='96'%20width='32'%20height='32'%20fill='%233e3e45'/%3E%3Crect%20x='96'%20y='96'%20width='32'%20height='32'%20fill='%232b2b31'/%3E%3Cpath%20d='M32%200V128M64%200V128M96%200V128M0%2032H128M0%2064H128M0%2096H128'%20stroke='%23808088'%20stroke-opacity='.6'%20stroke-width='1'/%3E%3C/g%3E%3C/svg%3E");
 }
 
 *,
@@ -134,8 +148,13 @@
 }
 
 /* The page colour sits on the root element, not on `body`: the app's backdrop layer is fixed
-   behind the content with `z-index: -1`, and a body background would paint over it. */
+   behind the content with `z-index: -1`, and a body background would paint over it.
+
+   The root font size is 18px, not 16px. Every spacing, radius and type token is expressed in
+   `rem`, so this one declaration scales the whole storefront up by 12.5% at once: copy, gutters,
+   buttons and card padding grow together instead of each element being tuned by hand. */
 html {
+  font-size: 112.5%;
   background: var(--color-bg);
 }
 
@@ -226,7 +245,9 @@ a {
   width: 100%;
   max-width: var(--measure);
   margin-inline: auto;
-  padding-inline: var(--space-4);
+  /* Gutters: a little wider than the previous pass, because the content was asked to feel
+     inset from the edge rather than stretched to it. */
+  padding-inline: clamp(1.25rem, 1.8vw, 2rem);
 }
 
 /**
@@ -242,9 +263,24 @@ a {
  * - The blur is additive. Where it is unsupported the surface is simply a slightly lighter dark
  *   rectangle, which is why the class does not raise its alpha in a `@supports` fallback.
  */
+/**
+ * A registered angle, so a conic gradient can be rotated by animating one custom property.
+ *
+ * Only the effect rows use it: the enchantment frame on a product description is a violet sweep
+ * travelling around the panel. Registration is what makes the property interpolate; without it
+ * the browser falls back to the static 0deg frame the component declares, so the border never
+ * disappears.
+ */
+@property --effect-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 .glass {
   background: var(--glass-bg);
   border: 1px solid var(--glass-border-soft);
+  box-shadow: var(--edge-bevel);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -365,13 +401,22 @@ a {
   font-size: var(--text-ui);
   font-weight: 600;
   cursor: pointer;
+  box-shadow: var(--edge-bevel-strong);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
   transition:
     background var(--transition),
     border-color var(--transition),
     color var(--transition),
+    box-shadow var(--transition),
     transform var(--transition);
+}
+
+/* Pressing a block pushes its face in: the bevel flips to an inner shadow and the button drops a
+   pixel. It is the one interaction where the voxel metaphor is literal. */
+.button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.45);
 }
 
 .button:hover {
@@ -456,9 +501,11 @@ a {
  * head layout live here rather than being copied into two slice stylesheets.
  */
 .section {
-  padding-block: var(--space-6);
+  padding-block: var(--space-7) var(--space-6);
 }
 
+/* The head is closed by a pixel rule instead of a hairline: same 3px block strip as the hero's
+   bottom edge, so every band of the page is bounded by the same material. */
 .section__head {
   display: flex;
   flex-wrap: wrap;
@@ -466,6 +513,38 @@ a {
   justify-content: space-between;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
+}
+
+/* A single lit voxel before the heading. It is the accent as a block rather than as ink: the
+   heading's own text never takes the accent colour, so the square is the only place purple
+   appears in a section head, and it is what makes the band read as part of a world. */
+.section__head h2 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.section__head h2::before {
+  content: '';
+  flex: none;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-accent);
+  box-shadow: 0 0 14px rgb(167 139 250 / 0.55);
+  animation: voxel-pulse 3.4s ease-in-out infinite;
+}
+
+@keyframes voxel-pulse {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
 }
 
 /**

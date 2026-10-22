@@ -78,39 +78,43 @@ triangles, `tlaloc_staff.json` 37 / 222 / 444 with 12 rotated UVs and an emissiv
 
 ## Landing scene
 
-`landing/` is split the way the rest of this folder is: pure description below the renderer,
-three.js only where it is unavoidable.
+`landing/` is three files now: a loader, a motion policy and a renderer. The procedural island
+that used to live here was replaced by a real End City model at the user's request.
 
 | Module | Responsibility |
 |---|---|
-| `palette.ts` | The eight block kinds and their colour ramps. Three.js-free. |
-| `random.ts` | `mulberry32` plus coordinate hashes. Three.js-free. |
-| `voxels.ts` | Seeded island generator: terrain disc, pad, trees, floating blocks, bounds, counts. Three.js-free and total. |
-| `pixels.ts` | 16×16 RGBA tiles generated from the palette. Three.js-free. |
 | `motion.ts` | The gating policy: `animate` / `still` / `paused`. Three.js-free. |
-| `textures.ts` | `DataTexture` + lit material per block kind. |
-| `island-scene.ts` | Instanced terrain, lantern-post and floating-block filtering, de-duplicated disposal. |
-| `landing-renderer.ts` | Transparent renderer, token-driven lights, camera, loop, observers, teardown. |
+| `end-city.ts` | Loads the compressed GLB, normalises it (centre + scale), fits the camera distance, disposes it. |
+| `landing-renderer.ts` | Transparent renderer, token-driven lights, camera, turntable loop, observers, teardown. |
+
+The asset is `public/models/end-city/end-city.glb` — 3.4 MB, `EXT_meshopt_compression` plus WebP
+textures, converted from the 19 MB Sketchfab export with `gltf-transform optimize --compress
+meshopt`. Its `LICENSE.txt` sits beside it: the model is CC BY 4.0 and the attribution is shown in
+the site footer.
 
 The rules that make it safe on a commercial storefront:
 
-- **The scene is never in the initial bundle.** `features/home/home-page.ts` starts a dynamic
-  `import()` from `afterNextRender`; the home page keeps its copy and links before three.js is
+- **The scene is never in the initial bundle.** `app.ts` starts a dynamic `import()` from
+  `afterNextRender`; the shell keeps its header, footer and routed content before three.js is
   requested. `@defer` was measured and rejected: its runtime added ~8 kB to the initial shared
   chunk, while the scene chunk is lazy either way. The dynamic import costs ~0.4 kB.
-- **No image files.** Every block texture is arithmetic over the palette. There is no CDN, no
-  loader, and no copied Minecraft texture.
+- **Mounted by the shell, not by a page.** This is what makes the world survive navigation: the
+  shell is never destroyed while the visitor moves between routes, so the 3.4 MB model is fetched
+  once per session instead of on every visit to the landing page.
+- **No work before the model.** The animation loop does not start until the GLB has loaded, so the
+  first seconds are not spent rendering an empty scene at 60 fps. The canvas fades in when the
+  first frame exists.
 - **No work off-screen.** `IntersectionObserver` and `visibilitychange` feed `motion.ts`;
   `requestAnimationFrame` only exists while the policy says `animate`. Reduced motion renders
-  exactly one still frame at the canonical camera position.
-- **WebGL absence is not an error page.** `createLandingScene` throws once if the browser
-  cannot create a context; the component catches it, logs one line and leaves the hero's own
-  wash and copy untouched. A frame failure hides the canvas instead of showing a broken scene.
-- **Disposal is one path.** `disposeObjectTree` de-duplicates geometries, materials, textures
-  and `InstancedMesh` instance buffers, because the unit box and the materials are shared.
-- **Full-bleed, not a panel.** The canvas clears to alpha zero and the scene has no background
-  or fog of its own; the hero's CSS mask fades it into the page. Lighting colours are read from
-  the CSS tokens, so the diorama stays in the storefront palette.
+  exactly one still frame from a fixed angle.
+- **WebGL absence is not an error page.** `createLandingScene` throws once if the browser cannot
+  create a context; the component catches it, logs one line and leaves the page's CSS backdrop and
+  copy untouched. A failed model fetch hides the canvas the same way.
+- **Disposal is one path.** `disposeObject` walks the loaded tree once and releases every
+  geometry, material and texture. A load that resolves after the shell is gone disposes itself.
+- **Full-bleed, not a panel.** The canvas clears to alpha zero and the scene has no background of
+  its own; the shell's `.app-scene` scrim dims it so copy keeps its contrast. Lighting colours are
+  read from the CSS tokens, so the city stays in the storefront palette.
 
 ## Traps that cost real time
 

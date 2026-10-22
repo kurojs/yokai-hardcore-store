@@ -48,7 +48,7 @@ describe('CatalogStore', () => {
     await vi.waitFor(() => expect(store.isReady()).toBe(true));
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe('/data/catalog.json');
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('data/catalog.json');
     expect(store.categories()).toHaveLength(10);
     expect(store.entries()).toHaveLength(48);
     expect(store.prices()).toEqual([1, 2, 3, 4, 5, 10]);
@@ -99,7 +99,7 @@ describe('CatalogStore', () => {
     const store = TestBed.inject(CatalogStore);
     await vi.waitFor(() => expect(store.errorMessage()).not.toBeNull());
 
-    expect(store.errorMessage()).toContain('GET /data/catalog.json responded 503');
+    expect(store.errorMessage()).toContain('GET data/catalog.json responded 503');
     expect(store.isReady()).toBe(false);
     expect(store.isLoading()).toBe(false);
     expect(store.categories()).toEqual([]);

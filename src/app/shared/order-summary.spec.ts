@@ -43,7 +43,8 @@ describe('OrderSummary', () => {
 
     expect(host.querySelector('.summary__title')?.textContent?.trim()).toBe('Resumen del pedido');
     expect(rowValues(host)).toEqual(['5 artículos', '$7.00', '$7.00']);
-    expect(host.textContent).toContain('sin envío ni impuestos');
+    // The summary is the rows and nothing else; the old "digital products" note is gone.
+    expect(host.querySelector('p')).toBeNull();
   });
 
   it('keeps the unit count grammatical for a single article', () => {

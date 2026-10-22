@@ -221,6 +221,7 @@ model.
 | T12 | Violet identity, curated category order, filler copy removed | Delegated writer | Write rule | **done, rejected by the user** (2026-10-20, `fd2725b`) |
 | T13 | Glass neutral redesign: Arial type scale, glass tokens, icon topbar, Destacados and filler removed, card grids, motion | Delegated writer (execution completed after the delegate hit a provider rate limit) | Write rule | **done** (2026-10-22) |
 | T14 | Enderman brand mark + favicon, Minotar helmet avatar with a username dialog, real footer, island turntable | Inline (delegation unavailable: three provider rate-limit failures) | Write rule, route declared | **done** (2026-10-22) |
+| T15 | Block-material pass: 18px root scale, wider measure and narrower gutters, bevel edges + pixel rules, unboxed enderman, avatar moved beside the cart, explanatory dialog copy removed, island promoted to a fixed page background | Inline (single coherent CSS/markup pass; no new files) | Bounded inline edits: token and layout changes only, no new modules | **done** (2026-10-22) |
 
 Dependency order: T1 → T2 → (T3 ∥ T4) → T5 → T6 → T7 → T8 → T9 → T10.
 
@@ -687,8 +688,34 @@ What remains:
 - **Delivery** — the branch is now ~25 commits and pushed to `origin`; `main` was fast-forwarded
   once. Commit, push and PR remain the user's decisions.
 
-**RESOLVED 2026-10-19 — `modelPath` stays `null`; 3D is world decoration, not an SKU attribute.**
-The user's decision: the models are wanted only as **decoration on the landing**, animated, and
+**Update after T15 (2026-10-22).** The user reviewed the page in the browser and asked for a
+denser, more textured, more alive storefront. T15 answers with tokens and markup, not new modules:
+
+- **The page is 12.5% larger at every size.** `html { font-size: 112.5% }` moves the root from
+  16px to 18px, and since every spacing, radius and type token is in `rem`, copy, gutters, buttons
+  and cards scale together. `--measure` went 74rem → 82rem and `.page-width` gutters shrank to
+  `clamp(0.875rem, 1.4vw, 1.5rem)`, so the grid got wider at both ends.
+- **Borders became block edges.** `--edge-bevel` (one light pixel on top, two dark underneath)
+  replaced the flat hairline on every `.glass` surface and every `.button`; `.button:active` flips
+  the bevel inward. A 16×3 procedural `--texture-edge` strip closes the hero and every
+  `.section__head`. The backdrop's voxel tile went from 5% to 8% opacity.
+- **The enderman lost its tile.** The mark is the artwork alone at 44px with a drop shadow, plus a
+  2px bob. The box made it read as a launcher icon; the face carries the brand.
+- **The avatar moved to the end of the bar**, beside the cart on the right. Order is now brand,
+  navigation, spacer, language, cart, player, and the bar's gap drops to `--space-2` under 30rem.
+- **All explanatory copy is gone from the player dialog** — `accountDialogHint` and
+  `accountNetworkNote` were deleted from the model and all three dictionaries. The checkout's
+  no-payment disclosure is deliberately kept: that one is not explanatory, it is honest.
+- **The island is the page background.** `.hero__scene` became `.page-scene`: `position: fixed`,
+  `inset: 0`, `z-index: -1`, `opacity: 0.55`, radially masked, and mounted outside `.hero`. The
+  hero keeps no box and no `position: relative`; its copy is in normal flow above the layer.
+
+Still unobserved: the new framing. A full-viewport canvas spreads the same world units over more
+vertical space than the old 42vh hero band, and the camera distance is fixed at 17.5 with a 36°
+vertical FOV, so on a portrait phone the island is cropped by the mask rather than fitted. Only a
+real screen can say whether 0.55 opacity is too faint behind the category grid.
+
+
 further Minecraft-style decorative assets may be **downloaded** to make the landing feel like the
 game. "No quiero items, quiero cosas decorativas." Consequences:
 

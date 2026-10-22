@@ -42,6 +42,20 @@ describe('App', () => {
     expect(fixture.componentInstance).toBeTruthy();
   });
 
+  it('reserves one decorative background layer for every route', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const layers = host.querySelectorAll('.app-scene');
+    expect(layers).toHaveLength(1);
+    // The scene is a world, not content: it is hidden from assistive technology and never
+    // intercepts a click.
+    expect(layers[0]?.getAttribute('aria-hidden')).toBe('true');
+    // It belongs to the shell, outside the routed main, so navigating does not restart it.
+    expect(host.querySelector('main .app-scene')).toBeNull();
+  });
+
   it('renders one main landmark where routed content goes', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
@@ -143,9 +157,8 @@ describe('App', () => {
       expect(link.getAttribute('href')).toMatch(/^\/catalog\/[a-z0-9-]+$/);
     }
 
-    expect(footer?.querySelector('.shell__footer-bottom')?.textContent?.trim()).toBe(
-      `© ${new Date().getFullYear()} Yokai Hardcore`,
-    );
+    const bottom = footer?.querySelector('.shell__footer-bottom');
+    expect(bottom?.textContent?.trim()).toBe(`© ${new Date().getFullYear()} Yokai Hardcore`);
     // The legal boilerplate went with the rest of the filler copy.
     expect(footer?.textContent).not.toContain('Mojang');
   });

@@ -1,14 +1,13 @@
 /**
  * The storefront's brand mark: the enderman head the store ships as its icon.
  *
- * The artwork is almost entirely black, so drawn straight onto the near-black header it would
- * read as a hole with two eyes. It therefore sits inside a small glass tile: the translucent
- * fill and the hairline are what give the silhouette a lit edge, and the violet eyes do the
- * rest. `image-rendering: pixelated` keeps the 16x16-derived sprite crisp instead of smearing
- * it through bilinear filtering.
+ * The artwork sits **free**, with no tile, frame or background behind it. A boxed mark reads as
+ * an app icon borrowed from a launcher; the face alone reads as the server's own symbol, and the
+ * two violet eyes are what identify it at a glance.
  *
- * The image is decorative: the link that contains it carries the accessible name, so announcing
- * the mark as well would repeat the brand.
+ * The one treatment it keeps is a drop shadow. The face is almost entirely black, so on a
+ * near-black header the silhouette would dissolve and leave two floating eyes. A soft shadow
+ * traces the head without drawing a container around it.
  */
 
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
@@ -17,17 +16,15 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
   selector: 'app-brand-mark',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <span class="mark" [style.width.px]="size()" [style.height.px]="size()">
-      <img
-        class="mark__image"
-        src="brand/enderman.png"
-        alt=""
-        width="24"
-        height="24"
-        decoding="async"
-        aria-hidden="true"
-      />
-    </span>
+    <img
+      class="mark"
+      src="brand/enderman.png"
+      alt=""
+      [style.width.px]="size()"
+      [style.height.px]="size()"
+      decoding="async"
+      aria-hidden="true"
+    />
   `,
   styles: `
     :host {
@@ -35,30 +32,36 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       flex: none;
     }
 
-    /* The tile is sized by the input so the mark can be scaled from the header to the footer
-       without changing the artwork's proportions. */
     .mark {
-      display: grid;
-      flex: none;
-      place-items: center;
-      box-sizing: border-box;
-      overflow: hidden;
-      border: 1px solid var(--glass-border);
-      border-radius: calc(var(--radius-md) + 1px);
-      background: var(--glass-bg-strong);
-      box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06);
-    }
-
-    .mark__image {
       display: block;
-      width: 84%;
-      height: 84%;
       object-fit: contain;
       image-rendering: pixelated;
+      /* A shadow, not a border: it gives the black silhouette an edge without enclosing it. */
+      filter: drop-shadow(0 0 1px rgb(255 255 255 / 0.35))
+        drop-shadow(0 4px 10px rgb(0 0 0 / 0.55));
+    }
+
+    /* A slow bob, so the mark belongs to the same living page as the cards. Two pixels: enough
+       to notice out of the corner of the eye, never enough to pull the eye away from the name. */
+    @media (prefers-reduced-motion: no-preference) {
+      .mark {
+        animation: mark-bob 5.5s ease-in-out infinite;
+      }
+    }
+
+    @keyframes mark-bob {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-2px);
+      }
     }
   `,
 })
 export class BrandMark {
-  /** Rendered width and height of the tile in pixels. The image is inset inside it. */
-  readonly size = input(34);
+  /** Rendered width and height in pixels. The artwork is square. */
+  readonly size = input(40);
 }

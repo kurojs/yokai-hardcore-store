@@ -115,8 +115,8 @@ describe('HomePage', () => {
     for (const source of sources) {
       expect(source.length).toBeGreaterThan(0);
     }
-    expect(sources.filter((source) => source.startsWith('/categories/'))).toHaveLength(7);
-    expect(sources.filter((source) => source.startsWith('/products/'))).toHaveLength(3);
+    expect(sources.filter((source) => source.startsWith('categories/'))).toHaveLength(7);
+    expect(sources.filter((source) => source.startsWith('products/'))).toHaveLength(3);
   });
 
   it('links each category card to its filtered catalog route', async () => {
@@ -159,7 +159,7 @@ describe('HomePage', () => {
     expect(host.textContent).not.toContain('Destacados');
   });
 
-  it('reserves a decorative full-bleed scene without taking any copy out of the page', async () => {
+  it('leaves the 3D background to the shell instead of mounting one per page', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(() => new Promise<Response>(() => undefined)),
@@ -168,12 +168,11 @@ describe('HomePage', () => {
     const { fixture, host } = await render();
     fixture.detectChanges();
 
-    const panel = host.querySelector('.hero__scene');
-    expect(panel).not.toBeNull();
-    // The canvas carries no information, so it is hidden from assistive technology rather
-    // than given a label that would announce a decoration.
-    expect(panel?.getAttribute('aria-hidden')).toBe('true');
-    // The hero copy is outside that panel and still readable without the scene.
+    // The scene lives in the app shell so it survives navigation; a page-level copy would be
+    // downloaded again on every route change.
+    expect(host.querySelector('.page-scene')).toBeNull();
+    expect(host.querySelector('app-landing-scene')).toBeNull();
+    // The hero copy stands on its own.
     expect(host.querySelector('.hero__title')?.textContent).toContain('Yokai Hardcore Store');
   });
 

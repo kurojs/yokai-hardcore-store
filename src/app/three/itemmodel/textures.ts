@@ -8,7 +8,7 @@
  *
  * - **Where to look.** The assets here place each texture's PNG beside its model JSON, named
  *   after the last segment of the texture path. That rule is the sibling-PNG convention, and
- *   it resolves `item/custom/tlaloc/tlaloc_hat` to `/models/items/tlaloc/tlaloc_hat.png`.
+ *   it resolves `item/custom/tlaloc/tlaloc_hat` to `models/items/tlaloc/tlaloc_hat.png`.
  *   A path whose file is not there — every `minecraft:` path, which points into the game's
  *   own jar — produces a URL that simply will not respond. That is not malformed input: it
  *   is the delegated case, and the caller reports it to the user instead of throwing.

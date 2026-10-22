@@ -86,7 +86,6 @@ import { PlayerStore } from '../core/player/player-store';
         <h2 class="account-dialog__title" id="account-dialog-title">
           {{ text().accountDialogTitle }}
         </h2>
-        <p class="account-dialog__hint">{{ text().accountDialogHint }}</p>
 
         <label class="account-dialog__label" for="account-player-name">
           {{ text().accountNameLabel }}
@@ -112,8 +111,6 @@ import { PlayerStore } from '../core/player/player-store';
             {{ text().usernameProblemMessage(problem) }}
           </p>
         }
-
-        <p class="account-dialog__note">{{ text().accountNetworkNote }}</p>
 
         <div class="account-dialog__actions">
           <button class="account-dialog__button" type="button" (click)="close()">
@@ -222,13 +219,6 @@ import { PlayerStore } from '../core/player/player-store';
 
     .account-dialog__title {
       font-size: 1.375rem;
-    }
-
-    .account-dialog__hint,
-    .account-dialog__note {
-      color: var(--color-text-muted);
-      font-size: var(--text-small);
-      line-height: 1.5;
     }
 
     .account-dialog__label {

@@ -83,7 +83,7 @@ describe('ProductPage', () => {
 
     const image = host.querySelector<HTMLImageElement>('img.product__image');
     expect(image).not.toBeNull();
-    expect(image?.getAttribute('src')).toContain('/products/10-algodones-de-azucar/imagen.png');
+    expect(image?.getAttribute('src')).toContain('products/10-algodones-de-azucar/imagen.png');
     expect(image?.getAttribute('alt')).toBe('10 ALGODONES DE AZUCAR');
     // No 3D on a product: the hero is the photograph, never a canvas or a model viewer.
     expect(host.querySelector('canvas')).toBeNull();

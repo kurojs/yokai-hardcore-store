@@ -1,26 +1,3 @@
-<section class="hero">
-  <!--
-    The scene is full-bleed: it sits behind the copy and fades into the page, so the island
-    reads as part of the background rather than as a framed widget. The element is part of the
-    static layout, which reserves the scene's space before any JavaScript for three.js is
-    fetched, and it is marked decorative because the hero holds the store's name and one action.
-    The anchor is where the lazily imported scene component is mounted after the first render.
-  -->
-  <div class="hero__scene" aria-hidden="true">
-    <ng-template #sceneAnchor></ng-template>
-  </div>
-
-  <div class="page-width hero__grid">
-    <div class="hero__inner">
-      <h1 class="hero__title">{{ text().homeTitle }}</h1>
-
-      <div class="hero__actions">
-        <a class="button button--primary" routerLink="/catalog">{{ text().homeCatalogAction }}</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 @if (errorMessage(); as message) {
   <section class="page-width state" role="alert">
     <h2 class="state__title">{{ text().catalogLoadErrorTitle }}</h2>

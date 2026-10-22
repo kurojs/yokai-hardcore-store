@@ -1,4 +1,4 @@
-import { Component, DestroyRef, afterNextRender, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ViewContainerRef, afterNextRender, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { CartStore } from './core/cart/cart-store';
@@ -6,6 +6,7 @@ import { CatalogStore } from './core/catalog/catalog-store';
 import { LanguageStore } from './core/i18n/language-store';
 import { LANGUAGE_LABELS, normalizeLanguage, type Language } from './core/i18n/language';
 import { BrandMark } from './shared/brand-mark';
+import { BackToTop } from './shared/back-to-top';
 import { PlayerAccount } from './shared/player-account';
 
 /**
@@ -31,9 +32,20 @@ import { PlayerAccount } from './shared/player-account';
  * - **The cart badge pop.** The badge animates when the count changes, never on first render.
  *   The component owns the flag and clears it on `animationend`; the keyframe lives in CSS.
  */
+
+/** One quiet line if the background's chunk cannot be fetched; never an error box. */
+let backgroundFailureReported = false;
+
+function reportBackgroundFailure(cause: unknown): void {
+  if (backgroundFailureReported) return;
+  backgroundFailureReported = true;
+  const detail = cause instanceof Error ? cause.message : String(cause);
+  console.warn(`landing scene: could not load its module: ${detail}`);
+}
+
 @Component({
   selector: 'app-root',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, BrandMark, PlayerAccount],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, BrandMark, BackToTop, PlayerAccount],
   styleUrl: './app.scss',
   templateUrl: './app.html',
 })
@@ -61,6 +73,17 @@ export class App {
 
   /** The copyright year, read once: a build does not need to re-evaluate it per frame. */
   protected readonly currentYear = new Date().getFullYear();
+
+  /**
+   * Where the lazily imported background component is mounted.
+   *
+   * It is a `ViewContainerRef` rather than an element because the component does not exist until
+   * its chunk has been fetched; the shell owns the slot and fills it when the import resolves.
+   */
+  private readonly sceneAnchor = viewChild('sceneAnchor', { read: ViewContainerRef });
+
+  private sceneStarted = false;
+  private shellDestroyed = false;
 
   /** The header's denser glass state, set from a passive scroll listener. */
   protected readonly scrolled = signal(false);
@@ -136,6 +159,33 @@ export class App {
       window.addEventListener('scroll', sync, { passive: true });
       this.destroyRef.onDestroy(() => window.removeEventListener('scroll', sync));
     });
+
+    // The background is the shell's, and it starts loading as soon as the shell has painted. A
+    // dynamic import keeps three.js out of the initial bundle; mounting it here instead of in a
+    // page is what makes it shared by every route and fetched exactly once per session.
+    afterNextRender(() => {
+      void this.loadBackground();
+    });
+
+    this.destroyRef.onDestroy(() => {
+      this.shellDestroyed = true;
+    });
+  }
+
+  private async loadBackground(): Promise<void> {
+    if (this.sceneStarted) return;
+    this.sceneStarted = true;
+
+    try {
+      const { LandingScene } = await import('./shared/landing-scene');
+      // The shell can be torn down while the chunk is in flight, and mounting into a destroyed
+      // container throws. A test teardown hits this path routinely.
+      if (this.shellDestroyed) return;
+      const anchor = this.sceneAnchor();
+      anchor?.createComponent(LandingScene);
+    } catch (cause) {
+      reportBackgroundFailure(cause);
+    }
   }
 
   /** The keyframe has finished, so the class can be removed and the next change can replay it. */

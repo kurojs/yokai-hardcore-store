@@ -134,18 +134,18 @@ describe('CheckoutPage', () => {
     expect(host.querySelector('app-order-summary')).toBeNull();
   });
 
-  it('keeps the demo disclosure next to the submit control, not in the footer', async () => {
+  it('keeps the submit control as the last thing in the form, with no disclaimer above it', async () => {
     const fixture = TestBed.createComponent(CheckoutPage);
     const host = fixture.nativeElement as HTMLElement;
     await waitForForm(fixture, host);
 
-    const disclosure = host.querySelector('.checkout__demo');
-    expect(disclosure?.textContent?.trim()).toBe(ES_UI_TEXT.checkoutDemoDisclosure);
-    expect(disclosure?.closest('form')).not.toBeNull();
-    expect(disclosure?.getAttribute('role')).toBe('note');
-    expect(host.querySelector('button[type="submit"]')?.textContent).toContain(
-      'Completar demostración',
-    );
+    const form = host.querySelector('form');
+    const submit = form?.querySelector('button[type="submit"]');
+    expect(submit?.textContent?.trim()).toBe('Finalizar pedido');
+    // The last element before the button is the username field: the old demo note used to sit
+    // between them and is gone.
+    expect(submit?.previousElementSibling?.classList.contains('field')).toBe(true);
+    expect(host.querySelector('.checkout__demo')).toBeNull();
   });
 
   it('collects no payment data at all', async () => {
@@ -197,7 +197,7 @@ describe('CheckoutPage', () => {
     expect(input?.getAttribute('aria-invalid')).toBeNull();
   });
 
-  it('confirms locally, clears the cart and states that nothing was charged', async () => {
+  it('confirms locally and clears the cart', async () => {
     const fixture = TestBed.createComponent(CheckoutPage);
     const host = fixture.nativeElement as HTMLElement;
     const cart = TestBed.inject(CartStore);
@@ -221,8 +221,10 @@ describe('CheckoutPage', () => {
     expect(text(host, '.checkout-confirmation .state__message')).toBe(
       ES_UI_TEXT.checkoutConfirmationMessage,
     );
-    expect(host.textContent).toContain('No se realizó ningún cargo');
-    expect(host.textContent).toContain('no se creó ningún pedido');
+    // The confirmation no longer carries a demo disclaimer; it says the receipt is local, which
+    // is the only thing the visitor needs to know about a receipt that never leaves the tab.
+    expect(host.textContent).toContain('se pierde si recargas la página');
+    expect(host.textContent).not.toContain('demostración');
 
     // The cart is gone, and the form with it.
     expect(cart.itemCount()).toBe(0);

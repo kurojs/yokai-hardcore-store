@@ -133,14 +133,6 @@
   color: var(--color-danger);
 }
 
-/* Next to the submit button, where the visitor is about to act — not in the footer. It is a
-   quiet line of small print, not a warning banner: the checkout is a demo, but it is not an
-   error state. */
-.checkout__demo {
-  font-size: var(--text-small);
-  color: var(--color-text-muted);
-}
-
 .checkout__submit {
   justify-self: start;
 }

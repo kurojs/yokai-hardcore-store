@@ -14,20 +14,17 @@
  *   nothing to sell.
  * - Copy comes from `LanguageStore.text`, and the document title follows it. The category names
  *   and product names it renders are catalog data and are never translated.
- * - The decorative 3D scene is an optional enhancement: it is imported dynamically after the
- *   first render, so the hero is complete before three.js is even requested.
+ * - The 3D world behind the page belongs to the shell, not to this page: it is imported
+ *   dynamically once and stays mounted across routes, so the hero is complete before three.js is
+ *   even requested and coming back to the landing page never re-downloads it.
  */
 
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
-  ViewContainerRef,
-  afterNextRender,
   computed,
   effect,
   inject,
-  viewChild,
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
@@ -38,17 +35,6 @@ import { LanguageStore } from '../../core/i18n/language-store';
 import { CategoryCard } from '../../shared/category-card';
 import { RevealOnScroll } from '../../shared/reveal-on-scroll';
 
-/** One quiet line if the scene's chunk cannot be fetched; never an error box. */
-let sceneLoadFailureReported = false;
-
-function reportSceneLoadFailure(cause: unknown): void {
-  if (sceneLoadFailureReported) return;
-  sceneLoadFailureReported = true;
-  console.warn(
-    `landing scene: could not load its module: ${cause instanceof Error ? cause.message : String(cause)}`,
-  );
-}
-
 @Component({
   selector: 'app-home-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,14 +42,10 @@ function reportSceneLoadFailure(cause: unknown): void {
   templateUrl: './home-page.html',
   styleUrl: './home-page.scss',
 })
-export class HomePage implements OnDestroy {
+export class HomePage {
   private readonly catalog = inject(CatalogStore);
   private readonly i18n = inject(LanguageStore);
   private readonly documentTitle = inject(Title);
-
-  private readonly sceneAnchor = viewChild.required('sceneAnchor', { read: ViewContainerRef });
-  private sceneStarted = false;
-  private destroyed = false;
 
   protected readonly text = this.i18n.text;
 
@@ -96,29 +78,6 @@ export class HomePage implements OnDestroy {
 
   constructor() {
     effect(() => this.documentTitle.setTitle(this.text().homeDocumentTitle));
-
-    // The scene is fetched only after the landing content has rendered, and only through a
-    // dynamic import: `three` and every scene module stay out of the home page's chunk and
-    // out of the initial bundle. A failed chunk fetch leaves the static hero untouched.
-    afterNextRender(() => {
-      void this.loadLandingScene();
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.destroyed = true;
-  }
-
-  private async loadLandingScene(): Promise<void> {
-    if (this.sceneStarted) return;
-    this.sceneStarted = true;
-    try {
-      const { LandingScene } = await import('./landing-scene');
-      if (this.destroyed) return;
-      this.sceneAnchor().createComponent(LandingScene);
-    } catch (cause) {
-      reportSceneLoadFailure(cause);
-    }
   }
 
   protected retry(): void {

@@ -58,6 +58,8 @@ import type { UiText } from '../../core/i18n/ui-text';
       border: 1px solid var(--color-border-control);
       border-radius: var(--radius-sm);
       background: var(--glass-bg);
+      -webkit-backdrop-filter: var(--glass-blur);
+      backdrop-filter: var(--glass-blur);
       color: var(--color-text);
       font: inherit;
       font-size: var(--text-ui);

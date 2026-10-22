@@ -1,13 +1,15 @@
 /**
- * The Angular host for the decorative landing scene.
+ * The Angular host for the decorative page background.
  *
- * Nothing interesting happens here: the component owns a stage element, asks the renderer to
- * fill it after the landing content has rendered, and disposes it on destroy. Every policy
- * decision lives in `three/landing/` so it can be tested without a browser.
+ * Nothing interesting happens here: the component owns a stage element, asks the renderer to fill
+ * it after the shell has rendered, and disposes it on destroy. Every policy decision lives in
+ * `three/landing/` so it can be tested without a browser.
  *
- * It is only reachable through a dynamic `import()` in `home-page.ts`, fired after the first
- * render. That is what keeps three.js — and this component — out of the home page's own chunk
- * and out of the initial bundle entirely.
+ * It is mounted by the app shell, not by a route, and only through a dynamic `import()`. That is
+ * the whole reason the world survives navigation: the shell is never destroyed while the visitor
+ * moves between pages, so the model is fetched once per session, parsed once, and keeps turning
+ * behind every route. Mounting it per page would restart the download on each navigation — which
+ * is exactly the delay the previous arrangement showed on the landing page.
  */
 
 import {
@@ -23,8 +25,7 @@ import {
   createLandingScene,
   reportLandingSceneFailure,
   type LandingSceneHandle,
-} from '../../three/landing/landing-renderer';
-import { DEFAULT_ISLAND_SEED, createIsland } from '../../three/landing/voxels';
+} from '../three/landing/landing-renderer';
 
 @Component({
   selector: 'app-landing-scene',
@@ -67,12 +68,9 @@ export class LandingScene implements OnDestroy {
 
   private start(): void {
     try {
-      this.handle = createLandingScene(
-        this.stage().nativeElement,
-        createIsland(DEFAULT_ISLAND_SEED),
-      );
+      this.handle = createLandingScene(this.stage().nativeElement);
     } catch (cause) {
-      // No WebGL is a normal outcome. The hero keeps its wash and copy, and the visitor sees
+      // No WebGL is a normal outcome. The page keeps its backdrop and copy, and the visitor sees
       // nothing but a quieter background.
       this.handle = null;
       reportLandingSceneFailure(cause);

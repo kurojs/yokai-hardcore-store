@@ -39,8 +39,6 @@ import { PricePipe } from './price.pipe';
           <dd class="summary__money">{{ totalUsd() | price }}</dd>
         </div>
       </dl>
-
-      <p class="summary__note">{{ text().orderSummaryNote }}</p>
     </section>
   `,
   styles: `
@@ -94,11 +92,6 @@ import { PricePipe } from './price.pipe';
       color: var(--color-price);
     }
 
-    .summary__note {
-      margin-top: var(--space-3);
-      font-size: var(--text-small);
-      color: var(--color-text-muted);
-    }
   `,
 })
 export class OrderSummary {

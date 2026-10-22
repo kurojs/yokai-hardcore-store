@@ -6,12 +6,20 @@
 -->
 <div class="backdrop" aria-hidden="true"></div>
 
+<!--
+  The 3D world: one layer for the whole app, mounted lazily by the shell so it is fetched once and
+  keeps turning behind every route instead of restarting on each navigation.
+-->
+<div class="app-scene" aria-hidden="true">
+  <ng-template #sceneAnchor></ng-template>
+</div>
+
 <a class="skip-link" href="#main">{{ text().skipToContent }}</a>
 
 <header class="shell__header" [class.is-scrolled]="scrolled()">
   <div class="page-width shell__bar">
     <a class="brand" routerLink="/" [attr.aria-label]="text().brandHomeLabel">
-      <app-brand-mark class="brand__mark" [size]="34" />
+      <app-brand-mark class="brand__mark" [size]="44" />
       <span class="brand__text">Yokai Hardcore</span>
     </a>
 
@@ -104,10 +112,6 @@
       </select>
     </div>
 
-    <!-- The player control sits immediately before the cart so the cart stays the rightmost
-         action: browsing, then identity, then the thing about to be bought. -->
-    <app-player-account />
-
     <!-- The count is the link's visible text and part of its accessible name, so the header
          says how much is in the cart and where to go. The hidden status repeats the text: a
          live region announces a changed count politely without taking focus from the page. -->
@@ -138,6 +142,11 @@
         >{{ itemCount() }}</span
       >
     </a>
+
+    <!-- The player closes the bar: the avatar sits beside the cart, at the far right end, so
+         identity and checkout share the same corner of the screen. -->
+    <app-player-account />
+
     <p class="visually-hidden" role="status" aria-live="polite">{{ cartLabel() }}</p>
     <p class="visually-hidden" role="status" aria-live="polite">{{ announcement() }}</p>
   </div>
@@ -146,6 +155,8 @@
 <main class="shell__main" id="main">
   <router-outlet />
 </main>
+
+<app-back-to-top />
 
 <footer class="shell__footer">
   <div class="page-width shell__footer-inner">

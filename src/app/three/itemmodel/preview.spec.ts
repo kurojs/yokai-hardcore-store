@@ -27,9 +27,11 @@ describe('ITEM_PREVIEW_MODELS', () => {
       'netherite_sword',
       'paper',
     ]);
-    expect(ITEM_PREVIEW_MODELS.every((model) => model.url.startsWith('/models/items/tlaloc/'))).toBe(
-      true,
-    );
+    expect(
+      ITEM_PREVIEW_MODELS.every(
+        (model) => model.url.startsWith('models/items/tlaloc/') && !model.url.startsWith('/'),
+      ),
+    ).toBe(true);
     expect(new Set(ITEM_PREVIEW_MODELS.map((model) => model.url)).size).toBe(
       ITEM_PREVIEW_MODELS.length,
     );

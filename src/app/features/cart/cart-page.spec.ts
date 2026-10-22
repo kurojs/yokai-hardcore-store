@@ -127,10 +127,10 @@ describe('CartPage', () => {
 
     const images = [...host.querySelectorAll<HTMLImageElement>('.line__image')];
     const sources = images.map((image) => image.getAttribute('src') ?? '');
-    expect(sources[0]).toBe('/products/10-algodones-de-azucar/imagen.png');
+    expect(sources[0]).toBe('products/10-algodones-de-azucar/imagen.png');
     // The committed catalog is not uniform about the extension (the coupon ships as `.jpg`),
     // so the assertion is on the real product path, not on an assumed suffix.
-    expect(sources[1]).toMatch(/^\/products\/cupon-canjeable-para-familiar\/imagen\.(png|jpg)$/);
+    expect(sources[1]).toMatch(/^products\/cupon-canjeable-para-familiar\/imagen\.(png|jpg)$/);
     // The name is the link text beside the photograph, so the image stays decorative.
     expect(images.every((image) => image.getAttribute('alt') === '')).toBe(true);
 

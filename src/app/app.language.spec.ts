@@ -79,9 +79,9 @@ describe('App language switcher', () => {
     expect(host.querySelector('.cart-indicator')?.textContent).toContain('カートは空です');
     // The footer is chrome too, and its headings are translated with everything else.
     expect(host.querySelector('.shell__footer-heading')?.textContent?.trim()).toBe('ストア');
-    expect(host.querySelector('.shell__footer-bottom')?.textContent?.trim()).toBe(
-      `© ${new Date().getFullYear()} Yokai Hardcore`,
-    );
+    expect(
+      host.querySelector('.shell__footer-bottom p')?.textContent?.trim(),
+    ).toBe(`© ${new Date().getFullYear()} Yokai Hardcore`);
     expect(document.documentElement.lang).toBe('ja');
     expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('ja');
   });
